@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+.dokdo-regular {
+  font-family: "Dokdo", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+.epilogue-normal {
+  font-family: "Epilogue", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.fs-sm {
+  font-size: var(--font-size-sm);
+}
+
+body {
+  background-image: url(assets/bg.jpg);
+  background-size: cover;
+}
+
+:root {
+  --primary-color: #6fb6e6;
+  --secondary-color: #fe7d29;
+  --font-size-sm: 12px;
+}

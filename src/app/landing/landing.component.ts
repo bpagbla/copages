@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { NavComponent } from "../nav/nav.component";
 
 @Component({
   selector: 'app-landing',
-  imports: [NavComponent],
+  imports: [],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })

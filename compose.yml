@@ -1,0 +1,30 @@
+services:
+  backend:
+    container_name: server
+    build: ./server
+    ports:
+      - "3001:3000"
+    environment:
+      DB_HOST: sql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ""
+      DB_NAME: pfcdb
+      PORT: 3000
+    volumes:
+      - ./server:/app
+    working_dir: /app
+    command: npm run dev
+    depends_on:
+      - sql
+
+  sql:
+    container_name: sqlFinal
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../mysql:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: pfcdb

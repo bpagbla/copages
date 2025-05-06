@@ -1,24 +1,27 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../services/authService/auth.service';
 
 @Component({
   selector: 'app-nav',
-  imports: [CommonModule, RouterModule ],
+  imports: [CommonModule, RouterModule],
   templateUrl: './nav.component.html',
-  styleUrl: './nav.component.css'
+  styleUrl: './nav.component.css',
 })
 export class NavComponent {
-  // Variable que indica si el usuario está logueado o no
-  isLoggedIn: boolean = false; 
+  isLoggedIn: boolean = false;
 
-  // Método para simular un inicio de sesión
-  login() {
-    this.isLoggedIn = true;  // Cambia el estado a logueado
+  constructor(private authService: AuthService) {}
+
+  ngOnInit() {
+    // Suscribirse al estado de autenticación
+    this.authService.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
   }
 
-  // Método para simular un cierre de sesión
   logout() {
-    this.isLoggedIn = false;  // Cambia el estado a no logueado
+    this.authService.logout();
   }
 }

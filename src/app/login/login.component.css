@@ -1,32 +1,50 @@
-form{
-    width: 35%;
-}
-.btn{
-    background-color: var(--secondary-color);
-    color: white;
+form {
+  width: 35%;
+  background: rgba(246, 244, 245, 0.372);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8.6px);
+  -webkit-backdrop-filter: blur(8.6px);
+  border: 1px solid rgba(255, 255, 255, 0.74);
+  padding: 2rem;
 }
 
+@media only screen and (max-width: 800px) {
+  form {
+    width: 80%;
+  }
+}
 
-a{
-    text-decoration: none;
-    color: black;
+.btn {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn:hover {
+  background-color: var(--dark-orange);
+}
+
+a {
+  text-decoration: none;
+  color: black;
 }
 
 .un {
-    display: inline-block;
-    padding-bottom:2px;
-    background-image: linear-gradient(#000 0 0);
-    background-position: 0 100%; /*OR bottom left*/
-    background-size: 0% 2px;
-    background-repeat: no-repeat;
-    transition:
-      background-size 0.3s,
-      background-position 0s 0.3s; /*change after the size immediately*/
-  }
-  
-  .un:hover {
-    background-position: 100% 100%; /*OR bottom right*/
-    background-size: 100% 2px;
-  }
+  display: inline-block;
+  padding-bottom: 2px;
+  background-image: linear-gradient(#000 0 0);
+  background-position: 0 100%; /*OR bottom left*/
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s, background-position 0s 0.3s; /*change after the size immediately*/
+}
 
- 
+.un:hover {
+  background-position: 100% 100%; /*OR bottom right*/
+  background-size: 100% 2px;
+}
+
+p{
+  padding: 0;
+  margin: 0;
+}

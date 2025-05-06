@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+
 .dokdo-regular {
   font-family: "Dokdo", system-ui;
   font-weight: 400;
@@ -21,6 +22,12 @@ body {
 
 :root {
   --primary-color: #6fb6e6;
-  --secondary-color: #fe7d29;
+  --secondary-color: #FB790E;
   --font-size-sm: 12px;
+
+  --dark-orange: #E95C20;
+  --yellow: #EBAF47;
+  --blue: #A7C5DD;
+  --white: #f6f4f5;
+  --black: #171214;
 }

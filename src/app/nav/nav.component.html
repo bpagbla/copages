@@ -8,11 +8,11 @@
     </div>
     <div class="d-flex justify-content-around">
       <div *ngIf="!isLoggedIn">
-        <a routerLink="register" class="pe-2 un" (click)="login()">Sign Up</a>
-        <a routerLink="login" class="ps-2 un" (click)="login()">Login</a>
+        <a routerLink="register" class="pe-2 un" >Sign Up</a>
+        <a routerLink="login" class="ps-2 un">Login</a>
       </div>
       <div *ngIf="isLoggedIn">
-        <a routerLink="/" class="ps-2 un" (click)="logout()">Logout</a>
+        <a routerLink="/" class="ps-2 un">Logout</a>
       </div>
     </div>
   </div>

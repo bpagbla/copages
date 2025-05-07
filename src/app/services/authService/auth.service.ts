@@ -35,15 +35,16 @@ export class AuthService {
   // validar inicio de sesión
   validarLogin(username: string, password: string) {
     const loginData = { username, password };
-
-    this.http
-      .post('http://localhost:3000/login', loginData, { withCredentials: true })
+  
+    this.http.post('http://localhost:3000/login', loginData, { withCredentials: true })
       .subscribe(
         (res: any) => {
+          console.log('Login exitoso', res);
           alert('Login exitoso');
           this.loggedIn.next(true);
         },
         (error) => {
+          console.error('Error al validar login', error);
           if (error.status === 401) {
             alert('Usuario o contraseña incorrecta');
           } else {
@@ -53,6 +54,7 @@ export class AuthService {
         }
       );
   }
+  
 
   //  Cierra sesión
   logout() {
@@ -68,7 +70,24 @@ export class AuthService {
       );
   }
 
-  registro() {}
+  registro(username: string, password: string, name: string, surname: string, email: string) {
+    console.log("Llamando al backend con:", username, password, name, surname, email);
+
+    const registerData = {
+      nick: username,
+      password: password,
+      nombre: name,
+      apellidos: surname,
+      email: email,
+      role: 'user' 
+    };
+
+    this.http.post('http://localhost:3000/register', registerData)
+    .subscribe({
+      next: (res) => console.log('Usuario registrado', res),
+      error: (err) => console.error('Error al registrar usuario', err)
+    });
+  }
 
   verificarUsuarioExiste(username: string) {
     return this.http.post<{ existe: boolean }>(

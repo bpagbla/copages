@@ -26,7 +26,6 @@ export class LoginComponent {
     const password: string = this.loginForm.get('password')?.value ?? '';
     if (this.loginForm.valid) {
       this.authService.validarLogin(username, password);
-      
     }
 
     

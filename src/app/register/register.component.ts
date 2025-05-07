@@ -73,7 +73,9 @@ ngOnInit() {
     const surname: string = this.registerForm.get('surname')?.value ?? '';
     const email: string = this.registerForm.get('email')?.value ?? '';
 
+    console.log("submit");
     if (this.registerForm.valid) {
+      this.authService.registro(username, password, name, surname, email);
     }
   }
 }

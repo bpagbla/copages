@@ -28,5 +28,5 @@ CREATE TABLE libro (
 );
 
 #Users
-INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE) VALUES('user@gmail.com','user','User','User','$2a$12$/.57XI5riojUPwXeoQXX9O/ru1XsQ5MRSsj8lZAo85sJb2b0tbEsi', 'user');
-INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE) VALUES('admin@gmail.com','admin','Admin','Admin','$2y$10$xiAIe5dxN/fi39Jq08f1nu3BLCnuU7OBhcHoDcuDnVNJqtrOZUJzK', 'admin');
+INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE) VALUES('user@gmail.com','user','User','User','$2b$10$sFS.61wwEU5KnWEqkgJsT.c0qjU3oeOYW8dO5WoUyPLM4qLQtgMfq', 'user');
+INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE) VALUES('admin@gmail.com','admin','Admin','Admin','$2b$10$jY9rkCuRzJIej4MjlzOOyO4U3qCvc1dpMvJ0EJxdl/M3oWfV5gZ0i', 'admin');

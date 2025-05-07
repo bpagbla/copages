@@ -4,7 +4,12 @@ const cors = require("cors");
 const conexion = require("../DB/db");
 const bcrypt = require("bcrypt");
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:4200",
+  methods: "GET,POST", // Métodos permitidos
+  allowedHeaders: "Content-Type,Authorization", // Encabezados permitidos
+  credentials: true, // Permite enviar cookies o credenciales
+}));
 app.use(express.json());
 
 const session = require("express-session");
@@ -20,6 +25,8 @@ app.use(
     },
   })
 );
+
+
 
 //comprobar si existe usuario
 app.post("/usuarioExiste", (req, res) => {
@@ -41,13 +48,14 @@ app.post("/usuarioExiste", (req, res) => {
 });
 
 
-//sacar datos de un usuario
+// Login
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   const sql = "SELECT * FROM usuario WHERE NICK = ?";
 
   conexion.query(sql, [username], async (err, results) => {
+    console.log("Datos del usuario recibido de la DB:", results[0]);
     if (err) {
       console.error("Error al buscar usuario:", err);
       return res.status(500).json({ error: "Error en la base de datos" });
@@ -59,29 +67,43 @@ app.post("/login", (req, res) => {
 
     const user = results[0];
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    // Verificar si la contraseña proporcionada y la almacenada existen y son válidas
+    if (!password || !user.PASSWORD) {
+      return res.status(400).json({ error: "Datos de contraseña incorrectos " });
 
-    if (!passwordMatch) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
+
     }
 
-    // Guardar los datos del usuario en la sesión
-    req.session.user = {
-      id: user.ID_USUARIO,
-      username: user.NICK,
-      email: user.EMAIL,
-      role: user.ROL,
-      nombre: user.NOMBRE,
-      apellidos: user.APELLIDOS,
-    };
+    try {
+      const passwordMatch = await bcrypt.compare(password, user.PASSWORD);
 
-    // Puedes seguir enviando el token si lo deseas
-    res.json({
-      message: "Login exitoso",
-      sessionUser: req.session.user,
-    });
+      if (!passwordMatch) {
+        return res.status(401).json({ message: "Contraseña incorrecta" });
+      }
+
+      // Guardar los datos del usuario en la sesión
+      req.session.user = {
+        id: user.ID,
+        username: user.NICK,
+        email: user.EMAIL,
+        role: user.ROLE,
+        nombre: user.NOMBRE,
+        apellidos: user.APELLIDOS,
+      };
+
+      res.json({
+        message: "Login exitoso",
+        sessionUser: req.session.user,
+      });
+    } catch (err) {
+      console.error("Error al comparar la contraseña:", err);
+      res.status(500).json({ error: "Error al comparar la contraseña" });
+    }
   });
 });
+
+
+
 
 //sacar todos los usuarios
 app.get("/usuarios", (req, res) => {
@@ -100,6 +122,7 @@ app.get("/usuarios", (req, res) => {
 
 //nuevo usuario
 app.post("/register", async (req, res) => {
+  console.log("Datos recibidos:", req.body);
   const { email, nick, role, nombre, apellidos, password } = req.body;
 
   try {

@@ -23,5 +23,6 @@ export class NavComponent {
 
   logout() {
     this.authService.logout();
+    
   }
 }

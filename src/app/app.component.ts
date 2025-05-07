@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { NavComponent } from './nav/nav.component';
 import { AuthService } from './services/authService/auth.service';
-
+import { StorageService } from './services/storageService/storage.service';
 
 @Component({
   selector: 'app-root',
@@ -12,25 +12,26 @@ import { AuthService } from './services/authService/auth.service';
 })
 export class AppComponent implements OnInit {
   title = 'copages';
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
-    // Verificar el estado del login al cargar la página
-    const token = localStorage.getItem('accessToken');
+    const token = this.storageService.getItem('accessToken');
+
     if (token) {
-      // Si el token está en el localStorage, intentar obtener un nuevo accessToken
-      this.authService.refreshToken();  // Renueva el token si es necesario
+      this.authService.refreshToken();
       this.authService.isLoggedIn$.subscribe((isLoggedIn) => {
         if (isLoggedIn) {
-          // Si está logueado, redirige al home
           this.router.navigate(['/home']);
         } else {
-          // Si no está logueado, redirige al login
           this.router.navigate(['/login']);
         }
       });
     } else {
-      this.authService.setLoggedIn(false); // Si no hay token, asegurarse de que loggedIn esté en false
+      this.authService.setLoggedIn(false);
     }
   }
 }

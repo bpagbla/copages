@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { StorageService } from '../storageService/storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,11 @@ export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.loggedIn.asObservable();
 
-  constructor(private http: HttpClient, private router:Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private storageService: StorageService
+  ) {
     // Al iniciar, verificamos si hay sesión activa
     this.verificarSesion();
   }
@@ -36,14 +41,15 @@ export class AuthService {
   // validar inicio de sesión
   validarLogin(username: string, password: string) {
     const loginData = { username, password };
-  
-    this.http.post('http://localhost:3000/login', loginData, { withCredentials: true })
+
+    this.http
+      .post('http://localhost:3000/login', loginData, { withCredentials: true })
       .subscribe(
         (res: any) => {
           console.log('Login exitoso', res);
-          localStorage.setItem('accessToken', res.accessToken);  // Guardamos el accessToken en localStorage
+          localStorage.setItem('accessToken', res.accessToken); // Guardamos el accessToken en localStorage
           alert('Login exitoso');
-          this.loggedIn.next(true);  // Actualizamos el estado de login
+          this.loggedIn.next(true); // Actualizamos el estado de login
           this.router.navigate(['/home']);
         },
         (error) => {
@@ -53,21 +59,20 @@ export class AuthService {
           } else {
             alert('Hubo un error, por favor intenta nuevamente');
           }
-          this.loggedIn.next(false);  // Si el login falla, actualizamos el estado
+          this.loggedIn.next(false); // Si el login falla, actualizamos el estado
         }
       );
   }
-  
-  
 
   //  Cierra sesión
   logout() {
-    this.http.post('http://localhost:3000/logout', {}, { withCredentials: true })
+    this.http
+      .post('http://localhost:3000/logout', {}, { withCredentials: true })
       .subscribe(
         () => {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
+          this.storageService.removeItem('accessToken');
+          this.storageService.removeItem('refreshToken');
+
           this.loggedIn.next(false);
           this.router.navigate(['/login']);
         },
@@ -76,10 +81,22 @@ export class AuthService {
         }
       );
   }
-  
 
-  registro(username: string, password: string, name: string, surname: string, email: string) {
-    console.log("Llamando al backend con:", username, password, name, surname, email);
+  registro(
+    username: string,
+    password: string,
+    name: string,
+    surname: string,
+    email: string
+  ) {
+    console.log(
+      'Llamando al backend con:',
+      username,
+      password,
+      name,
+      surname,
+      email
+    );
 
     const registerData = {
       nick: username,
@@ -87,13 +104,12 @@ export class AuthService {
       nombre: name,
       apellidos: surname,
       email: email,
-      role: 'user' 
+      role: 'user',
     };
 
-    this.http.post('http://localhost:3000/register', registerData)
-    .subscribe({
+    this.http.post('http://localhost:3000/register', registerData).subscribe({
       next: (res) => console.log('Usuario registrado', res),
-      error: (err) => console.error('Error al registrar usuario', err)
+      error: (err) => console.error('Error al registrar usuario', err),
     });
   }
 
@@ -112,7 +128,6 @@ export class AuthService {
           console.error('No se pudo renovar el token.');
           this.setLoggedIn(false);
         }
-        
       );
   }
 
@@ -128,8 +143,8 @@ export class AuthService {
     return this.loggedIn.value;
   }
 
-    // Método para actualizar el estado de login
-    setLoggedIn(value: boolean): void {
-      this.loggedIn.next(value);
-    }
+  // Método para actualizar el estado de login
+  setLoggedIn(value: boolean): void {
+    this.loggedIn.next(value);
+  }
 }

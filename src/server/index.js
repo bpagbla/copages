@@ -223,6 +223,34 @@ app.post("/refresh", (req, res) => {
   });
 });
 
+
+// Middleware para verificar el token
+function verifyToken(req, res, next) {
+  const token = req.headers['authorization']?.split(' ')[1]; // Obtener el token del encabezado
+
+  if (!token) {
+    return res.status(403).send('Token requerido');
+  }
+
+  jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).send('Token inválido');
+    }
+    req.user = decoded; // Decodificar el token y adjuntar los datos del usuario
+    next();
+  });
+}
+
+// Endpoint protegido para obtener la información del usuario
+app.get('/user-info', verifyToken, (req, res) => {
+  // Aquí podrías devolver la información del usuario desde tu base de datos
+  res.json({
+    name: req.user.name,  // El nombre que está en el token (por ejemplo, si el token contiene estos datos)
+    role: req.user.role   // El rol del usuario
+  });
+});
+
+
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");
 });

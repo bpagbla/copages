@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { StorageService } from '../storageService/storage.service';
 
 @Injectable({
@@ -82,6 +82,7 @@ export class AuthService {
       );
   }
 
+  //registrar nuevo usuario
   registro(
     username: string,
     password: string,
@@ -108,10 +109,14 @@ export class AuthService {
     };
 
     this.http.post('http://localhost:3000/register', registerData).subscribe({
-      next: (res) => console.log('Usuario registrado', res),
+      next: (res) => {
+        console.log('Usuario registrado', res);
+        this.router.navigate(['/login']); // Redirige al login
+      },
       error: (err) => console.error('Error al registrar usuario', err),
     });
   }
+
 
   refreshToken() {
     this.http
@@ -130,6 +135,17 @@ export class AuthService {
         }
       );
   }
+
+  getUserInfo(): Observable<any> {
+    const accessToken = localStorage.getItem('accessToken');
+  
+    return this.http.get('http://localhost:3000/user-info', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+  }
+  
 
   verificarUsuarioExiste(username: string) {
     return this.http.post<{ existe: boolean }>(

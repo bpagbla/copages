@@ -12,7 +12,7 @@
         <a routerLink="login" class="ps-2 un">Login</a>
       </div>
       <div *ngIf="isLoggedIn">
-        <a routerLink="/" class="ps-2 un">Logout</a>
+        <a routerLink="/" class="ps-2 un" (click)="logout()">Logout</a>
       </div>
     </div>
   </div>

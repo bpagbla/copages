@@ -43,7 +43,7 @@ app.use(
   })
 );
 
-//comprobar si existe usuario
+//comprobar si existe nombre de usuario
 app.post("/usuarioExiste", (req, res) => {
   const { username } = req.body;
 
@@ -51,6 +51,25 @@ app.post("/usuarioExiste", (req, res) => {
   conexion.query(sql, [username], (err, results) => {
     if (err) {
       console.error("Error al buscar usuario:", err);
+      return res.status(500).json({ error: "Error en la base de datos" });
+    }
+
+    if (results.length === 0) {
+      return res.json({ existe: false });
+    } else {
+      return res.json({ existe: true });
+    }
+  });
+});
+
+//comprobar si el email está registrado
+app.post("/emailExiste", (req, res) => {
+  const { email } = req.body;
+
+  const sql = "SELECT * FROM usuario WHERE EMAIL = ?";
+  conexion.query(sql, [email], (err, results) => {
+    if (err) {
+      console.error("Error al buscar email:", err);
       return res.status(500).json({ error: "Error en la base de datos" });
     }
 
@@ -180,7 +199,6 @@ app.post("/register", async (req, res) => {
 
 //verificar sesion
 app.get("/sesion", (req, res) => {
-  console.log("Session completa:", req.session);
   if (req.session.user) {
     res.json({
       loggedIn: true,
@@ -243,9 +261,10 @@ function verifyToken(req, res, next) {
 
 // Endpoint protegido para obtener la información del usuario
 app.get('/user-info', verifyToken, (req, res) => {
+  console.log(req.user);
   // Aquí podrías devolver la información del usuario desde tu base de datos
   res.json({
-    name: req.user.name,  // El nombre que está en el token (por ejemplo, si el token contiene estos datos)
+    username: req.user.username,  // El nombre que está en el token (por ejemplo, si el token contiene estos datos)
     role: req.user.role   // El rol del usuario
   });
 });

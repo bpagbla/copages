@@ -147,10 +147,17 @@ export class AuthService {
   }
   
 
-  verificarUsuarioExiste(username: string) {
+  verificarUsuarioExiste(username: string,) {
     return this.http.post<{ existe: boolean }>(
       'http://localhost:3000/usuarioExiste',
       { username }
+    );
+  }
+
+  verificarEmailExiste(email: string,) {
+    return this.http.post<{ existe: boolean }>(
+      'http://localhost:3000/emailExiste',
+      { email }
     );
   }
 

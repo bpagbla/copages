@@ -1,3 +1,11 @@
-<app-nav></app-nav>
-<main></main>
-<router-outlet></router-outlet>
+<ng-container *ngIf="esHome; else navbarNormal">
+    <app-sidebar></app-sidebar>
+  </ng-container>
+  
+  <ng-template #navbarNormal>
+    <app-nav></app-nav>
+  </ng-template>
+  
+  <main></main>
+  <router-outlet></router-outlet>
+  

@@ -4,10 +4,10 @@
   class="position-absolute top-50 start-50 translate-middle"
 >
   <div class="input-group">
-    <div class="d-flex gap-3 mb-5 flex-wrap" >
+    <div class="d-flex gap-3 mb-5 flex-wrap">
       <input
         type="text"
-        class="form-control "
+        class="form-control"
         placeholder="Name"
         aria-label="Name"
         formControlName="name"
@@ -19,29 +19,44 @@
         aria-label="Surname"
         formControlName="surname"
       />
-          <input
-        type="email"
-        class="form-control"
-        placeholder="Email"
-        aria-label="Email"
-        formControlName="email"
-      />
+      <input
+      type="email"
+      class="form-control"
+      placeholder="Email"
+      aria-label="Email"
+      formControlName="email"
+      (blur)="verificarEmail()"
+      [ngClass]="{
+        'is-invalid': registerForm.get('email')?.hasError('emailExistente')
+      }"
+    />
+    <div
+      class="invalid-feedback fs-sm"
+      *ngIf="registerForm.get('email')?.hasError('emailExistente')"
+    >
+      Este email ya está registrado.
     </div>
-
+    
+    </div>
   </div>
   <div class="input-group mb-2 mt-2">
     <div class="d-flex flex-column align-items-end w-100 mb-3 gap-3">
-      <div class="input-group ">
+      <div class="input-group">
+       
         <span class="input-group-text" id="basic-addon1">&#64;</span>
         <input
-        type="text"
-        class="form-control"
-        placeholder="Username"
-        aria-label="Username"
-        aria-describedby="basic-addon1"
-        formControlName="username"
-        [ngClass]="{ 'is-invalid': registerForm.get('username')?.hasError('usuarioExistente') }"
-      />
+          type="text"
+          class="form-control"
+          placeholder="Username"
+          aria-label="Username"
+          aria-describedby="basic-addon1"
+          formControlName="username"
+          [ngClass]="{
+            'is-invalid': registerForm
+              .get('username')
+              ?.hasError('usuarioExistente')
+          }"
+        />     
       </div>
       <input
         type="password"

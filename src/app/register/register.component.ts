@@ -22,41 +22,61 @@ import { of } from 'rxjs';
 export class RegisterComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
+  ngOnInit() {
+    this.registerForm
+      .get('username')
+      ?.valueChanges.pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        switchMap((value) => {
+          if (value && value.length > 2) {
+            return this.authService.verificarUsuarioExiste(value);
+          }
+          return of(null); // no hace petición si no cumple
+        })
+      )
+      .subscribe((res) => {
+        const control = this.registerForm.get('username');
 
+        if (!control) return;
 
-ngOnInit() {
-  this.registerForm.get('username')?.valueChanges
-    .pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      switchMap(value => {
-        if (value && value.length > 2) {
-          return this.authService.verificarUsuarioExiste(value);
-        }
-        return of(null); // no hace petición si no cumple
-      })
-    )
-    .subscribe(res => {
-      const control = this.registerForm.get('username');
-
-      if (!control) return;
-
-      if (res?.existe) {
-        control.setErrors({ usuarioExistente: true });
-      } else {
-        const errors = control.errors;
-        if (errors) {
-          delete errors['usuarioExistente'];
-          if (Object.keys(errors).length === 0) {
-            control.setErrors(null);
-          } else {
-            control.setErrors(errors);
+        if (res?.existe) {
+          control.setErrors({ usuarioExistente: true });
+        } else {
+          const errors = control.errors;
+          if (errors) {
+            delete errors['usuarioExistente'];
+            if (Object.keys(errors).length === 0) {
+              control.setErrors(null);
+            } else {
+              control.setErrors(errors);
+            }
           }
         }
-      }
-    });
-}
+      });
+  }
 
+  verificarEmail() {
+    const control = this.registerForm.get('email');
+    const value = control?.value;
+    if (value && value.length > 2) {
+      this.authService.verificarEmailExiste(value).subscribe((res) => {
+        if (res?.existe) {
+          control?.setErrors({ emailExistente: true });
+        } else {
+          const errors = control?.errors;
+          if (errors) {
+            delete errors['emailExistente'];
+            if (Object.keys(errors).length === 0) {
+              control?.setErrors(null);
+            } else {
+              control?.setErrors(errors);
+            }
+          }
+        }
+      });
+    }
+  }
 
   registerForm = new FormGroup({
     username: new FormControl('', Validators.required),
@@ -73,7 +93,7 @@ ngOnInit() {
     const surname: string = this.registerForm.get('surname')?.value ?? '';
     const email: string = this.registerForm.get('email')?.value ?? '';
 
-    console.log("submit");
+    console.log('submit');
     if (this.registerForm.valid) {
       this.authService.registro(username, password, name, surname, email);
     }

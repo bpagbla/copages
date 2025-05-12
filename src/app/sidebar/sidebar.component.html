@@ -1,0 +1,23 @@
+<div class="sidebar">
+  <a class="active" routerLink="/home"><ng-icon name="bootstrapHouseHeart" /></a>
+  <a href="#news"><ng-icon name="bootstrapMailbox" /></a>
+  <a href="#contact"><ng-icon name="bootstrapMailbox" /></a>
+  <a href="#about"><ng-icon name="bootstrapMailbox" /></a>
+  <a routerLink="/" (click)="logout()"><ng-icon name="bootstrapPower" /></a>
+</div>
+
+<div class="position-relative">
+  <div class="profile position-absolute top-0 end-0">
+    <a routerLink="/profile" class="d-flex align-items-center gap-2 un">
+      <ng-icon
+        [name]="
+          userRole === 'admin'
+            ? 'bootstrapPersonFillGear'
+            : 'bootstrapPersonFill'
+        "
+        size="1.5rem"
+      />
+      {{ userNick || "cargando..." }}</a
+    >
+  </div>
+</div>

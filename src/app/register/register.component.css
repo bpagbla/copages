@@ -52,3 +52,7 @@ p {
 .is-invalid {
   border: 1.5px solid var(--dark-orange);
 }
+
+.invalid-feedback{
+  margin: 0;
+}

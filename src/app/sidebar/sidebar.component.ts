@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../services/authService/auth.service';
 import { RouterModule } from '@angular/router';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [NgIcon, RouterModule],
+  imports: [NgIcon, RouterModule, MatTooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })

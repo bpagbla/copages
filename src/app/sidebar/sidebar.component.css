@@ -13,7 +13,7 @@
   .sidebar a {
     display: block;
     color: black;
-    padding: 1.5rem;
+    padding: 1rem;
     text-decoration: none;
   }
   
@@ -34,7 +34,7 @@
     padding-right: 2.5rem;
   }
 
-  
+
   /* On screens that are less than 700px wide, make the sidebar into a topbar */
   @media screen and (max-width: 700px) {
     .sidebar {

@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Router, RouterOutlet } from '@angular/router';
 import { NavComponent } from './nav/nav.component';
 import { AuthService } from './services/authService/auth.service';
 import { StorageService } from './services/storageService/storage.service';
 import { SidebarComponent } from "./sidebar/sidebar.component";
 import { CommonModule } from '@angular/common';
-
 
 @Component({
   selector: 'app-root',
@@ -16,20 +14,13 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent implements OnInit {
   title = 'copages';
-  esHome: boolean = false;
+  esHome: boolean = false; // ahora: ¿está logueado?
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private storageService: StorageService
-  ) {
-    // Detecta si la ruta es /home
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.esHome = event.urlAfterRedirects === '/home';
-      });
-  }
+  ) {}
 
   ngOnInit() {
     const token = this.storageService.getItem('accessToken');
@@ -37,6 +28,7 @@ export class AppComponent implements OnInit {
     if (token) {
       this.authService.refreshToken();
       this.authService.isLoggedIn$.subscribe((isLoggedIn) => {
+        this.esHome = isLoggedIn;
         if (isLoggedIn) {
           this.router.navigate(['/home']);
         } else {
@@ -45,6 +37,7 @@ export class AppComponent implements OnInit {
       });
     } else {
       this.authService.setLoggedIn(false);
+      this.esHome = false;
     }
   }
 }

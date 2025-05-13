@@ -2,8 +2,8 @@
   <p class="titulo dokdo-regular">LOGO</p>
   <div class="navLinks">
     <a
-      class="active"
       routerLink="/home"
+      routerLinkActive="active"
       matTooltip="Home"
       matTooltipPosition="after"
       ><ng-icon name="bootstrapHouseHeart" size="1.5rem"
@@ -11,7 +11,7 @@
     <a href="#news" matTooltip="Biblioteca" matTooltipPosition="after"
       ><ng-icon name="bootstrapBook" size="1.5rem"
     /></a>
-    <a href="#contact" matTooltip="Escribir" matTooltipPosition="after"
+    <a routerLink="/editor" routerLinkActive="active" matTooltip="Escribir" matTooltipPosition="after"
       ><ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"
     /></a>
     <a href="#about" matTooltip="Notificaciones" matTooltipPosition="after"

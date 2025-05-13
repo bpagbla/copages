@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+@import 'quill/dist/quill.snow.css';
 
 .dokdo-regular {
   font-family: "Dokdo", system-ui;
@@ -43,7 +43,10 @@ body {
   background-size: cover;
 }
 
-
+.content{
+  padding: 2.5rem;
+  margin-left: 2.5rem;
+}
 
 :root {
   --primary-color: #6fb6e6;

@@ -1,24 +1,26 @@
 services:
   backend:
     container_name: server
-    build: ./server
+    build: ./src/server
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
-      DB_HOST: sql
+      DB_HOST: sqlFinal
       DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: ""
       DB_NAME: pfcdb
       PORT: 3000
     volumes:
-      - ./server:/app
+      - ./src/server:/app
+      - /app/node_modules
     working_dir: /app
     command: npm run dev
     depends_on:
-      - sql
+      sqlFinal:
+        condition: service_healthy
 
-  sql:
+  sqlFinal:
     container_name: sqlFinal
     image: mysql:8
     ports:
@@ -28,3 +30,8 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: pfcdb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5

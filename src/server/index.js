@@ -11,7 +11,7 @@ function generarRefreshToken(user) {
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const conexion = require("../DB/db");
+const conexion = require("./DB/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
@@ -87,8 +87,11 @@ app.post("/login", (req, res) => {
   const sql = "SELECT * FROM usuario WHERE NICK = ?";
 
   conexion.query(sql, [username], async (err, results) => {
-    if (err)
+    if (err) {
+      console.error("Error al hacer la query del login:", err);
       return res.status(500).json({ error: "Error en la base de datos" });
+    }
+
     if (results.length === 0)
       return res.status(401).json({ message: "Usuario no encontrado" });
 
@@ -150,7 +153,6 @@ app.post("/logout", (req, res) => {
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
 });
-
 
 //sacar todos los usuarios
 app.get("/usuarios", (req, res) => {
@@ -241,18 +243,17 @@ app.post("/refresh", (req, res) => {
   });
 });
 
-
 // Middleware para verificar el token
 function verifyToken(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1]; // Obtener el token del encabezado
+  const token = req.headers["authorization"]?.split(" ")[1]; // Obtener el token del encabezado
 
   if (!token) {
-    return res.status(403).send('Token requerido');
+    return res.status(403).send("Token requerido");
   }
 
   jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(403).send('Token inválido');
+      return res.status(403).send("Token inválido");
     }
     req.user = decoded; // Decodificar el token y adjuntar los datos del usuario
     next();
@@ -260,15 +261,14 @@ function verifyToken(req, res, next) {
 }
 
 // Endpoint protegido para obtener la información del usuario
-app.get('/user-info', verifyToken, (req, res) => {
+app.get("/user-info", verifyToken, (req, res) => {
   console.log(req.user);
   // Aquí podrías devolver la información del usuario desde tu base de datos
   res.json({
-    username: req.user.username,  // El nombre que está en el token (por ejemplo, si el token contiene estos datos)
-    role: req.user.role   // El rol del usuario
+    username: req.user.username, // El nombre que está en el token (por ejemplo, si el token contiene estos datos)
+    role: req.user.role, // El rol del usuario
   });
 });
-
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

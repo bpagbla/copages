@@ -4,7 +4,7 @@ console.log('db.js cargado');
 
 
 const connection = mysql.createConnection({
-  host: '127.0.0.1',
+  host: process.env.DB_HOST || 'localhost',
   port:3306,    
   user: 'root',         
   password: '',        

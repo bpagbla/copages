@@ -7,7 +7,7 @@ import { QuillModule } from 'ngx-quill';
   standalone: true,
   imports: [FormsModule, QuillModule],
   templateUrl: './editor.component.html',
-  styleUrls: ['./editor.component.css']
+  styleUrls: ['./editor.component.css'],
 })
 export class EditorComponent implements OnInit, OnDestroy {
   public editorContent: string = '';
@@ -18,9 +18,9 @@ export class EditorComponent implements OnInit, OnDestroy {
         [{ list: 'ordered' }, { list: 'bullet' }],
         ['bold', 'italic', 'underline'],
         [{ align: [] }],
-        ['link']
-      ]
-    }
+        ['link'],
+      ],
+    },
   };
 
   private autoSaveInterval: any;
@@ -34,7 +34,7 @@ export class EditorComponent implements OnInit, OnDestroy {
     // Guardado automático cada 5 segundos
     this.autoSaveInterval = setInterval(() => {
       localStorage.setItem('copages-draft', this.editorContent);
-      console.log('✍️ Guardado automático');
+      console.log('Guardado automático');
     }, 5000);
   }
 
@@ -42,13 +42,31 @@ export class EditorComponent implements OnInit, OnDestroy {
     clearInterval(this.autoSaveInterval);
   }
 
+  decodeHtml(html: string): string {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+    return textarea.value;
+  }
+
   get wordCount(): number {
     if (!this.editorContent) return 0;
-    return this.editorContent.replace(/<[^>]+>/g, '').trim().split(/\s+/).filter(w => w.length > 0).length;
+
+    // Decodifica entidades HTML (como el codigo para los espacios)
+    const decoded = this.decodeHtml(this.editorContent);
+    // Elimina etiquetas HTML
+    const text = decoded
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return text ? text.split(' ').length : 0;
   }
-  
+
   get charCount(): number {
     if (!this.editorContent) return 0;
-    return this.editorContent.replace(/<[^>]+>/g, '').replace(/\s/g, '').length;
+
+    const decoded = this.decodeHtml(this.editorContent);
+    const text = decoded.replace(/<[^>]*>/g, '');
+    return text.replace(/\s/g, '').length;
   }
 }

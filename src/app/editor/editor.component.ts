@@ -14,7 +14,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   public quillModules: any = {
     toolbar: {
       container: [
-        [{ header: '1' }, { header: '2' }, { font: [] }],
+        [{ header: '1' }, { header: '2' }],
         [{ list: 'ordered' }, { list: 'bullet' }],
         ['bold', 'italic', 'underline'],
         [{ align: [] }],
@@ -25,18 +25,19 @@ export class EditorComponent implements OnInit, OnDestroy {
 
   private autoSaveInterval: any;
 
-  ngOnInit(): void {
-    const saved = localStorage.getItem('copages-draft');
-    if (saved) {
-      this.editorContent = saved;
-    }
-
-    // Guardado automático cada 5 segundos
-    this.autoSaveInterval = setInterval(() => {
-      localStorage.setItem('copages-draft', this.editorContent);
-      console.log('Guardado automático');
-    }, 5000);
+ngOnInit(): void {
+  const saved = localStorage.getItem('copages-draft');
+  if (saved && saved !== 'null') {
+    this.editorContent = saved;
+  } else {
+    this.editorContent = ''; // Asegúrate de que está vacío si no hay nada válido
   }
+
+  this.autoSaveInterval = setInterval(() => {
+    localStorage.setItem('copages-draft', this.editorContent || '');
+    console.log('Guardado automático');
+  }, 5000);
+}
 
   ngOnDestroy(): void {
     clearInterval(this.autoSaveInterval);

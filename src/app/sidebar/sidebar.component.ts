@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../services/authService/auth.service';
 import { RouterModule } from '@angular/router';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-sidebar',
@@ -34,7 +34,7 @@ export class SidebarComponent {
   }
 
   logout() {
-    console.log("bye");
+    console.log('bye');
     this.authService.logout();
   }
 }

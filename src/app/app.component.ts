@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   esHome: boolean = false; // ahora: ¿está logueado?
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private storageService: StorageService
   ) {}

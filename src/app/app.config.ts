@@ -18,6 +18,9 @@ import {
   bootstrapPower,
   bootstrapHouseHeart,
   bootstrapArrowDown,
+  bootstrapEnvelopePaperHeart,
+  bootstrapPencil,
+  bootstrapShare,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
@@ -61,6 +64,9 @@ export const appConfig: ApplicationConfig = {
       bootstrapPower,
       bootstrapHouseHeart,
       bootstrapArrowDown,
+      bootstrapEnvelopePaperHeart,
+      bootstrapPencil,
+      bootstrapShare,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

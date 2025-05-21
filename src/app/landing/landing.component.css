@@ -9,14 +9,12 @@
 
 }
 
-
-
 .title.fade-out {
   opacity: 0;
 }
 
 .section {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .background-image,
@@ -79,3 +77,8 @@
     transform: translateX(0);
   }
 }
+
+.card-group{
+    margin: 2% 5%;
+}
+

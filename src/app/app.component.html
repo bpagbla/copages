@@ -1,4 +1,4 @@
-<ng-container *ngIf="esHome; else navbarNormal">
+<ng-container *ngIf="authService.isLoggedIn; else navbarNormal">
     <app-sidebar></app-sidebar>
   </ng-container>
   

@@ -1,0 +1,15 @@
+<section class="section" id="hero">
+  <img src="assets/library.jpg" alt="Fondo libreria" class="background-image" />
+  <img
+    src="assets/column.png"
+    alt="Decoración columna"
+    class="column-overlay"
+  />
+  <div class="hero-content m-5 px-5">
+    <h1 (mouseenter)="onHover()" [class.fade-out]="fading" class="title">
+      {{ currentText }}
+    </h1>
+    <p></p>
+  </div>
+</section>
+<section class="section"></section>

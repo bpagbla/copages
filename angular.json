@@ -16,17 +16,9 @@
             "outputPath": "dist/copages",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+            "assets": ["src/assets", "src/favicon.ico"],
             "styles": [
               "@angular/material/prebuilt-themes/cyan-orange.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -87,12 +79,7 @@
               "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
+            "assets": ["src/assets", "src/favicon.ico"],
             "styles": [
               "@angular/material/prebuilt-themes/cyan-orange.css",
               "src/styles.css"

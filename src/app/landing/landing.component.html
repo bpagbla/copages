@@ -1,4 +1,4 @@
-<section class="section" id="hero">
+<section class="section rounded-edge" id="hero">
   <img src="assets/library.jpg" alt="Fondo libreria" class="background-image" />
   <img
     src="assets/column.png"
@@ -6,10 +6,18 @@
     class="column-overlay"
   />
   <div class="hero-content m-5 px-5">
-    <h1 (mouseenter)="onHover()" [class.fade-out]="fading" class="title">
-      {{ currentText }}
-    </h1>
-    <p></p>
+    <div class="txt">
+      <h1 [class.fade-out]="fading" class="title slide-in">
+        {{ currentText }}
+      </h1>
+      <p class="px-2 slide-in subtitle">Escribe, comparte, conecta.</p>
+    </div>
   </div>
+  <a
+    href="#sobre-nosotros"
+    class="btn btn-outline-light d-flex align-items-center gap-2 animated-btn"
+  >
+    <ng-icon name="bootstrapArrowDown" class="arrow-icon" /> Descubre más
+  </a>
 </section>
-<section class="section"></section>
+<section class="section" id="sobre-nosotros"></section>

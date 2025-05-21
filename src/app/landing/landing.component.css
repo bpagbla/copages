@@ -1,6 +1,12 @@
 .title {
   transition: opacity 0.5s ease-in-out;
   opacity: 1;
+  font-size: 4.5rem;
+}
+
+.subtitle{
+    font-size: 1.5rem;
+
 }
 
 .title.fade-out {
@@ -11,29 +17,60 @@
   height: 100vh;
 }
 
-.background-image {
+.background-image,
+.column-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
+  min-height: 100vh;
   object-fit: cover;
   z-index: 0;
 }
+
+/* La columna por encima del fondo */
 .column-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    object-fit: cover;
-    z-index: 2;
-    pointer-events: none;
-    width: 100%;
+  z-index: 2;
+  pointer-events: none;
 }
 
-.hero-content{
-        position: relative;
-    z-index: 1;
-    padding: 2rem;
-    color: white;
+.rounded-edge {
+  clip-path: ellipse(100% 55% at 48% 44%);
+}
+
+.hero-content {
+  z-index: 1;
+  padding: 2rem;
+  color: rgb(255, 255, 255);
+  position: absolute;
+  left: 4%;
+  top: 10%;
+  text-shadow: -1px 1px 2px rgb(139, 20, 2);
+}
+
+.btn {
+  z-index: 1;
+  position: absolute;
+  top: 85%;
+  right: 45%;
+}
+
+.animated-btn .arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.animated-btn:hover .arrow-icon {
+  transform: translateY(4px);
+}
+
+
+.slide-in {
+  transform: translateX(-50px);
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+@keyframes slideInRight {
+  to {
+    transform: translateX(0);
+  }
 }

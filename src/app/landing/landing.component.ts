@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-landing',
-  imports: [],
+  imports: [NgIcon],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
@@ -20,17 +21,26 @@ export class LandingComponent implements OnInit {
   }
 
   runInitialAnimation() {
-    const interval = setInterval(() => {
+  this.currentText = this.texts[this.index]; // Mostrar texto inmediatamente
+  this.index++;
+
+  const animateNext = () => {
+    if (this.index >= this.texts.length) {
+      this.firstRunFinished = true;
+      return;
+    }
+
+    setTimeout(() => {
       this.fadeText(() => {
         this.currentText = this.texts[this.index];
         this.index++;
-        if (this.index >= this.texts.length) {
-          clearInterval(interval);
-          this.firstRunFinished = true;
-        }
+        animateNext();  // llamada recursiva para siguiente texto
       });
-    }, 2000);
-  }
+    }, 1500);  // espera 1.5s antes de hacer fade
+  };
+
+  animateNext();
+}
 
   fadeText(callback: () => void) {
     this.fading = true;
@@ -40,13 +50,5 @@ export class LandingComponent implements OnInit {
     }, 500); // Duración de la animación CSS
   }
 
-  onHover() {
-    if (this.firstRunFinished) {
-      this.index = (this.index + 1) % this.texts.length;
-      this.fadeText(() => {
-        this.currentText = this.texts[this.index];
-      });
-    }
-  }
 }
 

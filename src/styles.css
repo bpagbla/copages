@@ -48,6 +48,11 @@ body {
   margin-left: 2.5rem;
 }
 
+::selection {
+  background: #ffd56b;
+  color: #5c1d00;
+}
+
 :root {
   --primary-color: #6fb6e6;
   --secondary-color: #FB790E;

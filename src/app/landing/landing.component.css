@@ -9,6 +9,8 @@
 
 }
 
+
+
 .title.fade-out {
   opacity: 0;
 }
@@ -26,6 +28,9 @@
   min-height: 100vh;
   object-fit: cover;
   z-index: 0;
+
+   user-select: none;
+  -webkit-user-drag: none;
 }
 
 /* La columna por encima del fondo */

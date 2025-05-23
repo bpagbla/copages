@@ -50,7 +50,7 @@ export class AuthService {
         (res: any) => {
           console.log('Login exitoso', res);
           localStorage.setItem('accessToken', res.accessToken); // Guardamos el accessToken en localStorage
-          this.notificationService.show({ type: 'success', message: 'Sesión iniciada correctamente' });
+          this.notificationService.show({ type: 'success', message: 'Sesión iniciada correctamente', title: '¡Hola de nuevo!' });
           this.loggedIn.next(true); // Actualizamos el estado de login
           this.router.navigate(['/home']);
         },

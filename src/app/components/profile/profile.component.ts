@@ -25,4 +25,8 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+
+  onImageError(event: Event) {
+  (event.target as HTMLImageElement).src = 'assets/profile_pics/defPfp.png';
+}
 }

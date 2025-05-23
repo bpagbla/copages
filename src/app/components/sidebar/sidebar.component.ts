@@ -18,9 +18,10 @@ export class SidebarComponent {
   ngOnInit(): void {
     this.authService.getUserInfo().subscribe({
       next: (res) => {
-        console.log('Usuario:', res);
+        console.log('Usuario:', res.role);
+        console.log("?????");
         this.userRole = res.role;
-        this.userNick = res.username;
+        this.userNick = res.nick;
       },
       error: (err) => {
         console.error('Error al obtener la información del usuario:', err);

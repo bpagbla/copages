@@ -16,7 +16,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private storageService: StorageService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {
     // Al iniciar, verificamos si hay sesión activa
     this.verificarSesion();
@@ -49,19 +49,23 @@ export class AuthService {
       .subscribe(
         (res: any) => {
           console.log('Login exitoso', res);
-          localStorage.setItem('accessToken', res.accessToken); // Guardamos el accessToken en localStorage
-          this.notificationService.show({ type: 'success', message: 'Sesión iniciada correctamente', title: '¡Hola de nuevo!' });
-          this.loggedIn.next(true); // Actualizamos el estado de login
+          localStorage.setItem('accessToken', res.accessToken);
+          this.notificationService.show({
+            type: 'success',
+            message: 'Sesión iniciada correctamente',
+            title: '¡Hola de nuevo!',
+          });
+
+          this.loggedIn.next(true);
           this.router.navigate(['/home']);
         },
         (error) => {
-          console.error('Error al validar login', error);
-          if (error.status === 401) {
-            alert('Usuario o contraseña incorrecta');
-          } else {
-            alert('Hubo un error, por favor intenta nuevamente');
-          }
-          this.loggedIn.next(false); // Si el login falla, actualizamos el estado
+          console.error('Error al iniciar sesión:', error);
+          this.notificationService.show({
+            type: 'error',
+            message: 'No se pudo iniciar sesión. Verifica tus credenciales.',
+            title: 'Error de login',
+          });
         }
       );
   }
@@ -119,7 +123,6 @@ export class AuthService {
     });
   }
 
-
   refreshToken() {
     this.http
       .post('http://localhost:3000/refresh', {}, { withCredentials: true })
@@ -140,23 +143,22 @@ export class AuthService {
 
   getUserInfo(): Observable<any> {
     const accessToken = localStorage.getItem('accessToken');
-  
+
     return this.http.get('http://localhost:3000/user-info', {
       headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
   }
-  
 
-  verificarUsuarioExiste(username: string,) {
+  verificarUsuarioExiste(username: string) {
     return this.http.post<{ existe: boolean }>(
       'http://localhost:3000/usuarioExiste',
       { username }
     );
   }
 
-  verificarEmailExiste(email: string,) {
+  verificarEmailExiste(email: string) {
     return this.http.post<{ existe: boolean }>(
       'http://localhost:3000/emailExiste',
       { email }

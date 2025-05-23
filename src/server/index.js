@@ -263,10 +263,10 @@ function verifyToken(req, res, next) {
 // Endpoint protegido para obtener la información del usuario
 app.get("/user-info", verifyToken, (req, res) => {
   console.log(req.user);
-  // Aquí podrías devolver la información del usuario desde tu base de datos
   res.json({
-    username: req.user.username, // El nombre que está en el token (por ejemplo, si el token contiene estos datos)
-    role: req.user.role, // El rol del usuario
+    id: req.user.id,       
+    nick: req.user.username,   
+    role: req.user.role,    
   });
 });
 

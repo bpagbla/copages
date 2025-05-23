@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { StorageService } from '../storageService/storage.service';
+import { NotificationService } from '../notificationService/notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private notificationService: NotificationService
   ) {
     // Al iniciar, verificamos si hay sesión activa
     this.verificarSesion();
@@ -48,7 +50,7 @@ export class AuthService {
         (res: any) => {
           console.log('Login exitoso', res);
           localStorage.setItem('accessToken', res.accessToken); // Guardamos el accessToken en localStorage
-          alert('Login exitoso');
+          this.notificationService.show({ type: 'success', message: 'Sesión iniciada correctamente' });
           this.loggedIn.next(true); // Actualizamos el estado de login
           this.router.navigate(['/home']);
         },

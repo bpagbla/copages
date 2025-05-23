@@ -1,0 +1,67 @@
+<section class="section rounded-edge" id="hero">
+  <img src="assets/library.jpg" alt="Fondo libreria" class="background-image" />
+  <img
+    src="assets/column.png"
+    alt="Decoración columna"
+    class="column-overlay"
+  />
+  <div class="hero-content m-5 px-5">
+    <div class="txt">
+      <h1 [class.fade-out]="fading" class="title slide-in">
+        {{ currentText }}
+      </h1>
+      <p class="px-2 slide-in subtitle">Escribe, comparte, conecta.</p>
+    </div>
+  </div>
+  <a
+    href="#sobre-copages"
+    class="btn btn-outline-light d-flex align-items-center gap-2 animated-btn"
+  >
+    <ng-icon name="bootstrapArrowDown" class="arrow-icon" /> Descubre más
+  </a>
+</section>
+<section
+  class="section d-flex justify-content-center align-items-center"
+  id="sobre-copages"
+>
+  <div class="card-group">
+    <div class="card p-2">
+      <div class="card-body">
+        <h5 class="card-title d-flex align-items-center gap-2">
+          <ng-icon name="bootstrapPencil" />Escribe
+        </h5>
+        <p class="card-text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Est eligendi
+          quo quaerat error ratione neque totam exercitationem sed placeat
+          consequatur aperiam, culpa laudantium recusandae quasi optio, possimus
+          reprehenderit! Incidunt, quo!
+        </p>
+      </div>
+    </div>
+    <div class="card p-2">
+      <div class="card-body">
+        <h5 class="card-title d-flex align-items-center gap-2">
+          <ng-icon name="bootstrapEnvelopePaperHeart" />Comparte
+        </h5>
+        <p class="card-text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod, a!
+          Explicabo est, quod quae aliquid sit enim quam impedit quisquam maxime
+          et voluptatem asperiores natus fugiat. Vero voluptatum nulla earum.
+        </p>
+      </div>
+    </div>
+    <div class="card p-2">
+      <div class="card-body">
+        <h5 class="card-title d-flex align-items-center gap-2">
+          <ng-icon name="bootstrapShare" />Conecta
+        </h5>
+        <p class="card-text">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
+          aliquid laborum, earum officiis cum culpa a deserunt ipsum modi sit
+          ipsa impedit aspernatur delectus ratione dignissimos harum eligendi
+          doloribus neque!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

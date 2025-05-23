@@ -1,0 +1,14 @@
+nav {
+  z-index: 10;
+
+
+  background: rgba(255, 255, 255, 0.199);
+  box-shadow: 0 2px 12px 0 rgba(31, 38, 135, 0.11);
+  backdrop-filter: blur(11px);
+  -webkit-backdrop-filter: blur(11px);
+  border: 1px solid rgba(255, 255, 255, 0.176);
+}
+
+.logo-txt {
+  font-size: 2.2rem;
+}

@@ -13,23 +13,21 @@ CREATE TABLE usuario (
   UNIQUE KEY `email_usuario` (`EMAIL`),
   UNIQUE KEY `nick_usuario` (`NICK`)
 );
-
 CREATE TABLE libro (
   `ID` int NOT NULL AUTO_INCREMENT,
   `TITULO` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
-  `PORTADA` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `PORTADA` varchar(128) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'defCover.png',
   `DESCRIPCION` varchar(5120) NOT NULL,
   PRIMARY KEY (`ID`)
 );
-
 CREATE TABLE capitulo (
   `ID` int NOT NULL AUTO_INCREMENT,
   `TITULO` varchar(128) NOT NULL,
   `ORDEN` int NOT NULL,
-  `FECHA` TIMESTAMP NOT NULL,
+  `FECHA` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `TEXTO` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`ID`)
 );
-
 CREATE TABLE componeCapLib (
   `ID_CAPITULO` int NOT NULL,
   `ID_LIBRO` int NOT NULL,
@@ -37,7 +35,6 @@ CREATE TABLE componeCapLib (
   CONSTRAINT `FK_COM_IDL_LIB_ID` FOREIGN KEY (`ID_LIBRO`) REFERENCES `libro` (`ID`),
   CONSTRAINT `FK_COM_IDC_CAP_ID` FOREIGN KEY (`ID_CAPITULO`) REFERENCES `capitulo` (`ID`)
 );
-
 CREATE TABLE publica (
   `ID_USUARIO` INT NOT NULL,
   `ID_LIBRO` INT NOT NULL,
@@ -45,8 +42,14 @@ CREATE TABLE publica (
   CONSTRAINT `FK_PUB_IDL_LIB_ID` FOREIGN KEY (`ID_LIBRO`) REFERENCES `libro`(`ID`),
   CONSTRAINT `FK_PUB_IDU_USU_ID` FOREIGN KEY (`ID_USUARIO`) REFERENCES `usuario`(`ID`)
 );
-
-#Users
+CREATE TABLE sigue (
+  `ID_SEGUIDOR` INT NOT NULL,
+  `ID_SEGUIDO` INT NOT NULL,
+  PRIMARY KEY (`ID_SEGUIDOR`, `ID_SEGUIDO`),
+  CONSTRAINT `FK_SEGUIDOR` FOREIGN KEY (`ID_SEGUIDOR`) REFERENCES `usuario`(`ID`),
+  CONSTRAINT `FK_SEGUIDO` FOREIGN KEY (`ID_SEGUIDO`) REFERENCES `usuario`(`ID`)
+);
+/* --Usuarios */
 INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE)
 VALUES(
     'user@gmail.com',
@@ -65,3 +68,25 @@ VALUES(
     '$2b$10$jY9rkCuRzJIej4MjlzOOyO4U3qCvc1dpMvJ0EJxdl/M3oWfV5gZ0i',
     'admin'
   );
+/*  seguidores */
+INSERT INTO sigue (ID_SEGUIDO, ID_SEGUIDOR)
+VALUES('1', '2');
+/* --libro */
+INSERT INTO libro (TITULO, DESCRIPCION)
+VALUES (
+    'El Viaje de los Sueños',
+    'Una historia épica de descubrimiento y magia.'
+  );
+/* -- capítulo */
+INSERT INTO capitulo (TITULO, ORDEN, TEXTO)
+VALUES (
+    'Capítulo 1: El Despertar',
+    1,
+    '<p>Todo comenzó una mañana brumosa...</p>'
+  );
+/* -- relacion libro - capitulo */
+INSERT INTO componeCapLib (ID_CAPITULO, ID_LIBRO)
+VALUES (1, 1);
+/* -- relacion libro - usuario */
+INSERT INTO publica (ID_USUARIO, ID_LIBRO)
+VALUES (1, 1);

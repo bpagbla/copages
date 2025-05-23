@@ -1,0 +1,20 @@
+<div class="content">
+  <p>Sesión iniciada por {{ userRole || "Cargando..." }}</p>
+
+  <section *ngIf="posts.length > 0; else noPosts">
+    <app-post
+      *ngFor="let post of posts"
+      [post]="post"
+      [showDescripcion]="true"
+      [showAuthor]="true"
+      [showDate]="true"
+      [showTituloCap]="true"
+      [showOrdenCap]="true"
+    >
+    </app-post>
+  </section>
+
+  <ng-template #noPosts>
+    <p>No hay publicaciones de los usuarios que sigues.</p>
+  </ng-template>
+</div>

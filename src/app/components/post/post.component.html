@@ -1,0 +1,19 @@
+<article class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title" *ngIf="showDescripcion">{{ post.title }}</h5>
+
+    <p *ngIf="showAuthor || showDate" class="card-subtitle mb-2 text-muted">
+      <span *ngIf="showAuthor">Por {{ post.author.username }}</span>
+      <span *ngIf="showAuthor && showDate"> - </span>
+      <span *ngIf="showDate">{{ post.date | date:'mediumDate' }}</span>
+    </p>
+
+    <p *ngIf="showDescripcion">{{ post.excerpt }}</p>
+
+    <div *ngIf="showTituloCap || showOrdenCap" class="capitulo-info">
+      <p *ngIf="showTituloCap">Capítulo: {{ post.capituloTitulo }}</p>
+      <p *ngIf="showOrdenCap">Número: {{ post.capituloOrden }}</p>
+    </div>
+
+  </div>
+</article>

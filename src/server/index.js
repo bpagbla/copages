@@ -270,6 +270,55 @@ app.get("/user-info", verifyToken, (req, res) => {
   });
 });
 
+//endpoint para obtener los posts para el feed
+app.get("/posts", verifyToken, (req, res) => {
+  console.log("Entrando en GET /posts, user:", req.user);
+  const userId = req.user.id;  // ID del usuario autenticado
+
+  const sql = `
+    SELECT 
+      l.ID AS id,
+      l.TITULO AS title,
+      SUBSTRING(l.DESCRIPCION, 1, 200) AS excerpt,
+      c.TITULO AS capituloTitulo,
+      c.ORDEN AS capituloOrden,
+      c.FECHA AS date,
+      u.NICK AS username
+    FROM libro l
+    INNER JOIN componeCapLib ccl ON ccl.ID_LIBRO = l.ID
+    INNER JOIN capitulo c ON c.ID = ccl.ID_CAPITULO
+    INNER JOIN publica p ON p.ID_LIBRO = l.ID
+    INNER JOIN usuario u ON u.ID = p.ID_USUARIO
+    INNER JOIN sigue s ON s.ID_SEGUIDO = u.ID
+    WHERE s.ID_SEGUIDOR = ?
+    ORDER BY c.FECHA DESC
+    LIMIT 20;
+  `;
+
+  conexion.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Error al obtener posts:", err);
+      return res.status(500).json({ message: "Error al obtener posts" });
+    }
+
+    const posts = results.map(row => ({
+      id: row.id,
+      title: row.title,
+      excerpt: row.excerpt,
+      capituloTitulo: row.capituloTitulo,
+      capituloOrden: row.capituloOrden,
+      date: row.date,
+      author: {
+        username: row.username
+      }
+    }));
+
+    res.json(posts);
+  });
+});
+
+
+
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");
 });

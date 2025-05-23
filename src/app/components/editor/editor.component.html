@@ -1,0 +1,11 @@
+<div class="content">
+  <quill-editor
+    [(ngModel)]="editorContent"
+    [modules]="quillModules"
+    [theme]="'snow'"
+  ></quill-editor>
+
+  <div class="contador">
+    Palabras: {{ wordCount }} · Caracteres: {{ charCount }}
+  </div>
+</div>

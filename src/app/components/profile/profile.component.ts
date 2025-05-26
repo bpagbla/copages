@@ -2,23 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { User } from '../../interfaces/user';
 import { AuthService } from '../../services/authService/auth.service';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule],
+  imports: [CommonModule, NgIcon],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit {
   user: User | null = null;
 
-  constructor(private authService: AuthService) {}
+
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.authService.getUserInfo().subscribe({
-      next: (res: User) => {
+      next: async (res: User) => {
         this.user = res;
-        console.log('Usuario completo:', this.user);
+        this.user.pfp = 'assets/pfpics/' + this.user.pfp;
       },
       error: (err) => {
         console.error('Error al obtener la info del usuario:', err);
@@ -26,7 +29,5 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onImageError(event: Event) {
-  (event.target as HTMLImageElement).src = 'assets/profile_pics/defPfp.png';
-}
+
 }

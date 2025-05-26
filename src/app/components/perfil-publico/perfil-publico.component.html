@@ -1,0 +1,21 @@
+<div class="content">
+    <div *ngIf="error">
+  <p>{{ error }}</p>
+</div>
+
+<div *ngIf="!error && usuario">
+  <h2>Perfil de {{ usuario.nick }}</h2>
+  <img [src]="'/uploads/' + usuario.pfp" alt="Foto de perfil" width="120" />
+  <p>Nombre: {{ usuario.nombre }} {{ usuario.apellidos }}</p>
+
+  <h3>Obras publicadas</h3>
+  <ul>
+    <li *ngFor="let obra of obras">
+      <img [src]="'/uploads/' + obra.portada" alt="Portada" width="80" />
+      <strong>{{ obra.titulo }}</strong>
+      <p>{{ obra.descripcion | slice:0:150 }}...</p>
+    </li>
+  </ul>
+</div>
+
+</div>

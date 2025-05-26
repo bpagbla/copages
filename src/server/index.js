@@ -112,6 +112,7 @@ app.post("/login", (req, res) => {
         role: user.ROLE,
         nombre: user.NOMBRE,
         apellidos: user.APELLIDOS,
+        pfp: user.PFP,
       };
 
       // Generamos los tokens
@@ -266,7 +267,8 @@ app.get("/user-info", verifyToken, (req, res) => {
   res.json({
     id: req.user.id,       
     nick: req.user.username,   
-    role: req.user.role,    
+    role: req.user.role,
+    pfp: req.user.pfp,
   });
 });
 
@@ -314,6 +316,81 @@ app.get("/posts", verifyToken, (req, res) => {
     }));
 
     res.json(posts);
+  });
+});
+
+//obras de un usuario segun el id
+app.get("/obras/:idUsuario", (req, res) => {
+  const idUsuario = req.params.idUsuario;
+
+  const sql = `
+    SELECT 
+      l.ID AS id,
+      l.TITULO AS titulo,
+      l.DESCRIPCION AS descripcion,
+      l.GENERO AS genero,
+      l.FECHA_CREACION AS fechaCreacion,
+      l.PORTADA AS portada
+    FROM libro l
+    INNER JOIN publica p ON p.ID_LIBRO = l.ID
+    WHERE p.ID_USUARIO = ?
+    ORDER BY l.FECHA_CREACION DESC;
+  `;
+
+  conexion.query(sql, [idUsuario], (err, results) => {
+    if (err) {
+      console.error("Error al obtener obras del usuario:", err);
+      return res.status(500).json({ message: "Error en la base de datos" });
+    }
+
+    res.json(results);
+  });
+});
+
+
+// Obras de un usuario según su nick (único)
+app.get("/obras/nick/:nick", (req, res) => {
+  const nick = req.params.nick;
+
+  // Primero obtener el ID del usuario por nick
+  const sqlUsuario = "SELECT ID FROM usuario WHERE NICK = ?";
+
+  conexion.query(sqlUsuario, [nick], (err, results) => {
+    if (err) {
+      console.error("Error al buscar usuario por nick:", err);
+      return res.status(500).json({ message: "Error en la base de datos" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    const idUsuario = results[0].ID;
+    console.log("id usuario: ", idUsuario);
+
+    // Ahora obtener las obras del usuario con ese ID
+    const sqlObras = `
+      SELECT 
+        l.ID AS id,
+        l.TITULO AS titulo,
+        l.DESCRIPCION AS descripcion,
+        l.GENERO AS genero,
+        l.FECHA_CREACION AS fechaCreacion,
+        l.PORTADA AS portada
+      FROM libro l
+      INNER JOIN publica p ON p.ID_LIBRO = l.ID
+      WHERE p.ID_USUARIO = ?
+      ORDER BY l.FECHA_CREACION DESC;
+    `;
+
+    conexion.query(sqlObras, [idUsuario], (err2, obras) => {
+      if (err2) {
+        console.error("Error al obtener obras del usuario:", err2);
+        return res.status(500).json({ message: "Error en la base de datos" });
+      }
+
+      res.json(obras);
+    });
   });
 });
 

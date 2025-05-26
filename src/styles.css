@@ -48,6 +48,14 @@ body {
   margin-left: 2.5rem;
 }
 
+.admin-color{
+  background-color: var(--yellow);
+}
+
+.user-color{
+  background-color: var(--primary-color);
+}
+
 ::selection {
   background: #ffd56b;
   color: #5c1d00;

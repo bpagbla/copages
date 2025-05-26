@@ -1,22 +1,42 @@
-<div class="content">
-  <!-- Mostramos contenido solo si 'user' NO es null -->
-  <div *ngIf="user; else noUser">
-    <!-- <p>ID: {{ user.id }}</p>
-<p>Nick: {{ user.nick }}</p>
-<p>Rol: {{ user.role }}</p> -->
+<div class="content" *ngIf="user; else noUser">
+  <div class="d-flex justify-content-start align-items-center gap-3 ps-4 pt-2">
+    <div class="position-relative d-inline-block mb-3">
+      <img
+        [src]="user.pfp"
+        alt="Foto de perfil"
+        width="100"
+        height="100"
+        class="rounded-circle"
+      />
+      <span
+        class="position-absolute top-100 start-50 translate-middle badge rounded-pill shadow-sm"
+        [ngClass]="{
+          'admin-color': user.role === 'admin',
+          'user-color': user.role !== 'admin'
+        }"
+      >
+        <ng-container [ngSwitch]="user.role">
+          <!-- Icono para admin -->
+          <ng-icon
+            name="bootstrapTools"
+            size="0.75rem"
+            *ngSwitchCase="'admin'"
+          />
 
-    <!-- Imagen de perfil -->
-    <img
-      [src]="'assets/profile_pics/' + user.nick + '.png'"
-      (error)="onImageError($event)"
-      alt="Foto de perfil"
-      width="120"
-      height="120"
-    />
-    <h1>{{ user.nick }}</h1>
+          <!-- Logo para user -->
+          <img
+            *ngSwitchCase="'user'"
+            src="assets/logo.svg"
+            alt="User"
+            style="width: 1rem; height: 1rem; filter: brightness(0) invert(1)"
+          />
+        </ng-container>
+      </span>
+    </div>
+
+    <h1 class="text-center">{{ user.nick }}</h1>
   </div>
-
-  <ng-template #noUser>
-    <p>No hay usuario logueado.</p>
-  </ng-template>
 </div>
+<ng-template #noUser>
+  <p>No hay usuario logueado.</p>
+</ng-template>

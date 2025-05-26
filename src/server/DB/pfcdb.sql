@@ -9,6 +9,7 @@ CREATE TABLE usuario (
   `NOMBRE` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `APELLIDOS` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
   `PASSWORD` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `PFP` varchar(128)COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'defPfp.webp',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `email_usuario` (`EMAIL`),
   UNIQUE KEY `nick_usuario` (`NICK`)

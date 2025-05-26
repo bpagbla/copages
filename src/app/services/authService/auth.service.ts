@@ -40,6 +40,7 @@ export class AuthService {
       );
   }
 
+
   // validar inicio de sesión
   validarLogin(username: string, password: string) {
     const loginData = { username, password };

@@ -27,7 +27,7 @@ export class PerfilPublicoComponent implements OnInit {
   }
 
   cargarPerfil(nick: string) {
-    this.http.get(`http://localhost:3000/perfil/${nick}`).subscribe({
+    this.http.get(`http://localhost:3000/profile/${nick}`).subscribe({
       next: (data: any) => {
         this.usuario = {
           nick: data.nick,

@@ -3,7 +3,7 @@
     <h5 class="card-title" *ngIf="showDescripcion">{{ post.title }}</h5>
 
     <p *ngIf="showAuthor || showDate" class="card-subtitle mb-2 text-muted">
-      <span *ngIf="showAuthor">Por {{ post.author.username }}</span>
+      <span *ngIf="showAuthor">Por <a [routerLink]="['/profile', post.author.username]">{{ post.author.username }}</a></span>
       <span *ngIf="showAuthor && showDate"> - </span>
       <span *ngIf="showDate">{{ post.date | date:'mediumDate' }}</span>
     </p>

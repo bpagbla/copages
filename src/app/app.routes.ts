@@ -18,7 +18,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] }, // perfil propio (editable)
-  { path: 'perfil/:nick', component: PerfilPublicoComponent }, // perfil público (cualquier usuario)
+  { path: 'profile/:nick', component: PerfilPublicoComponent }, // perfil público (cualquier usuario)
   { path: 'editor', component: EditorComponent, canActivate: [authGuard] },
   {
     path: 'biblioteca',

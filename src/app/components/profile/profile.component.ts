@@ -21,7 +21,6 @@ export class ProfileComponent implements OnInit {
     this.authService.getUserInfo().subscribe({
       next: async (res: User) => {
         this.user = res;
-        this.user.pfp = 'assets/pfpics/' + this.user.pfp;
       },
       error: (err) => {
         console.error('Error al obtener la info del usuario:', err);

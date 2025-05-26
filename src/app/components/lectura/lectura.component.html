@@ -2,18 +2,17 @@
   <div *ngIf="chapter">
     <h2>{{ chapter.titulo }}</h2>
     <p><strong>Autor:</strong> {{ author?.nick }}</p>
-    <div>{{ chapter.texto }}</div>
-    <button (click)="volver()">Volver</button>
+    <div [innerHTML]="chapter.texto"></div>
   </div>
   <div *ngIf="!chapter">
     <p>Capítulo no encontrado.</p>
-    <button (click)="volver()">Volver</button>
+    <button (click)="volver()" class="btn">Volver</button>
   </div>
 
-  <button [disabled]="ordenActual === 1" (click)="irAnterior()">
+  <button [disabled]="ordenActual === 1" (click)="irAnterior()" class="btn">
     Anterior
   </button>
-  <button [disabled]="ordenActual === totalCapitulos" (click)="irSiguiente()">
+  <button [disabled]="ordenActual === totalCapitulos" (click)="irSiguiente()" class="btn">
     Siguiente
   </button>
 </div>

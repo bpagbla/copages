@@ -244,7 +244,9 @@ app.get("/user-info", verifyToken, (req, res) => {
 app.get('/profile/:nick', (req, res) => {
   const nick = req.params.nick;
 
+  // 1. Consulta para obtener los datos del usuario
   const sqlUsuario = 'SELECT nick, nombre, apellidos, pfp FROM usuario WHERE nick = ?';
+
   conexion.query(sqlUsuario, [nick], (err, usuarioResults) => {
     if (err) {
       console.error('Error al consultar usuario:', err);
@@ -257,14 +259,33 @@ app.get('/profile/:nick', (req, res) => {
 
     const usuario = usuarioResults[0];
 
+    // 2. Consulta para obtener las obras publicadas por ese usuario
+    const sqlObras = `
+      SELECT libro.ID, libro.TITULO, libro.PORTADA, libro.DESCRIPCION
+      FROM libro
+      JOIN publica ON libro.ID = publica.ID_LIBRO
+      JOIN usuario ON publica.ID_USUARIO = usuario.ID
+      WHERE usuario.NICK = ?
+    `;
+
+    conexion.query(sqlObras, [nick], (err2, obrasResults) => {
+      if (err2) {
+        console.error('Error al consultar obras:', err2);
+        return res.status(500).json({ message: 'Error en la base de datos' });
+      }
+
+      // Enviamos la respuesta con usuario y obras
       res.json({
         nick: usuario.nick,
         nombre: usuario.nombre,
         apellidos: usuario.apellidos,
         pfp: usuario.pfp,
+        obras: obrasResults, // array con las obras publicadas
       });
     });
   });
+});
+
 
 
 //endpoint para obtener los posts para el feed

@@ -1,4 +1,8 @@
-import { APP_INITIALIZER, ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -21,12 +25,12 @@ import {
   bootstrapEnvelopePaperHeart,
   bootstrapPencil,
   bootstrapShare,
-  bootstrapTools
+  bootstrapTools,
+  bootstrapList,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
 import { authInterceptor } from './interceptors/auth.interceptor';
-
 
 const modules = {
   toolbar: [
@@ -53,7 +57,7 @@ const modules = {
 };
 
 export const appConfig: ApplicationConfig = {
-  providers: [ 
+  providers: [
     provideQuillConfig({
       modules,
     }),
@@ -71,6 +75,7 @@ export const appConfig: ApplicationConfig = {
       bootstrapPencil,
       bootstrapShare,
       bootstrapTools,
+      bootstrapList,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

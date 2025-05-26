@@ -3,10 +3,11 @@ import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../../services/authService/auth.service';
 import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [NgIcon, RouterModule, MatTooltipModule],
+  imports: [NgIcon, RouterModule, MatTooltipModule, CommonModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
@@ -19,7 +20,7 @@ export class SidebarComponent {
     this.authService.getUserInfo().subscribe({
       next: (res) => {
         console.log('Usuario:', res.role);
-        console.log("?????");
+        console.log('?????');
         this.userRole = res.role;
         this.userNick = res.nick;
       },
@@ -37,5 +38,11 @@ export class SidebarComponent {
   logout() {
     console.log('bye');
     this.authService.logout();
+  }
+
+  menuAbierto = false;
+
+  toggleMenu() {
+    this.menuAbierto = !this.menuAbierto;
   }
 }

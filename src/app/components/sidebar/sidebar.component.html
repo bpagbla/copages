@@ -1,38 +1,82 @@
-<div class="sidebar d-flex justify-content-between flex-column">
+<!-- Navbar para móviles -->
+<nav class="d-flex d-md-none justify-content-between align-items-center p-2 border-bottom bg-light">
+  <img src="assets/logo.webp" alt="logo" width="50" />
 
-<img src="assets/logo.webp" alt="logo" width="50"/>
+  <button class="btn btn-outline-secondary" (click)="toggleMenu()" aria-label="Abrir menú">
+    <ng-icon name="bootstrapList" size="1.5rem"></ng-icon>
+  </button>
+</nav>
 
-
-  <div class="navLinks">
-    <a
-      routerLink="/home"
-      routerLinkActive="active"
-      matTooltip="Home"
-      matTooltipPosition="after"
-      ><ng-icon name="bootstrapHouseHeart" size="1.5rem"
-    /></a>
-    <a routerLink="/biblioteca" matTooltip="Biblioteca" matTooltipPosition="after"
-      ><ng-icon name="bootstrapBook" size="1.5rem"
-    /></a>
-    <a routerLink="/editor" routerLinkActive="active" matTooltip="Escribir" matTooltipPosition="after"
-      ><ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"
-    /></a>
-    <a routerLink="/notifications" matTooltip="Notificaciones" matTooltipPosition="after"
-      ><ng-icon name="bootstrapMailbox" size="1.5rem"
-    /></a>
+<!-- Menú desplegable para móviles -->
+<div
+  *ngIf="menuAbierto"
+  class="mobile-menu d-md-none bg-light border position-fixed top-0 start-0 w-75 h-100 shadow d-flex flex-column"
+  tabindex="0"
+>
+  <div class="navLinks d-flex flex-column gap-3 p-3 flex-grow-1">
+    <a routerLink="/home" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Home" matTooltipPosition="right">
+      <ng-icon name="bootstrapHouseHeart" size="1.5rem"></ng-icon> Home
+    </a>
+    <a routerLink="/biblioteca" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Biblioteca" matTooltipPosition="right">
+      <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon> Biblioteca
+    </a>
+    <a routerLink="/editor" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Escribir" matTooltipPosition="right">
+      <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon> Escribir
+    </a>
+    <a routerLink="/notifications" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Notificaciones" matTooltipPosition="right">
+      <ng-icon name="bootstrapMailbox" size="1.5rem"></ng-icon> Notificaciones
+    </a>
   </div>
-  <div class="logoutLink">
-    <a
-      routerLink="/"
-      (click)="logout()"
-      matTooltip="Logout"
-      matTooltipPosition="after"
-      ><ng-icon name="bootstrapPower" size="1.5rem"
-    /></a>
+
+  <!-- PERFIL + LOGOUT dentro del menú móvil -->
+  <div class="profile p-3 border-top">
+    <a routerLink="/profile" routerLinkActive="active" class="d-flex align-items-center gap-2 mb-3" (click)="toggleMenu()">
+      <ng-icon
+        [name]="
+          userRole === 'admin'
+            ? 'bootstrapPersonFillGear'
+            : 'bootstrapPersonFill'
+        "
+        size="1.5rem"
+      ></ng-icon>
+      {{ userNick || "cargando..." }}
+    </a>
+    <a routerLink="/" (click)="logout(); toggleMenu()" class="d-flex align-items-center gap-2 text-danger">
+      <ng-icon name="bootstrapPower" size="1.5rem"></ng-icon> Logout
+    </a>
   </div>
 </div>
 
-<div class="position-relative">
+
+<!-- Sidebar para escritorio -->
+<div class="sidebar d-none d-md-flex justify-content-between flex-column">
+  <img src="assets/logo.webp" alt="logo" width="50"/>
+
+  <div class="navLinks">
+    <a routerLink="/home" routerLinkActive="active" matTooltip="Home" matTooltipPosition="after">
+      <ng-icon name="bootstrapHouseHeart" size="1.5rem"></ng-icon>
+    </a>
+    <a routerLink="/biblioteca" matTooltip="Biblioteca" matTooltipPosition="after">
+      <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon>
+    </a>
+    <a routerLink="/editor" routerLinkActive="active" matTooltip="Escribir" matTooltipPosition="after">
+      <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon>
+    </a>
+    <a routerLink="/notifications" matTooltip="Notificaciones" matTooltipPosition="after">
+      <ng-icon name="bootstrapMailbox" size="1.5rem"></ng-icon>
+    </a>
+  </div>
+
+  <div class="logoutLink">
+    <a routerLink="/" (click)="logout()" matTooltip="Logout" matTooltipPosition="after">
+      <ng-icon name="bootstrapPower" size="1.5rem"></ng-icon>
+    </a>
+  </div>
+</div>
+
+
+<!-- Ocultar perfil flotante en móviles -->
+<div class="position-relative d-none d-md-block">
   <div class="profile position-absolute top-0 end-0">
     <a routerLink="/profile" class="d-flex align-items-center gap-2 un">
       <ng-icon
@@ -42,8 +86,8 @@
             : 'bootstrapPersonFill'
         "
         size="1.5rem"
-      />
-      {{ userNick || "cargando..." }}</a
-    >
+      ></ng-icon>
+      {{ userNick || "cargando..." }}
+    </a>
   </div>
 </div>

@@ -9,6 +9,8 @@ import { EditorComponent } from './components/editor/editor.component';
 import { PerfilPublicoComponent } from './components/perfil-publico/perfil-publico.component';
 
 import { authGuard } from './guards/auth.guard';
+import { BibliotecaComponent } from './components/biblioteca/biblioteca.component';
+import { NotificationsComponent } from './components/notifications/notifications.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -18,5 +20,15 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] }, // perfil propio (editable)
   { path: 'perfil/:nick', component: PerfilPublicoComponent }, // perfil público (cualquier usuario)
   { path: 'editor', component: EditorComponent, canActivate: [authGuard] },
+  {
+    path: 'biblioteca',
+    component: BibliotecaComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'notifications',
+    component: NotificationsComponent,
+    canActivate: [authGuard],
+  },
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing
 ];

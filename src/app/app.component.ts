@@ -9,7 +9,13 @@ import { ToastComponent } from './components/toast/toast.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavComponent, SidebarComponent, CommonModule, ToastComponent],
+  imports: [
+    RouterOutlet,
+    NavComponent,
+    SidebarComponent,
+    CommonModule,
+    ToastComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -23,22 +29,7 @@ export class AppComponent implements OnInit {
     private storageService: StorageService
   ) {}
 
-  ngOnInit() {
-    const token = this.storageService.getItem('accessToken');
-
-    if (token) {
-      this.authService.refreshToken();
-      this.authService.isLoggedIn$.subscribe((isLoggedIn) => {
-        this.esHome = isLoggedIn;
-        if (isLoggedIn) {
-          this.router.navigate(['/home']);
-        } else {
-          this.router.navigate(['/login']);
-        }
-      });
-    } else {
-      this.authService.setLoggedIn(false);
-      this.esHome = false;
-    }
-  }
+ngOnInit() {
+  this.authService.verificarSesion();
+}
 }

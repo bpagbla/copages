@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  map,
+  Observable,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import { StorageService } from '../storageService/storage.service';
 import { NotificationService } from '../notificationService/notification.service';
 
@@ -11,34 +20,69 @@ import { NotificationService } from '../notificationService/notification.service
 export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.loggedIn.asObservable();
+  private refreshInProgress = false;
+  private refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   constructor(
     private http: HttpClient,
     private router: Router,
     private storageService: StorageService,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService
   ) {
-    // Al iniciar, verificamos si hay sesión activa
-    this.verificarSesion();
+    this.checkToken();
+  }
+
+  private checkToken() {
+    const token = this.storageService.getItem('accessToken');
+    if (token && this.isTokenValid(token)) {
+      this.loggedIn.next(true);
+    } else {
+      this.loggedIn.next(false);
+      this.storageService.removeItem('accessToken');
+    }
+  }
+
+    private isTokenValid(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return (Date.now() / 1000) < payload.exp;
+    } catch {
+      return false;
+    }
   }
 
   // Verifica si hay sesión activa en el servidor
   verificarSesion() {
+    const token = this.storageService.getItem('accessToken');
+
+    if (!token) {
+      this.loggedIn.next(false);
+      return;
+    }
+
     this.http
-      .get('http://localhost:3000/sesion', { withCredentials: true })
-      .subscribe(
-        (res: any) => {
-          if (res.loggedIn) {
+      .post<{ accessToken: string }>(
+        'http://localhost:3000/refresh',
+        {},
+        { withCredentials: true }
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.accessToken) {
+            this.storageService.setItem('accessToken', res.accessToken);
             this.loggedIn.next(true);
           } else {
             this.loggedIn.next(false);
+           this.storageService.removeItem('accessToken');
           }
         },
-        () => {
+        error: () => {
           this.loggedIn.next(false);
-        }
-      );
+          this.storageService.removeItem('accessToken');
+        },
+      });
   }
+
 
 
   // validar inicio de sesión
@@ -50,7 +94,7 @@ export class AuthService {
       .subscribe(
         (res: any) => {
           console.log('Login exitoso', res);
-          localStorage.setItem('accessToken', res.accessToken);
+          this.storageService.setItem('accessToken', res.accessToken);
           this.notificationService.show({
             type: 'success',
             message: 'Sesión iniciada correctamente',
@@ -81,6 +125,7 @@ export class AuthService {
           this.storageService.removeItem('refreshToken');
 
           this.loggedIn.next(false);
+
           this.router.navigate(['/login']);
         },
         (error) => {
@@ -124,26 +169,18 @@ export class AuthService {
     });
   }
 
-  refreshToken() {
-    this.http
-      .post('http://localhost:3000/refresh', {}, { withCredentials: true })
-      .subscribe(
-        (res: any) => {
-          if (res.accessToken) {
-            console.log('Token renovado:', res);
-            localStorage.setItem('accessToken', res.accessToken); // Guardar el nuevo accessToken
-            this.setLoggedIn(true); // Actualizamos el estado de login
-          }
-        },
-        () => {
-          console.error('No se pudo renovar el token.');
-          this.setLoggedIn(false);
-        }
-      );
+  refreshToken$(): Observable<string> {
+    return this.http
+      .post<{ accessToken: string }>(
+        'http://localhost:3000/refresh',
+        {},
+        { withCredentials: true }
+      )
+      .pipe(map((response) => response.accessToken));
   }
 
   getUserInfo(): Observable<any> {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = this.storageService.getItem('accessToken');
 
     return this.http.get('http://localhost:3000/user-info', {
       headers: {

@@ -28,20 +28,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const session = require("express-session");
-
-app.use(
-  session({
-    secret: "secretKey",
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: false, // Para desarrollo local, asegúrate de que sea false
-      httpOnly: true, // Hace que la cookie solo sea accesible por el servidor
-      maxAge: 3600000, // Tiempo de expiración (1 hora)
-    },
-  })
-);
 
 //comprobar si existe nombre de usuario
 app.post("/usuarioExiste", (req, res) => {
@@ -147,10 +133,6 @@ app.post("/logout", (req, res) => {
     sameSite: "Lax",
   });
 
-  // Si usas sesiones en express-session, puedes destruirla también:
-  if (req.session) {
-    req.session.destroy();
-  }
 
   res.status(200).json({ message: "Sesión cerrada correctamente" });
 });
@@ -200,19 +182,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-//verificar sesion
-app.get("/sesion", (req, res) => {
-  if (req.session.user) {
-    res.json({
-      loggedIn: true,
-      user: req.session.user,
-    });
-  } else {
-    res.json({
-      loggedIn: false,
-    });
-  }
-});
 
 //refrescar el access token
 app.post("/refresh", (req, res) => {

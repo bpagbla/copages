@@ -1,4 +1,17 @@
-.content{
-    padding: 2.5rem;
-    margin-left: 2.5rem;
+.content {
+  padding: 2.5rem;
+  margin-left: 2.5rem;
+}
+
+.slide-up {
+  opacity: 0;
+  transform: translateY(50px);
+  animation: slideInUp 0.8s ease-out forwards;
+}
+
+@keyframes slideInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

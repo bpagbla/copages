@@ -1,7 +1,7 @@
 <div class="content">
   <p>Sesión iniciada por {{ userRole || "Cargando..." }}</p>
 
-  <section *ngIf="posts.length > 0; else noPosts">
+  <section *ngIf="posts.length > 0; else noPosts" >
     <app-post
       *ngFor="let post of posts"
       [post]="post"
@@ -10,6 +10,7 @@
       [showDate]="true"
       [showTituloCap]="true"
       [showOrdenCap]="true"
+      class="slide-up"
     >
     </app-post>
   </section>

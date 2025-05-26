@@ -15,6 +15,7 @@ const conexion = require("./DB/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const connection = require("./DB/db");
 
 app.use(
   cors({
@@ -27,7 +28,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 
 //comprobar si existe nombre de usuario
 app.post("/usuarioExiste", (req, res) => {
@@ -133,7 +133,6 @@ app.post("/logout", (req, res) => {
     sameSite: "Lax",
   });
 
-
   res.status(200).json({ message: "Sesión cerrada correctamente" });
 });
 
@@ -181,7 +180,6 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
-
 
 //refrescar el access token
 app.post("/refresh", (req, res) => {
@@ -234,27 +232,28 @@ function verifyToken(req, res, next) {
 app.get("/user-info", verifyToken, (req, res) => {
   console.log(req.user);
   res.json({
-    id: req.user.id,       
-    nick: req.user.username,   
+    id: req.user.id,
+    nick: req.user.username,
     role: req.user.role,
     pfp: req.user.pfp,
   });
 });
 
-app.get('/profile/:nick', (req, res) => {
+app.get("/profile/:nick", (req, res) => {
   const nick = req.params.nick;
 
   // 1. Consulta para obtener los datos del usuario
-  const sqlUsuario = 'SELECT nick, nombre, apellidos, pfp FROM usuario WHERE nick = ?';
+  const sqlUsuario =
+    "SELECT nick, nombre, apellidos, pfp FROM usuario WHERE nick = ?";
 
   conexion.query(sqlUsuario, [nick], (err, usuarioResults) => {
     if (err) {
-      console.error('Error al consultar usuario:', err);
-      return res.status(500).json({ message: 'Error en la base de datos' });
+      console.error("Error al consultar usuario:", err);
+      return res.status(500).json({ message: "Error en la base de datos" });
     }
 
     if (usuarioResults.length === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     const usuario = usuarioResults[0];
@@ -270,10 +269,10 @@ app.get('/profile/:nick', (req, res) => {
 
     conexion.query(sqlObras, [nick], (err2, obrasResults) => {
       if (err2) {
-        console.error('Error al consultar obras:', err2);
-        return res.status(500).json({ message: 'Error en la base de datos' });
+        console.error("Error al consultar obras:", err2);
+        return res.status(500).json({ message: "Error en la base de datos" });
       }
-
+      console.log(obrasResults);
       // Enviamos la respuesta con usuario y obras
       res.json({
         nick: usuario.nick,
@@ -286,12 +285,10 @@ app.get('/profile/:nick', (req, res) => {
   });
 });
 
-
-
 //endpoint para obtener los posts para el feed
 app.get("/posts", verifyToken, (req, res) => {
   console.log("Entrando en GET /posts, user:", req.user);
-  const userId = req.user.id;  // ID del usuario autenticado
+  const userId = req.user.id; // ID del usuario autenticado
 
   const sql = `
     SELECT 
@@ -319,7 +316,7 @@ app.get("/posts", verifyToken, (req, res) => {
       return res.status(500).json({ message: "Error al obtener posts" });
     }
 
-    const posts = results.map(row => ({
+    const posts = results.map((row) => ({
       id: row.id,
       title: row.title,
       excerpt: row.excerpt,
@@ -327,16 +324,67 @@ app.get("/posts", verifyToken, (req, res) => {
       capituloOrden: row.capituloOrden,
       date: row.date,
       author: {
-        username: row.username
-      }
+        username: row.username,
+      },
     }));
 
     res.json(posts);
   });
 });
 
+//endpoint para obtener los capitulos de un libro
+app.get("/libro/:id/capitulo/:orden", async (req, res) => {
+   const { id, orden } = req.params;
 
+  const query = `
+    SELECT c.ID, c.TITULO, c.TEXTO, c.ORDEN, u.NICK AS autor
+    FROM capitulo c
+    JOIN componeCapLib cl ON c.ID = cl.ID_CAPITULO
+    JOIN publica p ON p.ID_LIBRO = cl.ID_LIBRO
+    JOIN usuario u ON u.ID = p.ID_USUARIO
+    WHERE cl.ID_LIBRO = ? AND c.ORDEN = ?
+  `;
 
+  connection.query(query, [id, orden], (err, results) => {
+    if (err) {
+      console.error("Error al obtener capítulo:", err);
+      return res.status(500).json({ mensaje: "Error interno del servidor" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ mensaje: "Capítulo no encontrado" });
+    }
+
+    const capitulo = results[0];
+
+    res.json({
+      capitulo: {
+        id: capitulo.ID,
+        titulo: capitulo.TITULO,
+        texto: capitulo.TEXTO,
+        orden: capitulo.ORDEN
+      },
+      autor: {
+        nick: capitulo.autor
+      }
+    });
+  });
+});
+
+// endpoint para contar capítulos de un libro
+app.get('/libro/:id/capitulos/count', (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT COUNT(*) AS total
+    FROM capitulo c
+    INNER JOIN componeCapLib cl ON c.ID = cl.ID_CAPITULO
+    WHERE cl.ID_LIBRO = ?
+  `;
+  connection.query(query, [id], (err, results) => {
+    if (err) return res.status(500).json({ mensaje: 'Error interno del servidor' });
+    res.json({ total: results[0].total });
+  });
+});
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

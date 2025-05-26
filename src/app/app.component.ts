@@ -7,6 +7,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { ToastComponent } from './components/toast/toast.component';
 
+
 @Component({
   selector: 'app-root',
   imports: [

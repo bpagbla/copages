@@ -11,6 +11,7 @@ import { PerfilPublicoComponent } from './components/perfil-publico/perfil-publi
 import { authGuard } from './guards/auth.guard';
 import { BibliotecaComponent } from './components/biblioteca/biblioteca.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
+import { LecturaComponent } from './components/lectura/lectura.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -30,5 +31,6 @@ export const routes: Routes = [
     component: NotificationsComponent,
     canActivate: [authGuard],
   },
+  { path: 'libro/:idLibro/capitulo/:orden', component: LecturaComponent },
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing
 ];

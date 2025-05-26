@@ -10,11 +10,11 @@ export class ChapterService {
 
   constructor(private http: HttpClient) {}
 
-  getChapterByLibroOrden(idLibro: string, orden: string): Observable<any> {
+  getChapterByLibroOrden(idLibro: number, orden: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/libro/${idLibro}/capitulo/${orden}`);
   }
 
-  getTotalCapitulos(idLibro: string): Observable<any> {
+  getTotalCapitulos(idLibro: number): Observable<any> {
   return this.http.get(`${this.baseUrl}/libro/${idLibro}/capitulos/count`);
 }
 

@@ -3,9 +3,14 @@
     <h5 class="card-title" *ngIf="showDescripcion">{{ post.title }}</h5>
 
     <p *ngIf="showAuthor || showDate" class="card-subtitle mb-2 text-muted">
-      <span *ngIf="showAuthor">Por <a [routerLink]="['/profile', post.author.username]">{{ post.author.username }}</a></span>
+      <span *ngIf="showAuthor"
+        >Por
+        <a [routerLink]="['/profile', post.author.username]">{{
+          post.author.username
+        }}</a></span
+      >
       <span *ngIf="showAuthor && showDate"> - </span>
-      <span *ngIf="showDate">{{ post.date | date:'mediumDate' }}</span>
+      <span *ngIf="showDate">{{ post.date | date : "mediumDate" }}</span>
     </p>
 
     <p *ngIf="showDescripcion">{{ post.excerpt }}</p>
@@ -14,6 +19,12 @@
       <p *ngIf="showTituloCap">Capítulo: {{ post.capituloTitulo }}</p>
       <p *ngIf="showOrdenCap">Número: {{ post.capituloOrden }}</p>
     </div>
-
+    <a
+      *ngIf="post.id && post.capituloOrden"
+      [routerLink]="['/libro', post.id, 'capitulo', post.capituloOrden]"
+      class="btn btn-primary btn-sm mt-2"
+    >
+      Leer capítulo
+    </a>
   </div>
 </article>

@@ -334,8 +334,9 @@ app.get("/posts", verifyToken, (req, res) => {
 
 //endpoint para obtener los capitulos de un libro
 app.get("/libro/:id/capitulo/:orden", async (req, res) => {
-   const { id, orden } = req.params;
 
+   const { id, orden } = req.params;
+console.log("ID recibido:", id, "ORDEN recibido:", orden);
   const query = `
     SELECT c.ID, c.TITULO, c.TEXTO, c.ORDEN, u.NICK AS autor
     FROM capitulo c
@@ -352,11 +353,13 @@ app.get("/libro/:id/capitulo/:orden", async (req, res) => {
     }
 
     if (results.length === 0) {
+      console.log("capitulo no encontrado");
       return res.status(404).json({ mensaje: "Capítulo no encontrado" });
     }
 
     const capitulo = results[0];
 
+    console.log(capitulo);
     res.json({
       capitulo: {
         id: capitulo.ID,

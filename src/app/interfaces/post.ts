@@ -3,9 +3,9 @@ export interface Author {
 }
 
 export interface Post {
-  id: number;
-  title: string;
-  excerpt: string;
+  id: number; //id del libro
+  title: string; //titulo del libro
+  excerpt: string; //descripcion
   date: string;
   author: {
     id: number;

@@ -31,6 +31,6 @@ export const routes: Routes = [
     component: NotificationsComponent,
     canActivate: [authGuard],
   },
-  { path: 'libro/:idLibro/capitulo/:orden', component: LecturaComponent },
+  { path: 'libro/:id/capitulo/:orden', component: LecturaComponent },
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing
 ];

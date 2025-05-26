@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-start align-items-center gap-3 ps-4 pt-2">
     <div class="position-relative d-inline-block mb-3">
       <img
-        [src]="'/assets/pfpics/' + user.pfp"
+        [src]="'/assets/pfpics/' + user.pfp || '/assets/pfpics/defPfp.webp'"
         alt="Foto de perfil"
         width="100"
         height="100"

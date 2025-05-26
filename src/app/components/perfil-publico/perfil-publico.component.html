@@ -4,7 +4,7 @@
 </div>
 
 <div *ngIf="!error && usuario">
-  <img [src]="'/assets/pfpics/' + usuario.pfp" alt="Foto de perfil" width="120" />
+  <img [src]="'/assets/pfpics/' + usuario.pfp" alt="Foto de perfil" width="120" class="rounded-circle"/>
   <p>Nombre: {{ usuario.nombre }} {{ usuario.apellidos }}</p>
 
   <h3>Obras publicadas</h3>

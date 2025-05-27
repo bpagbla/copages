@@ -21,7 +21,6 @@
           <img [src]="'/assets/covers/' + obra.PORTADA" class="card-img-top" alt="Portada" />
           <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ obra.TITULO }}</h5>
-            <p class="card-text">{{ obra.DESCRIPCION | slice : 0 : 120 }}...</p>
             <button class="btn btn-outline-primary mt-auto" (click)="editarObra(obra.ID)">Editar</button>
           </div>
         </div>

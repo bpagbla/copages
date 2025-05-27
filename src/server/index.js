@@ -394,11 +394,12 @@ app.get("/loggedInUser-books", verifyToken, (req, res) => {
   const userId = req.user.id;
 
   const sql = `
-    SELECT libro.ID, libro.TITULO, libro.PORTADA, libro.DESCRIPCION
-    FROM libro
-    JOIN publica ON libro.ID = publica.ID_LIBRO
-    WHERE publica.ID_USUARIO = ?
-    ORDER BY libro.FECHA_CREACION DESC
+SELECT l.ID, l.TITULO, l.PORTADA, l.DESCRIPCION
+FROM libro l
+INNER JOIN publica p ON l.ID = p.ID_LIBRO
+WHERE p.ID_USUARIO = ?
+GROUP BY l.ID, l.TITULO, l.PORTADA, l.DESCRIPCION
+ORDER BY l.ID DESC
   `;
 
   conexion.query(sql, [userId], (err, results) => {
@@ -411,7 +412,7 @@ app.get("/loggedInUser-books", verifyToken, (req, res) => {
 });
 
 // Endpoint para listar capítulos de un libro
-app.get('/libro/:id/capitulos', verifyToken, (req, res) => {
+app.get("/libro/:id/capitulos", verifyToken, (req, res) => {
   const libroId = req.params.id;
   const sql = `
     SELECT c.ID, c.TITULO, c.ORDEN
@@ -426,6 +427,68 @@ app.get('/libro/:id/capitulos', verifyToken, (req, res) => {
       return res.status(500).json({ mensaje: "Error interno del servidor" });
     }
     res.json(results);
+  });
+});
+
+//POST PARA CREAR NUEVA OBRA
+app.post('/obra', verifyToken, (req, res) => {
+  const userId = req.user.id; // El usuario logueado
+  const { TITULO, DESCRIPCION } = req.body;
+
+  // Validación de datos
+  if (!TITULO || !DESCRIPCION) {
+    return res.status(400).json({ mensaje: "Título y descripción son obligatorios." });
+  }
+
+  // Insertar libro
+  const sqlLibro = `INSERT INTO libro (TITULO, DESCRIPCION) VALUES (?, ?)`;
+  conexion.query(sqlLibro, [TITULO, DESCRIPCION], (err, libroResult) => {
+    if (err) {
+      console.error("Error al crear libro:", err);
+      return res.status(500).json({ mensaje: "Error en la base de datos" });
+    }
+    const libroId = libroResult.insertId;
+
+    // Asociar libro con usuario 
+    const sqlPublica = `INSERT INTO publica (ID_USUARIO, ID_LIBRO) VALUES (?, ?)`;
+    conexion.query(sqlPublica, [userId, libroId], (err2) => {
+      if (err2) {
+        console.error("Error al asociar libro con usuario:", err2);
+        return res.status(500).json({ mensaje: "Error en la base de datos (publica)" });
+      }
+
+      //devolver el id y mensaje
+      res.status(201).json({ id: libroId, mensaje: "Obra creada con éxito" });
+    });
+  });
+});
+
+app.post('/libro/:id/capitulo', (req, res) => {
+  const libroId = req.params.id;
+  const { TITULO, TEXTO, ORDEN } = req.body;
+
+  if (!TITULO || !TEXTO || !ORDEN) {
+    return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
+  }
+
+  // 1. Crear el capítulo
+  const sqlCapitulo = `INSERT INTO capitulo (TITULO, TEXTO, ORDEN) VALUES (?, ?, ?)`;
+  conexion.query(sqlCapitulo, [TITULO, TEXTO, ORDEN], (err, capResult) => {
+    if (err) {
+      console.error("Error al crear el capítulo:", err);
+      return res.status(500).json({ mensaje: "Error al crear el capítulo" });
+    }
+    const capituloId = capResult.insertId;
+
+    // 2. Relacionar el capítulo con el libro
+    const sqlRelacion = `INSERT INTO componeCapLib (ID_CAPITULO, ID_LIBRO) VALUES (?, ?)`;
+    conexion.query(sqlRelacion, [capituloId, libroId], (err2) => {
+      if (err2) {
+        console.error("Error al asociar capítulo con libro:", err2);
+        return res.status(500).json({ mensaje: "Error al asociar el capítulo al libro" });
+      }
+      res.status(201).json({ id: capituloId, mensaje: "Capítulo guardado correctamente" });
+    });
   });
 });
 

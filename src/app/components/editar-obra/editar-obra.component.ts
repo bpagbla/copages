@@ -32,7 +32,7 @@ export class EditarObraComponent {
 
     // Obtener lista de capítulos de esta obra
     this.capitulosService
-      .getCapitulosPorLibro(this.obraId)
+      .getTotalCapitulos(this.obraId)
       .subscribe((caps) => (this.capitulos = caps));
   }
 

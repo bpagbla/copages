@@ -20,7 +20,7 @@
     <a routerLink="/biblioteca" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Biblioteca" matTooltipPosition="right">
       <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon> Biblioteca
     </a>
-    <a routerLink="/editor" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Escribir" matTooltipPosition="right">
+    <a routerLink="/dashboard" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Escribir" matTooltipPosition="right">
       <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon> Escribir
     </a>
     <a routerLink="/notifications" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Notificaciones" matTooltipPosition="right">
@@ -59,7 +59,7 @@
     <a routerLink="/biblioteca" matTooltip="Biblioteca" matTooltipPosition="after">
       <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon>
     </a>
-    <a routerLink="/editor" routerLinkActive="active" matTooltip="Escribir" matTooltipPosition="after">
+    <a routerLink="/dashboard" routerLinkActive="active" matTooltip="Escribir" matTooltipPosition="after">
       <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon>
     </a>
     <a routerLink="/notifications" matTooltip="Notificaciones" matTooltipPosition="after">
@@ -76,7 +76,7 @@
 
 <!-- Ocultar perfil flotante en móviles -->
 <div class="position-relative d-none d-md-block">
-  <div class="profile position-absolute top-0 end-0">
+  <div class="profile position-fixed top-0 end-0">
     <a routerLink="/profile" class="d-flex align-items-center gap-2 un">
       <ng-icon
         [name]="

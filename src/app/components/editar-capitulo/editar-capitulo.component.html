@@ -1,1 +1,21 @@
-<p>editar-capitulo works!</p>
+<div class="container">
+  <h3>Nuevo Capítulo</h3>
+  <form (ngSubmit)="guardarCapitulo()">
+    <div class="mb-3">
+      <label for="titulo" class="form-label">Título del capítulo</label>
+      <input
+        type="text"
+        id="titulo"
+        class="form-control"
+        [(ngModel)]="capitulo.TITULO"
+        name="titulo"
+        required
+      />
+    </div>
+
+    <!-- editor hijo -->
+    <app-editor [(content)]="capitulo.TEXTO"></app-editor>
+
+    <button type="submit" class="btn btn-success mt-3">Guardar capítulo</button>
+  </form>
+</div>

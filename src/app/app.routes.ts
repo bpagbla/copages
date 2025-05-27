@@ -14,6 +14,7 @@ import { NotificationsComponent } from './components/notifications/notifications
 import { LecturaComponent } from './components/lectura/lectura.component';
 import { EditarObraComponent } from './components/editar-obra/editar-obra.component';
 import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component';
+import { EditordashboardComponent } from './components/editordashboard/editordashboard.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -42,11 +43,15 @@ export const routes: Routes = [
   {
     path: 'obra/editar/:id/capitulo/nuevo',
     component: EditarCapituloComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'obra/editar/:id/capitulo/:idCapitulo',
     component: EditarCapituloComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'dashboard',
+    component: EditordashboardComponent,
     canActivate: [authGuard],
   },
 

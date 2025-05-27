@@ -42,7 +42,7 @@ export class EditordashboardComponent implements OnInit {
       next: (data) => {
         this.showModal = false;
         this.nuevaObra = { TITULO: '', DESCRIPCION: '' };
-        this.ngOnInit();
+        this.router.navigate(['/obra/editar', data.id, 'capitulo', 'nuevo']);
       },
       error: () => {
         this.modalError = 'No se pudo crear la obra.';

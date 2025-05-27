@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChapterService } from '../../services/chapterService/chapter.service';
+import { CapitulosService } from '../../services/capitulosService/capitulos.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -18,7 +18,7 @@ export class LecturaComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private chapterService: ChapterService,
+    private chapterService: CapitulosService,
     private router: Router
   ) {}
 

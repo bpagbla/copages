@@ -1,0 +1,19 @@
+<div class="content">
+    <div class="container">
+  <h3>Editar obra: {{ obra?.TITULO }}</h3>
+  <div class="mb-3">
+    <button class="btn btn-success" (click)="nuevoCapitulo()">Añadir nuevo capítulo</button>
+  </div>
+
+  <div *ngIf="capitulos.length === 0" class="alert alert-info">Esta obra no tiene capítulos aún.</div>
+  <ul class="list-group">
+    <li *ngFor="let cap of capitulos" class="list-group-item d-flex justify-content-between align-items-center">
+      <span>
+        <strong>{{ cap.ORDEN }}.</strong> {{ cap.TITULO }}
+      </span>
+      <button class="btn btn-outline-primary btn-sm" (click)="editarCapitulo(cap.ID)">Editar</button>
+    </li>
+  </ul>
+</div>
+
+</div>

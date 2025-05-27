@@ -12,6 +12,8 @@ import { authGuard } from './guards/auth.guard';
 import { BibliotecaComponent } from './components/biblioteca/biblioteca.component';
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { LecturaComponent } from './components/lectura/lectura.component';
+import { EditarObraComponent } from './components/editar-obra/editar-obra.component';
+import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -32,5 +34,21 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   { path: 'libro/:id/capitulo/:orden', component: LecturaComponent },
+  {
+    path: 'obra/editar/:id',
+    component: EditarObraComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'obra/editar/:id/capitulo/nuevo',
+    component: EditarCapituloComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'obra/editar/:id/capitulo/:idCapitulo',
+    component: EditarCapituloComponent,
+    canActivate: [authGuard],
+  },
+
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing
 ];

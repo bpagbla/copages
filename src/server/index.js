@@ -410,6 +410,26 @@ app.get("/loggedInUser-books", verifyToken, (req, res) => {
   });
 });
 
+// Endpoint para listar capítulos de un libro
+app.get('/libro/:id/capitulos', verifyToken, (req, res) => {
+  const libroId = req.params.id;
+  const sql = `
+    SELECT c.ID, c.TITULO, c.ORDEN
+    FROM capitulo c
+    JOIN componeCapLib cl ON c.ID = cl.ID_CAPITULO
+    WHERE cl.ID_LIBRO = ?
+    ORDER BY c.ORDEN
+  `;
+  conexion.query(sql, [libroId], (err, results) => {
+    if (err) {
+      console.error("Error al obtener capítulos:", err);
+      return res.status(500).json({ mensaje: "Error interno del servidor" });
+    }
+    res.json(results);
+  });
+});
+
+
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");
 });

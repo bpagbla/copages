@@ -1,0 +1,33 @@
+<div class="content">
+
+    <div class="container">
+  <h2>Mis obras</h2>
+  <div class="row g-3">
+    <!-- Tarjeta para crear nueva obra -->
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card h-100 d-flex align-items-center justify-content-center" style="cursor:pointer;" (click)="nuevaObra()">
+        <div class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+          <div class="mb-2">
+            <svg width="48" height="48" fill="currentColor" class="mb-2" viewBox="0 0 16 16">
+              <path d="M8 4a.5.5 0 0 1 .5.5V7.5h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3V4.5A.5.5 0 0 1 8 4z"/>
+            </svg>
+          </div>
+          <p class="card-text">Añadir nueva obra</p>
+        </div>
+      </div>
+    </div>
+    <!-- Tarjetas de obras -->
+    <div *ngFor="let obra of obras" class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="card h-100">
+        <img [src]="'/assets/covers/' + obra.PORTADA" class="card-img-top" alt="Portada" />
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ obra.TITULO }}</h5>
+          <p class="card-text">{{ obra.DESCRIPCION | slice : 0 : 120 }}...</p>
+          <button class="btn btn-outline-primary mt-auto" (click)="editarObra(obra.ID)">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>

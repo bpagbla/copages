@@ -334,9 +334,8 @@ app.get("/posts", verifyToken, (req, res) => {
 
 //endpoint para obtener los capitulos de un libro
 app.get("/libro/:id/capitulo/:orden", async (req, res) => {
-
-   const { id, orden } = req.params;
-console.log("ID recibido:", id, "ORDEN recibido:", orden);
+  const { id, orden } = req.params;
+  console.log("ID recibido:", id, "ORDEN recibido:", orden);
   const query = `
     SELECT c.ID, c.TITULO, c.TEXTO, c.ORDEN, u.NICK AS autor
     FROM capitulo c
@@ -365,17 +364,17 @@ console.log("ID recibido:", id, "ORDEN recibido:", orden);
         id: capitulo.ID,
         titulo: capitulo.TITULO,
         texto: capitulo.TEXTO,
-        orden: capitulo.ORDEN
+        orden: capitulo.ORDEN,
       },
       autor: {
-        nick: capitulo.autor
-      }
+        nick: capitulo.autor,
+      },
     });
   });
 });
 
 // endpoint para contar capítulos de un libro
-app.get('/libro/:id/capitulos/count', (req, res) => {
+app.get("/libro/:id/capitulos/count", (req, res) => {
   const { id } = req.params;
   const query = `
     SELECT COUNT(*) AS total
@@ -384,8 +383,30 @@ app.get('/libro/:id/capitulos/count', (req, res) => {
     WHERE cl.ID_LIBRO = ?
   `;
   connection.query(query, [id], (err, results) => {
-    if (err) return res.status(500).json({ mensaje: 'Error interno del servidor' });
+    if (err)
+      return res.status(500).json({ mensaje: "Error interno del servidor" });
     res.json({ total: results[0].total });
+  });
+});
+
+// Obtener todos los libros publicados por el usuario logueado
+app.get("/loggedInUser-books", verifyToken, (req, res) => {
+  const userId = req.user.id;
+
+  const sql = `
+    SELECT libro.ID, libro.TITULO, libro.PORTADA, libro.DESCRIPCION
+    FROM libro
+    JOIN publica ON libro.ID = publica.ID_LIBRO
+    WHERE publica.ID_USUARIO = ?
+    ORDER BY libro.FECHA_CREACION DESC
+  `;
+
+  conexion.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Error al obtener los libros del usuario logueado:", err);
+      return res.status(500).json({ mensaje: "Error interno del servidor" });
+    }
+    res.json(results);
   });
 });
 

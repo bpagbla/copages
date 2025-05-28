@@ -1,11 +1,12 @@
 <div class="content">
-  <quill-editor
-    [(ngModel)]="editorContent"
-    [modules]="quillModules"
-    [theme]="'snow'"
-  ></quill-editor>
+<quill-editor
+  [(ngModel)]="internalContent"
+  [modules]="quillModules"
+  [theme]="'snow'"
+  (ngModelChange)="onContentChanged($event)"
+></quill-editor>
+<div class="contador">
+  Palabras: {{ wordCount }} · Caracteres: {{ charCount }}
+</div>
 
-  <div class="contador">
-    Palabras: {{ wordCount }} · Caracteres: {{ charCount }}
-  </div>
 </div>

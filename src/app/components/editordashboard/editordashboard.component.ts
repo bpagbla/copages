@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ObrasService } from '../../services/obrasService/obras.service';
 import { FormsModule } from '@angular/forms';
+import { Obra } from '../../interfaces/obra';
 
 @Component({
   selector: 'app-editordashboard',
@@ -11,17 +12,22 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './editordashboard.component.css',
 })
 export class EditordashboardComponent implements OnInit {
-  obras: any[] = [];
+  obras: Obra[] = [];
   error: string = '';
   modalError = '';
 
   constructor(private obrasService: ObrasService, private router: Router) {}
 
   ngOnInit(): void {
-    // Suponiendo que tu servicio filtra las obras por el usuario logueado (por el backend o token)
     this.obrasService.getMisObras().subscribe({
-      next: (data) => (this.obras = data),
-      error: (err) => (this.error = 'No se pudieron cargar tus obras.'),
+      next: (data: Obra[]) => {
+        this.obras = data;
+        console.log(data);
+      },
+      error: (err) => {
+        this.error = 'No se pudieron cargar tus obras.';
+        console.error(err);
+      },
     });
   }
 

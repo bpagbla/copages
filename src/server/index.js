@@ -239,6 +239,7 @@ app.get("/user-info", verifyToken, (req, res) => {
   });
 });
 
+//OBTENER DATOS Y OBRAS DE UN USUARIO POR SU NICK
 app.get("/profile/:nick", (req, res) => {
   const nick = req.params.nick;
 
@@ -332,7 +333,7 @@ app.get("/posts", verifyToken, (req, res) => {
   });
 });
 
-//endpoint para obtener los capitulos de un libro
+//endpoint para obtener un capitulo de un libro por su orden
 app.get("/libro/:id/capitulo/:orden", async (req, res) => {
   const { id, orden } = req.params;
   console.log("ID recibido:", id, "ORDEN recibido:", orden);
@@ -430,14 +431,60 @@ app.get("/libro/:id/capitulos", verifyToken, (req, res) => {
   });
 });
 
+//ENDPOINT PARA SACAR UNA OBRA POR SU ID
+app.get("/obra/:id", verifyToken, (req, res) => {
+  const obraId = req.params.id;
+  const userId = req.user.id;
+
+  const sql = `
+    SELECT l.* 
+    FROM libro l
+    INNER JOIN publica p ON l.ID = p.ID_LIBRO
+    WHERE l.ID = ? AND p.ID_USUARIO = ?
+  `;
+
+  conexion.query(sql, [obraId, userId], (err, results) => {
+    if (err) return res.status(500).json({ mensaje: "Error interno" });
+    if (results.length === 0)
+      return res.status(403).json({ mensaje: "No tienes acceso a esta obra" });
+    res.json(results[0]);
+  });
+});
+
+// DELETE PARA Borrar una obra
+app.delete('/obra/:id', verifyToken, (req, res) => {
+  const obraId = req.params.id;
+  const userId = req.user.id;
+
+  const checkSql = `
+    SELECT l.ID
+    FROM libro l
+    INNER JOIN publica p ON l.ID = p.ID_LIBRO
+    WHERE l.ID = ? AND p.ID_USUARIO = ?
+  `;
+
+  conexion.query(checkSql, [obraId, userId], (err, results) => {
+    if (err) return res.status(500).json({ mensaje: 'Error interno' });
+    if (results.length === 0) return res.status(403).json({ mensaje: 'No autorizado' });
+
+    const deleteSql = `DELETE FROM libro WHERE ID = ?`;
+    conexion.query(deleteSql, [obraId], (err2) => {
+      if (err2) return res.status(500).json({ mensaje: 'Error al eliminar' });
+      res.json({ mensaje: 'Obra eliminada con éxito' });
+    });
+  });
+});
+
 //POST PARA CREAR NUEVA OBRA
-app.post('/obra', verifyToken, (req, res) => {
+app.post("/obra", verifyToken, (req, res) => {
   const userId = req.user.id; // El usuario logueado
   const { TITULO, DESCRIPCION } = req.body;
 
   // Validación de datos
   if (!TITULO || !DESCRIPCION) {
-    return res.status(400).json({ mensaje: "Título y descripción son obligatorios." });
+    return res
+      .status(400)
+      .json({ mensaje: "Título y descripción son obligatorios." });
   }
 
   // Insertar libro
@@ -449,12 +496,14 @@ app.post('/obra', verifyToken, (req, res) => {
     }
     const libroId = libroResult.insertId;
 
-    // Asociar libro con usuario 
+    // Asociar libro con usuario
     const sqlPublica = `INSERT INTO publica (ID_USUARIO, ID_LIBRO) VALUES (?, ?)`;
     conexion.query(sqlPublica, [userId, libroId], (err2) => {
       if (err2) {
         console.error("Error al asociar libro con usuario:", err2);
-        return res.status(500).json({ mensaje: "Error en la base de datos (publica)" });
+        return res
+          .status(500)
+          .json({ mensaje: "Error en la base de datos (publica)" });
       }
 
       //devolver el id y mensaje
@@ -463,12 +512,15 @@ app.post('/obra', verifyToken, (req, res) => {
   });
 });
 
-app.post('/libro/:id/capitulo', (req, res) => {
+//POST PARA CREAR NUEVO CAPITULO
+app.post("/libro/:id/capitulo", (req, res) => {
   const libroId = req.params.id;
   const { TITULO, TEXTO, ORDEN } = req.body;
 
   if (!TITULO || !TEXTO || !ORDEN) {
-    return res.status(400).json({ mensaje: "Todos los campos son obligatorios" });
+    return res
+      .status(400)
+      .json({ mensaje: "Todos los campos son obligatorios" });
   }
 
   // 1. Crear el capítulo
@@ -485,13 +537,16 @@ app.post('/libro/:id/capitulo', (req, res) => {
     conexion.query(sqlRelacion, [capituloId, libroId], (err2) => {
       if (err2) {
         console.error("Error al asociar capítulo con libro:", err2);
-        return res.status(500).json({ mensaje: "Error al asociar el capítulo al libro" });
+        return res
+          .status(500)
+          .json({ mensaje: "Error al asociar el capítulo al libro" });
       }
-      res.status(201).json({ id: capituloId, mensaje: "Capítulo guardado correctamente" });
+      res
+        .status(201)
+        .json({ id: capituloId, mensaje: "Capítulo guardado correctamente" });
     });
   });
 });
-
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Obra } from '../../interfaces/obra';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,9 @@ export class ObrasService {
   constructor(private http: HttpClient) {}
 
   // Obtener todas las obras del usuario logueado
-  getMisObras(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/loggedInUser-books`);
+  getMisObras(): Observable<Obra[]> {
+    return this.http.get<Obra[]>(`${this.baseUrl}/loggedInUser-books`);
   }
-
 
   // Obtener una obra por ID
   getObraPorId(id: number): Observable<any> {

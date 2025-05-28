@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
 
@@ -13,6 +20,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   // Input y Output para binding externo
   @Input() content: string = '';
   @Output() contentChange = new EventEmitter<string>();
+  internalContent: string = '';
 
   public quillModules: any = {
     toolbar: {
@@ -38,6 +46,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.internalContent = this.content;
     const saved = localStorage.getItem('copages-draft');
     if (saved && saved !== 'null') {
       this.editorContent = saved;
@@ -45,10 +54,10 @@ export class EditorComponent implements OnInit, OnDestroy {
       this.editorContent = '';
     }
 
-    this.autoSaveInterval = setInterval(() => {
+    /*     this.autoSaveInterval = setInterval(() => {
       localStorage.setItem('copages-draft', this.editorContent || '');
       // console.log('Guardado automático');
-    }, 5000);
+    }, 5000); */
   }
 
   ngOnDestroy(): void {
@@ -64,8 +73,16 @@ export class EditorComponent implements OnInit, OnDestroy {
   get wordCount(): number {
     if (!this.editorContent) return 0;
     const decoded = this.decodeHtml(this.editorContent);
-    const text = decoded.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    const text = decoded
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
     return text ? text.split(' ').length : 0;
+  }
+
+    onContentChanged(event: any) {
+    this.internalContent = event.html; 
+    this.contentChange.emit(this.internalContent);
   }
 
   get charCount(): number {

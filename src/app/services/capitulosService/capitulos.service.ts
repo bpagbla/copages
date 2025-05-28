@@ -10,8 +10,22 @@ export class CapitulosService {
 
   constructor(private http: HttpClient) {}
 
+  getListaCapitulos(idLibro: number): Observable<any>{
+    return this.http.get(`${this.baseUrl}/libro/${idLibro}/capitulos`);
+  }
+
   getChapterByLibroOrden(idLibro: number, orden: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/libro/${idLibro}/capitulo/${orden}`);
+  }
+
+  getCapitulosPorLibro(libroId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/libro/${libroId}/capitulos`);
+  }
+
+  getCapitulo(idLibro: number, orden: number): Observable<any> {
+    return this.http.get<any>(
+      `${this.baseUrl}/libro/${idLibro}/capitulo/${orden}`
+    );
   }
 
   getTotalCapitulos(idLibro: number): Observable<any> {

@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS pfcdb;
 CREATE DATABASE pfcdb;
 USE pfcdb;
+
 CREATE TABLE usuario (
   `ID` int NOT NULL AUTO_INCREMENT,
   `EMAIL` varchar(128) COLLATE utf8mb4_general_ci NOT NULL UNIQUE,
@@ -9,11 +10,10 @@ CREATE TABLE usuario (
   `NOMBRE` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
   `APELLIDOS` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
   `PASSWORD` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
-  `PFP` varchar(128)COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'defPfp.webp',
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `email_usuario` (`EMAIL`),
-  UNIQUE KEY `nick_usuario` (`NICK`)
+  `PFP` varchar(128) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'defPfp.webp',
+  PRIMARY KEY (`ID`)
 );
+
 CREATE TABLE libro (
   `ID` int NOT NULL AUTO_INCREMENT,
   `TITULO` varchar(256) COLLATE utf8mb4_general_ci NOT NULL,
@@ -21,6 +21,7 @@ CREATE TABLE libro (
   `DESCRIPCION` varchar(5120) NOT NULL,
   PRIMARY KEY (`ID`)
 );
+
 CREATE TABLE capitulo (
   `ID` int NOT NULL AUTO_INCREMENT,
   `TITULO` varchar(128) NOT NULL,
@@ -29,65 +30,56 @@ CREATE TABLE capitulo (
   `TEXTO` MEDIUMTEXT NOT NULL,
   PRIMARY KEY (`ID`)
 );
+
 CREATE TABLE componeCapLib (
   `ID_CAPITULO` int NOT NULL,
   `ID_LIBRO` int NOT NULL,
   PRIMARY KEY (`ID_CAPITULO`, `ID_LIBRO`),
-  CONSTRAINT `FK_COM_IDL_LIB_ID` FOREIGN KEY (`ID_LIBRO`) REFERENCES `libro` (`ID`),
-  CONSTRAINT `FK_COM_IDC_CAP_ID` FOREIGN KEY (`ID_CAPITULO`) REFERENCES `capitulo` (`ID`)
+  CONSTRAINT `FK_COM_IDL_LIB_ID` FOREIGN KEY (`ID_LIBRO`) REFERENCES `libro` (`ID`) ON DELETE CASCADE,
+  CONSTRAINT `FK_COM_IDC_CAP_ID` FOREIGN KEY (`ID_CAPITULO`) REFERENCES `capitulo` (`ID`) ON DELETE CASCADE
 );
+
 CREATE TABLE publica (
   `ID_USUARIO` INT NOT NULL,
   `ID_LIBRO` INT NOT NULL,
   PRIMARY KEY (`ID_USUARIO`, `ID_LIBRO`),
-  CONSTRAINT `FK_PUB_IDL_LIB_ID` FOREIGN KEY (`ID_LIBRO`) REFERENCES `libro`(`ID`),
-  CONSTRAINT `FK_PUB_IDU_USU_ID` FOREIGN KEY (`ID_USUARIO`) REFERENCES `usuario`(`ID`)
+  CONSTRAINT `FK_PUB_IDL_LIB_ID` FOREIGN KEY (`ID_LIBRO`) REFERENCES `libro`(`ID`) ON DELETE CASCADE,
+  CONSTRAINT `FK_PUB_IDU_USU_ID` FOREIGN KEY (`ID_USUARIO`) REFERENCES `usuario`(`ID`) ON DELETE CASCADE
 );
+
 CREATE TABLE sigue (
   `ID_SEGUIDOR` INT NOT NULL,
   `ID_SEGUIDO` INT NOT NULL,
   PRIMARY KEY (`ID_SEGUIDOR`, `ID_SEGUIDO`),
-  CONSTRAINT `FK_SEGUIDOR` FOREIGN KEY (`ID_SEGUIDOR`) REFERENCES `usuario`(`ID`),
-  CONSTRAINT `FK_SEGUIDO` FOREIGN KEY (`ID_SEGUIDO`) REFERENCES `usuario`(`ID`)
+  CONSTRAINT `FK_SEGUIDOR` FOREIGN KEY (`ID_SEGUIDOR`) REFERENCES `usuario`(`ID`) ON DELETE CASCADE,
+  CONSTRAINT `FK_SEGUIDO` FOREIGN KEY (`ID_SEGUIDO`) REFERENCES `usuario`(`ID`) ON DELETE CASCADE
 );
-/* --Usuarios */
+
+-- Usuarios
 INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE)
-VALUES(
-    'user@gmail.com',
-    'user',
-    'User',
-    'User',
-    '$2b$10$sFS.61wwEU5KnWEqkgJsT.c0qjU3oeOYW8dO5WoUyPLM4qLQtgMfq',
-    'user'
-  );
+VALUES (
+  'user@gmail.com', 'user', 'User', 'User',
+  '$2b$10$sFS.61wwEU5KnWEqkgJsT.c0qjU3oeOYW8dO5WoUyPLM4qLQtgMfq', 'user'
+);
 INSERT INTO usuario(EMAIL, NICK, NOMBRE, APELLIDOS, PASSWORD, ROLE)
-VALUES(
-    'admin@gmail.com',
-    'admin',
-    'Admin',
-    'Admin',
-    '$2b$10$jY9rkCuRzJIej4MjlzOOyO4U3qCvc1dpMvJ0EJxdl/M3oWfV5gZ0i',
-    'admin'
-  );
-/*  seguidores */
-INSERT INTO sigue (ID_SEGUIDO, ID_SEGUIDOR)
-VALUES('1', '2');
-/* --libro */
+VALUES (
+  'admin@gmail.com', 'admin', 'Admin', 'Admin',
+  '$2b$10$jY9rkCuRzJIej4MjlzOOyO4U3qCvc1dpMvJ0EJxdl/M3oWfV5gZ0i', 'admin'
+);
+
+-- Seguidores
+INSERT INTO sigue (ID_SEGUIDO, ID_SEGUIDOR) VALUES (1, 2);
+
+-- Libro
 INSERT INTO libro (TITULO, DESCRIPCION)
-VALUES (
-    'El Viaje de los Sueños',
-    'Una historia épica de descubrimiento y magia.'
-  );
-/* -- capítulo */
+VALUES ('El Viaje de los Sueños', 'Una historia épica de descubrimiento y magia.');
+
+-- Capítulo
 INSERT INTO capitulo (TITULO, ORDEN, TEXTO)
-VALUES (
-    'Capítulo 1: El Despertar',
-    1,
-    '<p>Todo comenzó una mañana brumosa...</p>'
-  );
-/* -- relacion libro - capitulo */
-INSERT INTO componeCapLib (ID_CAPITULO, ID_LIBRO)
-VALUES (1, 1);
-/* -- relacion libro - usuario */
-INSERT INTO publica (ID_USUARIO, ID_LIBRO)
-VALUES (1, 1);
+VALUES ('Capítulo 1: El Despertar', 1, '<p>Todo comenzó una mañana brumosa...</p>');
+
+-- Relación libro - capítulo
+INSERT INTO componeCapLib (ID_CAPITULO, ID_LIBRO) VALUES (1, 1);
+
+-- Relación libro - usuario
+INSERT INTO publica (ID_USUARIO, ID_LIBRO) VALUES (1, 1);

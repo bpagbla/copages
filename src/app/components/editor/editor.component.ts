@@ -56,10 +56,6 @@ export class EditorComponent implements OnInit {
       this.editorContent = '';
     }
 
-    /*     this.autoSaveInterval = setInterval(() => {
-      localStorage.setItem('copages-draft', this.editorContent || '');
-      // console.log('Guardado automático');
-    }, 5000); */
   }
 
   decodeHtml(html: string): string {

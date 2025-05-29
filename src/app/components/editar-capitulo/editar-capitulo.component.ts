@@ -5,6 +5,7 @@ import { Capitulo } from '../../interfaces/capitulo';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EditorComponent } from '../editor/editor.component';
+import { NotificationService } from '../../services/notificationService/notification.service';
 
 @Component({
   selector: 'app-editar-capitulo',
@@ -13,21 +14,39 @@ import { EditorComponent } from '../editor/editor.component';
   styleUrl: './editar-capitulo.component.css',
 })
 export class EditarCapituloComponent implements OnInit {
-guardar() {
-throw new Error('Method not implemented.');
-}
   capitulo: Capitulo | undefined;
 
   constructor(
     private capitulosService: CapitulosService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
     const capituloId = +this.route.snapshot.params['idCapitulo'];
     this.capitulosService.getCapituloPorId(capituloId).subscribe({
-      next: (cap) => this.capitulo = cap,
-      error: (err) => console.error('Error al cargar capítulo:', err)
+      next: (cap) => (this.capitulo = cap),
+      error: (err) => console.error('Error al cargar capítulo:', err),
+    });
+  }
+
+  guardar(): void {
+    if (!this.capitulo) return;
+
+    this.capitulosService.actualizarCapitulo(this.capitulo).subscribe({
+      next: () => {
+        this.notificationService.show({
+            type: 'success',
+            message: 'Capitulo guardada',
+            title: 'Se han guardado los cambios.',
+          });
+        //  redirigir:
+       /*  this.router.navigate(['/editar/obra', nuevoCap.ID]); */
+      },
+      error: (err) => {
+        console.error('Error al guardar capítulo:', err);
+        alert('Error al guardar capítulo');
+      },
     });
   }
 }

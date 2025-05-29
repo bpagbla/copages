@@ -41,11 +41,11 @@ export class CapitulosService {
     );
   }
 
-  editarCapitulo(id: number, capitulo: Capitulo): Observable<any> {
-    return this.http.put(`${this.baseUrl}/capitulo/${id}`, capitulo);
+  actualizarCapitulo(capitulo: Capitulo): Observable<any> {
+    return this.http.put(`${this.baseUrl}/capitulo/${capitulo.ID}`, capitulo);
   }
 
   eliminarCapitulo(idCapitulo: number): Observable<any> {
-     return this.http.delete(`${this.baseUrl}/capitulo/${idCapitulo}`);
+    return this.http.delete(`${this.baseUrl}/capitulo/${idCapitulo}`);
   }
 }

@@ -84,7 +84,7 @@ export class EditarObraComponent {
 
   //editar capitulo
   editarCapitulo(id: number): void {
-    this.router.navigate(['/capitulo/editar', id]);
+    this.router.navigate(['/editar/capitulo', id]);
   }
 
   //borrar capitulo
@@ -114,7 +114,7 @@ nuevoCap(): void {
     ORDEN: ordenNuevo
   }).subscribe({
     next: (nuevoCap) => {
-      this.router.navigate(['/capitulo/editar', nuevoCap.ID]); // redirige al nuevo capítulo
+      this.router.navigate(['/editar/capitulo', nuevoCap.ID]); // redirige al nuevo capítulo
     },
     error: (err) => {
       console.error('Error al crear capítulo:', err);

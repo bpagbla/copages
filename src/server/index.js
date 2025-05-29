@@ -574,7 +574,7 @@ app.post("/libro/:id/capitulo", verifyToken, (req, res) => {
         return res
           .status(500)
           .json({ mensaje: "Error al relacionar capítulo con libro" });
-      res.json({ mensaje: "Capítulo creado", id: capituloId });
+      res.json({ mensaje: "Capítulo creado", ID: capituloId });
     });
   });
 });

@@ -13,7 +13,7 @@ import { BibliotecaComponent } from './components/biblioteca/biblioteca.componen
 import { NotificationsComponent } from './components/notifications/notifications.component';
 import { LecturaComponent } from './components/lectura/lectura.component';
 import { EditarObraComponent } from './components/editar-obra/editar-obra.component';
-/* import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component'; */
+import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component';
 import { EditordashboardComponent } from './components/editordashboard/editordashboard.component';
 
 export const routes: Routes = [
@@ -43,10 +43,16 @@ export const routes: Routes = [
   },
 
   {
-    path:'editar/obra/:idObra',
-    component:EditarObraComponent,
-    canActivate:[authGuard]
+    path: 'editar/obra/:idObra',
+    component: EditarObraComponent,
+    canActivate: [authGuard],
   },
+
+{
+  path: 'capitulo/editar/:idCapitulo',
+  component: EditarCapituloComponent,
+  canActivate: [authGuard],
+},
 
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing
 ];

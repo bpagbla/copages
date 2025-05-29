@@ -1,26 +1,31 @@
-<div class="container">
-  <h3>{{ modoEdicion ? 'Editar' : 'Nuevo' }} Capítulo {{ capitulo.ORDEN ? ' #' + capitulo.ORDEN : '' }}</h3>
+<div class="content" *ngIf="capitulo">
+  <div class="mb-3">
+    <label for="titulo" class="form-label">Título del capítulo</label>
+    <input
+      id="titulo"
+      type="text"
+      class="form-control"
+      [(ngModel)]="capitulo.TITULO"
+      name="titulo"
+      required
+    />
+  </div>
 
-  <form (ngSubmit)="guardarCapitulo()">
-    <div class="mb-3">
-      <label for="titulo" class="form-label">Título del capítulo</label>
-      <input
-        type="text"
-        id="titulo"
-        class="form-control"
-        [(ngModel)]="capitulo.TITULO"
-        name="titulo"
-        required
-      />
-    </div>
+  <div class="mb-3">
+    <label for="texto" class="form-label">Contenido</label>
+    <textarea
+      id="texto"
+      class="form-control"
+      [(ngModel)]="capitulo.TEXTO"
+      name="texto"
+      rows="10"
+      required
+    ></textarea>
+  </div>
 
-    <!-- Editor de texto -->
-    <app-editor [(content)]="capitulo.TEXTO"></app-editor>
+  <button class="btn btn-success" (click)="guardar()">Guardar cambios</button>
+</div>
 
-    <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
-
-    <button type="submit" class="btn btn-success mt-3">
-      {{ modoEdicion ? 'Actualizar' : 'Guardar' }} capítulo
-    </button>
-  </form>
+<div *ngIf="!capitulo">
+  <p>Cargando capítulo...</p>
 </div>

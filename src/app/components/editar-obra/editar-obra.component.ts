@@ -8,10 +8,11 @@ import { NotificationService } from '../../services/notificationService/notifica
 import { Capitulo } from '../../interfaces/capitulo';
 import { Obra } from '../../interfaces/obra';
 import { FormsModule } from '@angular/forms';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-editar-obra',
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, NgIcon],
   templateUrl: './editar-obra.component.html',
   styleUrl: './editar-obra.component.css',
   providers: [ObrasService, CapitulosService],
@@ -25,7 +26,8 @@ export class EditarObraComponent {
     private route: ActivatedRoute,
     private obrasService: ObrasService,
     private capitulosService: CapitulosService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +69,11 @@ export class EditarObraComponent {
         next: () => {
           console.log('Obra actualizada');
           // mostrar notificación
+          this.notificationService.show({
+            type: 'success',
+            message: 'Obra guardada',
+            title: 'Se han guardado los cambios.',
+          });
         },
         error: (err) => {
           console.error('Error al guardar la obra:', err);
@@ -91,4 +98,28 @@ export class EditarObraComponent {
       },
     });
   }
+
+  //crear nuevo capitulo
+nuevoCap(): void {
+  const maxOrden = this.capitulos.length > 0
+    ? Math.max(...this.capitulos.map(c => c.ORDEN))
+    : 0;
+
+  const ordenNuevo = maxOrden + 1;
+
+  this.capitulosService.crearCapitulo(this.obraId, {
+    ID: 0, // se asigna en backend
+    TITULO: '',
+    TEXTO: '',
+    ORDEN: ordenNuevo
+  }).subscribe({
+    next: (nuevoCap) => {
+      this.router.navigate(['/capitulo/editar', nuevoCap.ID]); // redirige al nuevo capítulo
+    },
+    error: (err) => {
+      console.error('Error al crear capítulo:', err);
+    }
+  });
+}
+
 }

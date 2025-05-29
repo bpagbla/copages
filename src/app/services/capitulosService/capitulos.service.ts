@@ -30,10 +30,14 @@ export class CapitulosService {
     return this.http.get(`${this.baseUrl}/libro/${idLibro}/capitulos/count`);
   }
 
-  crearCapitulo(libroId: number, capitulo: Capitulo): Observable<any> {
-    return this.http.post<any>(
+  crearCapitulo(libroId: number, capitulo: Capitulo): Observable<Capitulo> {
+    return this.http.post<Capitulo>(
       `${this.baseUrl}/libro/${libroId}/capitulo`,
-      capitulo
+      {
+        TITULO: capitulo.TITULO,
+        TEXTO: capitulo.TEXTO,
+        ORDEN: capitulo.ORDEN,
+      }
     );
   }
 

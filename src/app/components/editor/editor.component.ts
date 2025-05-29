@@ -1,14 +1,12 @@
 import {
   Component,
   OnInit,
-  OnDestroy,
   Input,
   Output,
   EventEmitter,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
-import { StorageService } from '../../services/storageService/storage.service';
 
 @Component({
   selector: 'app-editor',
@@ -18,11 +16,11 @@ import { StorageService } from '../../services/storageService/storage.service';
   styleUrls: ['./editor.component.css'],
 })
 export class EditorComponent implements OnInit {
-  // Input y Output para binding externo
   @Input() content: string = '';
   @Output() contentChange = new EventEmitter<string>();
   internalContent: string = '';
-  constructor(private storageService: StorageService) {}
+
+  constructor() {}
 
   public quillModules: any = {
     toolbar: {
@@ -36,26 +34,23 @@ export class EditorComponent implements OnInit {
     },
   };
 
-  private autoSaveInterval: any;
-
-  // Getter/setter para emitir cambios hacia fuera y reflejar cambios internos
   get editorContent(): string {
     return this.content;
   }
+
   set editorContent(value: string) {
     this.content = value;
     this.contentChange.emit(value);
   }
 
   ngOnInit(): void {
+    this.editorContent = this.content;
     this.internalContent = this.content;
-    const saved = this.storageService.getItem('copages-draft');
-    if (saved && saved !== 'null') {
-      this.editorContent = saved;
-    } else {
-      this.editorContent = '';
-    }
+  }
 
+  onContentChanged(newContent: string) {
+    this.internalContent = newContent;
+    this.contentChange.emit(newContent);
   }
 
   decodeHtml(html: string): string {
@@ -72,11 +67,6 @@ export class EditorComponent implements OnInit {
       .replace(/\s+/g, ' ')
       .trim();
     return text ? text.split(' ').length : 0;
-  }
-
-  onContentChanged(newContent: string) {
-    this.internalContent = newContent;
-    this.contentChange.emit(newContent);
   }
 
   get charCount(): number {

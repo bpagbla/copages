@@ -1,19 +1,29 @@
 <div class="content">
-  <div *ngIf="chapter">
-    <h2>{{ chapter.titulo }}</h2>
-    <p><strong>Autor:</strong> {{ author?.nick }}</p>
-    <div [innerHTML]="chapter.texto"></div>
+
+  <div *ngIf="capitulo; else noCapitulo">
+    <h2>{{ capitulo.TITULO }}</h2>
+
+    <!-- Mostrar el texto con formato HTML -->
+    <div [innerHTML]="capitulo.TEXTO" class="texto-capitulo"></div>
+
+    <!-- Navegación entre capítulos -->
+    <div class="mt-4 d-flex justify-content-between">
+      <button class="btn" (click)="irAnterior()" [disabled]="orden === 1">
+        ← Capítulo anterior
+      </button>
+
+      <button
+        class="btn"
+        (click)="irSiguiente()"
+        [disabled]="orden === totalCapitulos"
+      >
+        Capítulo siguiente →
+      </button>
+    </div>
   </div>
-  <div *ngIf="!chapter">
+
+  <ng-template #noCapitulo>
     <p>Capítulo no encontrado.</p>
-    <button (click)="volver()" class="btn">Volver</button>
-  </div>
-
-  <button [disabled]="ordenActual === 1" (click)="irAnterior()" class="btn">
-    Anterior
-  </button>
-  <button [disabled]="ordenActual === totalCapitulos" (click)="irSiguiente()" class="btn">
-    Siguiente
-  </button>
+    <button class="btn" (click)="home()">Volver al home</button>
+  </ng-template>
 </div>
-

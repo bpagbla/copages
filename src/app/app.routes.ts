@@ -34,7 +34,7 @@ export const routes: Routes = [
     component: NotificationsComponent,
     canActivate: [authGuard],
   },
-  { path: 'libro/:id/capitulo/:capituloId', component: LecturaComponent },
+  { path: 'libro/:idObra/capitulo/:orden', component: LecturaComponent },
 
   {
     path: 'dashboard',

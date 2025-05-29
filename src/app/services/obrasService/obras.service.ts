@@ -44,4 +44,10 @@ export class ObrasService {
   eliminarDeBiblioteca(libroId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/biblioteca/${libroId}`);
   }
+
+  //comprobar si esta guardado en la biblioteca
+  estaGuardado(libroId: number): Observable<{ guardado: boolean }> {
+  return this.http.get<{ guardado: boolean }>(`${this.baseUrl}/biblioteca/${libroId}`);
+}
+
 }

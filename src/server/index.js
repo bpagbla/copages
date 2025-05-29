@@ -730,7 +730,7 @@ app.put("/obra/:id", verifyToken, (req, res) => {
 });
 
 //guardar libro en biblioteca
-app.post('/biblioteca', verifyToken, (req, res) => {
+app.post("/biblioteca", verifyToken, (req, res) => {
   const userId = req.user.id;
   const { libroId } = req.body;
 
@@ -738,15 +738,54 @@ app.post('/biblioteca', verifyToken, (req, res) => {
 
   conexion.query(sql, [userId, libroId], (err, result) => {
     if (err) {
-      console.error('Error al guardar libro:', err);
-      return res.status(500).json({ message: 'Error en el servidor' });
+      console.error("Error al guardar libro:", err);
+      return res.status(500).json({ message: "Error en el servidor" });
     }
 
     if (result.affectedRows === 0) {
-      return res.status(200).json({ message: 'Ya estaba en tu biblioteca' });
+      return res.status(200).json({ message: "Ya estaba en tu biblioteca" });
     }
 
-    res.status(200).json({ message: 'Libro guardado en tu biblioteca' });
+    res.status(200).json({ message: "Libro guardado en tu biblioteca" });
+  });
+});
+
+//eliminar libro de la biblioteca
+app.delete("/biblioteca/:libroId", verifyToken, (req, res) => {
+  const userId = req.user.id;
+  const libroId = +req.params.libroId;
+
+  const sql = `DELETE FROM guarda WHERE ID_USUARIO = ? AND ID_LIBRO = ?`;
+
+  conexion.query(sql, [userId, libroId], (err, result) => {
+    if (err) {
+      console.error("Error al eliminar de biblioteca:", err);
+      return res.status(500).json({ message: "Error al eliminar libro" });
+    }
+
+    res.status(200).json({ message: "Libro eliminado de biblioteca" });
+  });
+});
+
+//comprobar si un libro está en la biblioteca del usuario
+app.get('/biblioteca/:libroId', verifyToken, (req, res) => {
+  const userId = req.user.id;
+  const libroId = +req.params.libroId;
+
+  const sql = `
+    SELECT 1 FROM guarda
+    WHERE ID_USUARIO = ? AND ID_LIBRO = ?
+    LIMIT 1
+  `;
+
+  conexion.query(sql, [userId, libroId], (err, results) => {
+    if (err) {
+      console.error('Error al comprobar si el libro está guardado:', err);
+      return res.status(500).json({ message: 'Error en el servidor' });
+    }
+
+    const yaGuardado = results.length > 0;
+    res.status(200).json({ guardado: yaGuardado });
   });
 });
 

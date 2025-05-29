@@ -55,11 +55,9 @@
         </ul>
       </div>
 
-      <div
-        *ngIf="capitulos.length === 0"
-        class="d-flex align-items-center justify-content-between gap-3"
-      >
-        <p>No hay capítulos aún.</p>
+      <div class="d-flex justify-content-end mt-3">
+        <p *ngIf="capitulos.length === 0">No hay capítulos aún.</p>
+
         <button
           class="btn btn-funcion d-flex align-items-center gap-2"
           (click)="nuevoCap()"

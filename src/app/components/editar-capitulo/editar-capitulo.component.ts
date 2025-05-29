@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CapitulosService } from '../../services/capitulosService/capitulos.service';
 import { Capitulo } from '../../interfaces/capitulo';
 import { FormsModule } from '@angular/forms';
@@ -15,14 +15,17 @@ import { NotificationService } from '../../services/notificationService/notifica
 })
 export class EditarCapituloComponent implements OnInit {
   capitulo: Capitulo | undefined;
+  idObra!: number;
 
   constructor(
     private capitulosService: CapitulosService,
     private route: ActivatedRoute,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.idObra = +this.route.snapshot.params['idObra'];
     const capituloId = +this.route.snapshot.params['idCapitulo'];
     this.capitulosService.getCapituloPorId(capituloId).subscribe({
       next: (cap) => (this.capitulo = cap),
@@ -36,12 +39,12 @@ export class EditarCapituloComponent implements OnInit {
     this.capitulosService.actualizarCapitulo(this.capitulo).subscribe({
       next: () => {
         this.notificationService.show({
-            type: 'success',
-            message: 'Capitulo guardada',
-            title: 'Se han guardado los cambios.',
-          });
+          type: 'success',
+          message: 'Capitulo guardada',
+          title: 'Se han guardado los cambios.',
+        });
         //  redirigir:
-       /*  this.router.navigate(['/editar/obra', nuevoCap.ID]); */
+        this.router.navigate(['/editar/obra', this.idObra]);
       },
       error: (err) => {
         console.error('Error al guardar capítulo:', err);

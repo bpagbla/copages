@@ -49,7 +49,7 @@ export const routes: Routes = [
   },
 
 {
-  path: 'editar/capitulo/:idCapitulo',
+  path: 'editar/:idObra/capitulo/:idCapitulo',
   component: EditarCapituloComponent,
   canActivate: [authGuard],
 },

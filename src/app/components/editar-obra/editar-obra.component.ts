@@ -84,7 +84,7 @@ export class EditarObraComponent {
 
   //editar capitulo
   editarCapitulo(id: number): void {
-    this.router.navigate(['/editar/capitulo', id]);
+    this.router.navigate(['/editar', this.obraId, 'capitulo', id]);
   }
 
   //borrar capitulo
@@ -100,26 +100,33 @@ export class EditarObraComponent {
   }
 
   //crear nuevo capitulo
-nuevoCap(): void {
-  const maxOrden = this.capitulos.length > 0
-    ? Math.max(...this.capitulos.map(c => c.ORDEN))
-    : 0;
+  nuevoCap(): void {
+    const maxOrden =
+      this.capitulos.length > 0
+        ? Math.max(...this.capitulos.map((c) => c.ORDEN))
+        : 0;
 
-  const ordenNuevo = maxOrden + 1;
+    const ordenNuevo = maxOrden + 1;
 
-  this.capitulosService.crearCapitulo(this.obraId, {
-    ID: 0, // se asigna en backend
-    TITULO: '',
-    TEXTO: '',
-    ORDEN: ordenNuevo
-  }).subscribe({
-    next: (nuevoCap) => {
-      this.router.navigate(['/editar/capitulo', nuevoCap.ID]); // redirige al nuevo capítulo
-    },
-    error: (err) => {
-      console.error('Error al crear capítulo:', err);
-    }
-  });
-}
-
+    this.capitulosService
+      .crearCapitulo(this.obraId, {
+        ID: 0, // se asigna en backend
+        TITULO: '',
+        TEXTO: '',
+        ORDEN: ordenNuevo,
+      })
+      .subscribe({
+        next: (nuevoCap) => {
+          this.router.navigate([
+            '/editar',
+            this.obraId,
+            'capitulo',
+            nuevoCap.ID,
+          ]); // redirige al nuevo capítulo
+        },
+        error: (err) => {
+          console.error('Error al crear capítulo:', err);
+        },
+      });
+  }
 }

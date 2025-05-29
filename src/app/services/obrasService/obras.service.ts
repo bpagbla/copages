@@ -35,4 +35,13 @@ export class ObrasService {
   eliminarObra(id: number): Observable<any> {
     return this.http.delete<any>(`${this.baseUrl}/obra/${id}`);
   }
+
+  // Guardar un libro en la biblioteca personal
+  guardarEnBiblioteca(libroId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/biblioteca`, { libroId });
+  }
+  // eliminar libro de la biblioteca personal
+  eliminarDeBiblioteca(libroId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/biblioteca/${libroId}`);
+  }
 }

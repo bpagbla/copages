@@ -7,6 +7,7 @@ export interface Post {
   title: string; //titulo del libro
   excerpt: string; //descripcion
   date: string;
+  portada: string;
   author: {
     id: number;
     username: string;

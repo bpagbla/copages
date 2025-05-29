@@ -10,7 +10,6 @@ export class PostService {
   constructor() {}
 
   private http = inject(HttpClient);
-  private apiUrl = '/api/posts';
 
   getFeed(): Observable<Post[]> {
     const accessToken = localStorage.getItem('accessToken');

@@ -292,23 +292,28 @@ app.get("/posts", verifyToken, (req, res) => {
   const userId = req.user.id; // ID del usuario autenticado
 
   const sql = `
-    SELECT 
-      l.ID AS id,
-      l.TITULO AS title,
-      SUBSTRING(l.DESCRIPCION, 1, 200) AS excerpt,
-      c.TITULO AS capituloTitulo,
-      c.ORDEN AS capituloOrden,
-      c.FECHA AS date,
-      u.NICK AS username
-    FROM libro l
-    INNER JOIN componeCapLib ccl ON ccl.ID_LIBRO = l.ID
-    INNER JOIN capitulo c ON c.ID = ccl.ID_CAPITULO
-    INNER JOIN publica p ON p.ID_LIBRO = l.ID
-    INNER JOIN usuario u ON u.ID = p.ID_USUARIO
-    INNER JOIN sigue s ON s.ID_SEGUIDO = u.ID
-    WHERE s.ID_SEGUIDOR = ?
-    ORDER BY c.FECHA DESC
-    LIMIT 20;
+   SELECT 
+  l.ID AS id,
+  l.TITULO AS title,
+  l.PORTADA AS portada,
+  SUBSTRING(l.DESCRIPCION, 1, 200) AS excerpt,
+  c.TITULO AS capituloTitulo,
+  c.ORDEN AS capituloOrden,
+  c.FECHA AS date,
+  u.ID AS authorId,                                 
+  u.NICK AS username,
+  u.NOMBRE AS nombre,                              
+  u.APELLIDOS AS apellidos                          
+FROM libro l
+INNER JOIN componeCapLib ccl ON ccl.ID_LIBRO = l.ID
+INNER JOIN capitulo c ON c.ID = ccl.ID_CAPITULO
+INNER JOIN publica p ON p.ID_LIBRO = l.ID
+INNER JOIN usuario u ON u.ID = p.ID_USUARIO
+INNER JOIN sigue s ON s.ID_SEGUIDO = u.ID
+WHERE s.ID_SEGUIDOR = ?
+ORDER BY c.FECHA DESC
+LIMIT 20;
+
   `;
 
   conexion.query(sql, [userId], (err, results) => {
@@ -321,11 +326,15 @@ app.get("/posts", verifyToken, (req, res) => {
       id: row.id,
       title: row.title,
       excerpt: row.excerpt,
+      portada: row.portada,
       capituloTitulo: row.capituloTitulo,
       capituloOrden: row.capituloOrden,
       date: row.date,
       author: {
+        id: row.authorId,
         username: row.username,
+        nombre: row.nombre,
+        apellidos: row.apellidos,
       },
     }));
 
@@ -493,7 +502,9 @@ app.delete("/obra/:id", verifyToken, (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.status(403).json({ mensaje: "No tienes permiso para eliminar esta obra" });
+      return res
+        .status(403)
+        .json({ mensaje: "No tienes permiso para eliminar esta obra" });
     }
 
     // 2. Eliminar primero registros relacionados (opcional: para evitar FK errors si los tienes)
@@ -501,7 +512,9 @@ app.delete("/obra/:id", verifyToken, (req, res) => {
     conexion.query(deletePublicaSql, [obraId], (err2) => {
       if (err2) {
         console.error("Error al eliminar relación en publica:", err2);
-        return res.status(500).json({ mensaje: "Error al eliminar relación publica" });
+        return res
+          .status(500)
+          .json({ mensaje: "Error al eliminar relación publica" });
       }
 
       // 3. Eliminar la obra
@@ -676,7 +689,9 @@ app.put("/obra/:id", verifyToken, (req, res) => {
   const { TITULO, DESCRIPCION } = req.body;
 
   if (!TITULO || !DESCRIPCION) {
-    return res.status(400).json({ mensaje: "Título y descripción son obligatorios." });
+    return res
+      .status(400)
+      .json({ mensaje: "Título y descripción son obligatorios." });
   }
 
   // Verificar que la obra pertenece al usuario
@@ -689,7 +704,9 @@ app.put("/obra/:id", verifyToken, (req, res) => {
     }
 
     if (result.length === 0) {
-      return res.status(403).json({ mensaje: "No tienes permiso para editar esta obra." });
+      return res
+        .status(403)
+        .json({ mensaje: "No tienes permiso para editar esta obra." });
     }
 
     // El usuario es el autor, proceder a actualizar
@@ -698,7 +715,9 @@ app.put("/obra/:id", verifyToken, (req, res) => {
     conexion.query(updateSql, [TITULO, DESCRIPCION, id], (err2, result2) => {
       if (err2) {
         console.error("Error al actualizar la obra:", err2);
-        return res.status(500).json({ mensaje: "Error al actualizar la obra." });
+        return res
+          .status(500)
+          .json({ mensaje: "Error al actualizar la obra." });
       }
 
       if (result2.affectedRows === 0) {
@@ -707,6 +726,27 @@ app.put("/obra/:id", verifyToken, (req, res) => {
 
       res.status(200).json({ mensaje: "Obra actualizada correctamente." });
     });
+  });
+});
+
+//guardar libro en biblioteca
+app.post('/biblioteca', verifyToken, (req, res) => {
+  const userId = req.user.id;
+  const { libroId } = req.body;
+
+  const sql = `INSERT IGNORE INTO guarda (ID_USUARIO, ID_LIBRO) VALUES (?, ?)`;
+
+  conexion.query(sql, [userId, libroId], (err, result) => {
+    if (err) {
+      console.error('Error al guardar libro:', err);
+      return res.status(500).json({ message: 'Error en el servidor' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(200).json({ message: 'Ya estaba en tu biblioteca' });
+    }
+
+    res.status(200).json({ message: 'Libro guardado en tu biblioteca' });
   });
 });
 

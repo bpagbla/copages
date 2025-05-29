@@ -1,5 +1,12 @@
 <article class="card mb-3">
   <div class="card-body">
+    <img
+      *ngIf="post.portada"
+      [src]="'/assets/covers/' + post.portada"
+      alt="Portada del libro"
+      class="img-fluid mb-2"
+      style="max-height: 200px; object-fit: cover"
+    />
     <h5 class="card-title" *ngIf="showDescripcion">{{ post.title }}</h5>
 
     <p *ngIf="showAuthor || showDate" class="card-subtitle mb-2 text-muted">
@@ -26,5 +33,13 @@
     >
       Leer capítulo
     </a>
+
+    <button
+      class="btn btn-outline-success"
+      (click)="addToLibrary()"
+      [disabled]="guardado"
+    >
+      {{ guardado ? "Guardado" : "Guardar" }}
+    </button>
   </div>
 </article>

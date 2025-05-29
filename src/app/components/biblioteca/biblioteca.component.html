@@ -35,10 +35,10 @@
                 Leer
               </button>
               <button
-                class="btn btn-outline-danger btn-sm"
-                (click)="eliminar(libro.ID)"
+                class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center p-2"
+                (click)="eliminar(libro.ID)" matTooltip="Quitar de Biblioteca" matTooltipPosition="after"
               >
-                Eliminar
+                <ng-icon name="bootstrapTrash" class="m-0"></ng-icon>
               </button>
             </div>
           </div>

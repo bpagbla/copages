@@ -10,11 +10,11 @@ import { PerfilPublicoComponent } from './components/perfil-publico/perfil-publi
 
 import { authGuard } from './guards/auth.guard';
 import { BibliotecaComponent } from './components/biblioteca/biblioteca.component';
-import { NotificationsComponent } from './components/notifications/notifications.component';
 import { LecturaComponent } from './components/lectura/lectura.component';
 import { EditarObraComponent } from './components/editar-obra/editar-obra.component';
 import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component';
 import { EditordashboardComponent } from './components/editordashboard/editordashboard.component';
+import { ExploreComponent } from './components/explore/explore.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -30,8 +30,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'notifications',
-    component: NotificationsComponent,
+    path: 'explore',
+    component: ExploreComponent,
     canActivate: [authGuard],
   },
   { path: 'libro/:idObra/capitulo/:orden', component: LecturaComponent },
@@ -48,11 +48,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
-{
-  path: 'editar/:idObra/capitulo/:idCapitulo',
-  component: EditarCapituloComponent,
-  canActivate: [authGuard],
-},
+  {
+    path: 'editar/:idObra/capitulo/:idCapitulo',
+    component: EditarCapituloComponent,
+    canActivate: [authGuard],
+  },
 
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing
 ];

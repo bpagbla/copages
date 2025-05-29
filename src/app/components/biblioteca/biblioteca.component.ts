@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { Obra } from '../../interfaces/obra';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-biblioteca',
   templateUrl: './biblioteca.component.html',
   styleUrl: './biblioteca.component.css',
-  imports: [CommonModule, NgIcon],
+  imports: [CommonModule, NgIcon, MatTooltipModule],
 })
 export class BibliotecaComponent implements OnInit {
  libros: Obra[] = [];

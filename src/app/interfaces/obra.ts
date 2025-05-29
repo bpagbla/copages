@@ -3,4 +3,5 @@ export interface Obra {
   TITULO: string;
   DESCRIPCION: string;
   PORTADA: string;
+  AUTOR: string;
 }

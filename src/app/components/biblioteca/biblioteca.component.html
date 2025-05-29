@@ -37,13 +37,22 @@
               matTooltip="Eliminar de biblioteca"
               (click)="eliminar(libro.ID); $event.stopPropagation()"
             >
-              <ng-icon name="bootstrapBookmarkX" size="1.5rem" class="deleteIcon"></ng-icon>
+              <ng-icon
+                name="bootstrapBookmarkX"
+                size="1.5rem"
+                class="deleteIcon"
+              ></ng-icon>
             </div>
           </div>
 
           <div class="mt-2">
             <h6 class="mb-0">{{ libro.TITULO }}</h6>
-            <small class="text-muted">Autor</small>
+            <small
+              class="text-muted un"
+              [routerLink]="['/profile', libro.AUTOR]"
+            >
+              &#64;{{ libro.AUTOR }}
+            </small>
           </div>
         </div>
       </div>

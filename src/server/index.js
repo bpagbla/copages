@@ -754,16 +754,20 @@ app.post("/biblioteca", verifyToken, (req, res) => {
 app.get('/biblioteca', verifyToken, (req, res) => {
   const userId = req.user.id;
 
-  const sql = `
-    SELECT 
-      l.ID AS ID,
-      l.TITULO AS TITULO,
-      l.DESCRIPCION AS DESCRIPCION,
-      l.PORTADA AS PORTADA
-    FROM guarda g
-    JOIN libro l ON g.ID_LIBRO = l.ID
-    WHERE g.ID_USUARIO = ?
-  `;
+ const sql = `
+  SELECT 
+    l.ID AS ID,
+    l.TITULO AS TITULO,
+    l.DESCRIPCION AS DESCRIPCION,
+    l.PORTADA AS PORTADA,
+    u.NICK AS AUTOR
+  FROM guarda g
+  JOIN libro l ON g.ID_LIBRO = l.ID
+  JOIN publica p ON p.ID_LIBRO = l.ID
+  JOIN usuario u ON u.ID = p.ID_USUARIO
+  WHERE g.ID_USUARIO = ?
+`;
+
 
   conexion.query(sql, [userId], (err, results) => {
     if (err) {

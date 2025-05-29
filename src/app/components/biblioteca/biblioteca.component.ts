@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ObrasService } from '../../services/obrasService/obras.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { Obra } from '../../interfaces/obra';
@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './biblioteca.component.html',
   styleUrl: './biblioteca.component.css',
   standalone: true,
-  imports: [CommonModule, NgIcon, MatTooltipModule, FormsModule],
+  imports: [CommonModule, NgIcon, MatTooltipModule, FormsModule, RouterModule],
 })
 export class BibliotecaComponent implements OnInit {
   libros: Obra[] = [];

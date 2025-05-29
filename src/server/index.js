@@ -750,6 +750,31 @@ app.post("/biblioteca", verifyToken, (req, res) => {
   });
 });
 
+//sacar libros guardados
+app.get('/biblioteca', verifyToken, (req, res) => {
+  const userId = req.user.id;
+
+  const sql = `
+    SELECT 
+      l.ID AS ID,
+      l.TITULO AS TITULO,
+      l.DESCRIPCION AS DESCRIPCION,
+      l.PORTADA AS PORTADA
+    FROM guarda g
+    JOIN libro l ON g.ID_LIBRO = l.ID
+    WHERE g.ID_USUARIO = ?
+  `;
+
+  conexion.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error('Error al obtener la biblioteca:', err);
+      return res.status(500).json({ message: 'Error en el servidor' });
+    }
+
+    res.status(200).json(results); // coincide directamente con la interfaz Obra
+  });
+});
+
 //eliminar libro de la biblioteca
 app.delete("/biblioteca/:libroId", verifyToken, (req, res) => {
   const userId = req.user.id;

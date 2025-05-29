@@ -28,6 +28,7 @@ import {
   bootstrapTools,
   bootstrapList,
   bootstrapSave,
+  bootstrapTrash,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
@@ -78,6 +79,7 @@ export const appConfig: ApplicationConfig = {
       bootstrapTools,
       bootstrapList,
       bootstrapSave,
+      bootstrapTrash
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

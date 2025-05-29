@@ -1,1 +1,49 @@
-<p>biblioteca works!</p>
+<div class="content">
+  <div class="container mt-4">
+    <h2 class="mb-4">Mi Biblioteca</h2>
+
+    <div *ngIf="libros.length === 0" class="text-muted">
+      No tienes libros guardados todavía.
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      <div class="col" *ngFor="let libro of libros">
+        <div
+          class="card h-100 shadow-sm d-flex flex-column justify-content-between"
+        >
+          <img
+            [src]="'/assets/covers/' + libro.PORTADA"
+            class="card-img-top"
+            [alt]="libro.TITULO"
+            style="height: 250px; object-fit: cover"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ libro.TITULO }}</h5>
+            <p class="card-text">
+              <small class="text-muted">
+                {{ libro.DESCRIPCION.slice(0, 70)
+                }}{{ libro.DESCRIPCION.length > 70 ? "..." : "" }}
+              </small>
+            </p>
+          </div>
+          <div class="card-footer bg-white border-0">
+            <div class="d-flex justify-content-between">
+              <button
+                class="btn btn-primary btn-sm"
+                (click)="irALectura(libro.ID)"
+              >
+                Leer
+              </button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                (click)="eliminar(libro.ID)"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

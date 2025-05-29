@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Obra } from '../../interfaces/obra';
+import { Post } from '../../interfaces/post';
 
 @Injectable({
   providedIn: 'root',
@@ -47,7 +48,11 @@ export class ObrasService {
 
   //comprobar si esta guardado en la biblioteca
   estaGuardado(libroId: number): Observable<{ guardado: boolean }> {
-  return this.http.get<{ guardado: boolean }>(`${this.baseUrl}/biblioteca/${libroId}`);
-}
-
+    return this.http.get<{ guardado: boolean }>(
+      `${this.baseUrl}/biblioteca/${libroId}`
+    );
+  }
+  getBiblioteca(): Observable<Obra[]> {
+    return this.http.get<Obra[]>(`${this.baseUrl}/biblioteca`);
+  }
 }

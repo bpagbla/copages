@@ -1,5 +1,6 @@
 <div class="container">
-  <h3>Nuevo Capítulo</h3>
+  <h3>{{ modoEdicion ? 'Editar' : 'Nuevo' }} Capítulo {{ capitulo.ORDEN ? ' #' + capitulo.ORDEN : '' }}</h3>
+
   <form (ngSubmit)="guardarCapitulo()">
     <div class="mb-3">
       <label for="titulo" class="form-label">Título del capítulo</label>
@@ -13,10 +14,13 @@
       />
     </div>
 
-    <!-- editor hijo -->
+    <!-- Editor de texto -->
     <app-editor [(content)]="capitulo.TEXTO"></app-editor>
 
+    <div *ngIf="error" class="alert alert-danger mt-2">{{ error }}</div>
 
-    <button type="submit" class="btn btn-success mt-3">Guardar capítulo</button>
+    <button type="submit" class="btn btn-success mt-3">
+      {{ modoEdicion ? 'Actualizar' : 'Guardar' }} capítulo
+    </button>
   </form>
 </div>

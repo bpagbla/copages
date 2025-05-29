@@ -20,7 +20,7 @@ const connection = require("./DB/db");
 app.use(
   cors({
     origin: "http://localhost:4200",
-    methods: "GET,POST", // Métodos permitidos
+    methods: "GET,POST, PUT, DELETE", // Métodos permitidos
     allowedHeaders: "Content-Type,Authorization", // Encabezados permitidos
     credentials: true, // Permite enviar cookies o credenciales
   })
@@ -374,6 +374,29 @@ app.get("/libro/:id/capitulo/:orden", async (req, res) => {
   });
 });
 
+//endpoint para obtener capitulo por su id
+app.get("/capitulo/:id", verifyToken, (req, res) => {
+  const capituloId = req.params.id;
+  const userId = req.user.id;
+
+  const sql = `
+    SELECT c.* FROM capitulo c
+    INNER JOIN componeCapLib cl ON c.ID = cl.ID_CAPITULO
+    INNER JOIN publica p ON cl.ID_LIBRO = p.ID_LIBRO
+    WHERE c.ID = ? AND p.ID_USUARIO = ?
+  `;
+
+  conexion.query(sql, [capituloId, userId], (err, results) => {
+    if (err) return res.status(500).json({ mensaje: "Error interno" });
+    if (results.length === 0) {
+      return res
+        .status(403)
+        .json({ mensaje: "No tienes acceso a este capítulo" });
+    }
+    res.json(results[0]);
+  });
+});
+
 // endpoint para contar capítulos de un libro
 app.get("/libro/:id/capitulos/count", (req, res) => {
   const { id } = req.params;
@@ -452,25 +475,45 @@ app.get("/obra/:id", verifyToken, (req, res) => {
 });
 
 // DELETE PARA Borrar una obra
-app.delete('/obra/:id', verifyToken, (req, res) => {
+app.delete("/obra/:id", verifyToken, (req, res) => {
   const obraId = req.params.id;
   const userId = req.user.id;
 
-  const checkSql = `
-    SELECT l.ID
-    FROM libro l
-    INNER JOIN publica p ON l.ID = p.ID_LIBRO
-    WHERE l.ID = ? AND p.ID_USUARIO = ?
+  // 1. Verificar si el usuario es el autor de la obra
+  const checkAuthorSql = `
+    SELECT p.ID_LIBRO
+    FROM publica p
+    WHERE p.ID_LIBRO = ? AND p.ID_USUARIO = ?
   `;
 
-  conexion.query(checkSql, [obraId, userId], (err, results) => {
-    if (err) return res.status(500).json({ mensaje: 'Error interno' });
-    if (results.length === 0) return res.status(403).json({ mensaje: 'No autorizado' });
+  conexion.query(checkAuthorSql, [obraId, userId], (err, results) => {
+    if (err) {
+      console.error("Error al verificar autoría:", err);
+      return res.status(500).json({ mensaje: "Error interno del servidor" });
+    }
 
-    const deleteSql = `DELETE FROM libro WHERE ID = ?`;
-    conexion.query(deleteSql, [obraId], (err2) => {
-      if (err2) return res.status(500).json({ mensaje: 'Error al eliminar' });
-      res.json({ mensaje: 'Obra eliminada con éxito' });
+    if (results.length === 0) {
+      return res.status(403).json({ mensaje: "No tienes permiso para eliminar esta obra" });
+    }
+
+    // 2. Eliminar primero registros relacionados (opcional: para evitar FK errors si los tienes)
+    const deletePublicaSql = `DELETE FROM publica WHERE ID_LIBRO = ?`;
+    conexion.query(deletePublicaSql, [obraId], (err2) => {
+      if (err2) {
+        console.error("Error al eliminar relación en publica:", err2);
+        return res.status(500).json({ mensaje: "Error al eliminar relación publica" });
+      }
+
+      // 3. Eliminar la obra
+      const deleteObraSql = `DELETE FROM libro WHERE ID = ?`;
+      conexion.query(deleteObraSql, [obraId], (err3) => {
+        if (err3) {
+          console.error("Error al eliminar obra:", err3);
+          return res.status(500).json({ mensaje: "Error al eliminar la obra" });
+        }
+
+        res.json({ mensaje: "Obra eliminada con éxito" });
+      });
     });
   });
 });
@@ -513,40 +556,160 @@ app.post("/obra", verifyToken, (req, res) => {
 });
 
 //POST PARA CREAR NUEVO CAPITULO
-app.post("/libro/:id/capitulo", (req, res) => {
+app.post("/libro/:id/capitulo", verifyToken, (req, res) => {
   const libroId = req.params.id;
   const { TITULO, TEXTO, ORDEN } = req.body;
 
-  if (!TITULO || !TEXTO || !ORDEN) {
-    return res
-      .status(400)
-      .json({ mensaje: "Todos los campos son obligatorios" });
-  }
+  const insertSql = `INSERT INTO capitulo (TITULO, TEXTO, ORDEN) VALUES (?, ?, ?)`;
+  conexion.query(insertSql, [TITULO, TEXTO, ORDEN || 1], (err, result) => {
+    if (err)
+      return res.status(500).json({ mensaje: "Error al crear capítulo" });
 
-  // 1. Crear el capítulo
-  const sqlCapitulo = `INSERT INTO capitulo (TITULO, TEXTO, ORDEN) VALUES (?, ?, ?)`;
-  conexion.query(sqlCapitulo, [TITULO, TEXTO, ORDEN], (err, capResult) => {
-    if (err) {
-      console.error("Error al crear el capítulo:", err);
-      return res.status(500).json({ mensaje: "Error al crear el capítulo" });
-    }
-    const capituloId = capResult.insertId;
+    const capituloId = result.insertId;
 
-    // 2. Relacionar el capítulo con el libro
-    const sqlRelacion = `INSERT INTO componeCapLib (ID_CAPITULO, ID_LIBRO) VALUES (?, ?)`;
-    conexion.query(sqlRelacion, [capituloId, libroId], (err2) => {
-      if (err2) {
-        console.error("Error al asociar capítulo con libro:", err2);
+    // Relación en componeCapLib
+    const relSql = `INSERT INTO componeCapLib (ID_CAPITULO, ID_LIBRO) VALUES (?, ?)`;
+    conexion.query(relSql, [capituloId, libroId], (err2) => {
+      if (err2)
         return res
           .status(500)
-          .json({ mensaje: "Error al asociar el capítulo al libro" });
-      }
-      res
-        .status(201)
-        .json({ id: capituloId, mensaje: "Capítulo guardado correctamente" });
+          .json({ mensaje: "Error al relacionar capítulo con libro" });
+      res.json({ mensaje: "Capítulo creado", id: capituloId });
     });
   });
 });
+
+//PUT PARA ACTUALIZAR CAPITULO YA EXISTENTE
+app.put("/capitulo/:id", verifyToken, (req, res) => {
+  const capituloId = req.params.id;
+  const userId = req.user.id;
+  const { TITULO, TEXTO, ORDEN } = req.body;
+
+  // 1. Verificar que el capítulo pertenece a una obra del usuario autenticado
+  const checkOwnershipSql = `
+    SELECT c.ID FROM capitulo c
+    INNER JOIN componeCapLib cl ON c.ID = cl.ID_CAPITULO
+    INNER JOIN publica p ON cl.ID_LIBRO = p.ID_LIBRO
+    WHERE c.ID = ? AND p.ID_USUARIO = ?
+  `;
+
+  conexion.query(checkOwnershipSql, [capituloId, userId], (err, results) => {
+    if (err) return res.status(500).json({ mensaje: "Error interno" });
+    if (results.length === 0) {
+      return res
+        .status(403)
+        .json({ mensaje: "No tienes permiso para editar este capítulo" });
+    }
+
+    // 2. Si es del usuario, permitir actualizar
+    const updateSql = `
+      UPDATE capitulo
+      SET TITULO = ?, TEXTO = ?, ORDEN = ?
+      WHERE ID = ?
+    `;
+    conexion.query(
+      updateSql,
+      [TITULO, TEXTO, ORDEN || 1, capituloId],
+      (err2, result) => {
+        if (err2)
+          return res
+            .status(500)
+            .json({ mensaje: "Error al actualizar capítulo" });
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ mensaje: "Capítulo no encontrado" });
+        }
+        res.json({ mensaje: "Capítulo actualizado con éxito" });
+      }
+    );
+  });
+});
+
+//DELETE PARA BORRAR CAPITULO
+app.delete("/capitulo/:id", verifyToken, (req, res) => {
+  const capituloId = req.params.id;
+  const userId = req.user.id;
+
+  // 1. Verificar si el capítulo pertenece a un libro del usuario autenticado
+  const checkOwnershipSql = `
+    SELECT cl.ID_LIBRO FROM capitulo c
+    INNER JOIN componeCapLib cl ON c.ID = cl.ID_CAPITULO
+    INNER JOIN publica p ON cl.ID_LIBRO = p.ID_LIBRO
+    WHERE c.ID = ? AND p.ID_USUARIO = ?
+  `;
+
+  conexion.query(checkOwnershipSql, [capituloId, userId], (err, results) => {
+    if (err) return res.status(500).json({ mensaje: "Error interno" });
+    if (results.length === 0) {
+      return res
+        .status(403)
+        .json({ mensaje: "No tienes permiso para eliminar este capítulo" });
+    }
+
+    // 2. Eliminar primero de componeCapLib (relación libro-capítulo)
+    const deleteRelationSql = `DELETE FROM componeCapLib WHERE ID_CAPITULO = ?`;
+
+    conexion.query(deleteRelationSql, [capituloId], (err2) => {
+      if (err2)
+        return res
+          .status(500)
+          .json({ mensaje: "Error al eliminar la relación con el libro" });
+
+      // 3. Luego eliminar el capítulo en sí
+      const deleteCapituloSql = `DELETE FROM capitulo WHERE ID = ?`;
+
+      conexion.query(deleteCapituloSql, [capituloId], (err3) => {
+        if (err3)
+          return res
+            .status(500)
+            .json({ mensaje: "Error al eliminar el capítulo" });
+
+        res.json({ mensaje: "Capítulo eliminado con éxito" });
+      });
+    });
+  });
+});
+
+//PUT PARA EDITAR OBRA
+app.put("/obra/:id", verifyToken, (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+  const { TITULO, DESCRIPCION } = req.body;
+
+  if (!TITULO || !DESCRIPCION) {
+    return res.status(400).json({ mensaje: "Título y descripción son obligatorios." });
+  }
+
+  // Verificar que la obra pertenece al usuario
+  const checkSql = `SELECT * FROM publica WHERE ID_USUARIO = ? AND ID_LIBRO = ?`;
+
+  conexion.query(checkSql, [userId, id], (err, result) => {
+    if (err) {
+      console.error("Error al verificar propiedad de la obra:", err);
+      return res.status(500).json({ mensaje: "Error en la base de datos." });
+    }
+
+    if (result.length === 0) {
+      return res.status(403).json({ mensaje: "No tienes permiso para editar esta obra." });
+    }
+
+    // El usuario es el autor, proceder a actualizar
+    const updateSql = `UPDATE libro SET TITULO = ?, DESCRIPCION = ? WHERE ID = ?`;
+
+    conexion.query(updateSql, [TITULO, DESCRIPCION, id], (err2, result2) => {
+      if (err2) {
+        console.error("Error al actualizar la obra:", err2);
+        return res.status(500).json({ mensaje: "Error al actualizar la obra." });
+      }
+
+      if (result2.affectedRows === 0) {
+        return res.status(404).json({ mensaje: "Obra no encontrada." });
+      }
+
+      res.status(200).json({ mensaje: "Obra actualizada correctamente." });
+    });
+  });
+});
+
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

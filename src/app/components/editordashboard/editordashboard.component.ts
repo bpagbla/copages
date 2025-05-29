@@ -32,8 +32,25 @@ export class EditordashboardComponent implements OnInit {
   }
 
   editarObra(id: number): void {
-    this.router.navigate(['/obra/editar', id]);
+    this.router.navigate(['/editar/obra', id]);
   }
+
+eliminarObra(id: number): void {
+  const confirmacion = confirm('¿Estás seguro de que quieres eliminar esta obra?');
+  if (!confirmacion) return;
+
+  this.obrasService.eliminarObra(id).subscribe({
+    next: () => {
+      // Actualiza la lista local quitando la obra eliminada
+      this.obras = this.obras.filter((obra) => obra.ID !== id);
+    },
+    error: (err) => {
+      console.error('Error al eliminar la obra:', err);
+      this.error = 'No se pudo eliminar la obra.';
+    }
+  });
+}
+
 
   showModal = false;
   nuevaObra = { TITULO: '', DESCRIPCION: '' };
@@ -43,12 +60,20 @@ export class EditordashboardComponent implements OnInit {
       this.modalError = 'Completa todos los campos';
       return;
     }
+
     this.modalError = '';
+
     this.obrasService.crearObra(this.nuevaObra).subscribe({
       next: (data) => {
         this.showModal = false;
         this.nuevaObra = { TITULO: '', DESCRIPCION: '' };
-        this.router.navigate(['/obra/editar', data.id, 'capitulo', 'nuevo']);
+
+        const nuevaObraId = data?.id; // Captura el ID que devuelve el backend
+        if (nuevaObraId) {
+          this.router.navigate(['/editar/obra', nuevaObraId]);
+        } else {
+          this.modalError = 'Obra creada pero no se pudo obtener el ID.';
+        }
       },
       error: () => {
         this.modalError = 'No se pudo crear la obra.';

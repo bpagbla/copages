@@ -27,7 +27,7 @@ export class LecturaComponent implements OnInit {
     this.idLibro = params['id'];
     this.ordenActual = Number(params['orden']);
 
-    this.chapterService.getChapterByLibroOrden(this.idLibro, this.ordenActual).subscribe({
+    this.chapterService.getCapitulo(this.idLibro, this.ordenActual).subscribe({
       next: data => {
         this.chapter = data.capitulo;
         this.author = data.autor;

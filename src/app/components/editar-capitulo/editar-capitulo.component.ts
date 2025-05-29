@@ -1,81 +1,73 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+/* import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CapitulosService } from '../../services/capitulosService/capitulos.service';
-import { EditorComponent } from '../editor/editor.component';
-import { FormsModule } from '@angular/forms';
 import { Capitulo } from '../../interfaces/capitulo';
+import { FormsModule } from '@angular/forms';
+import { EditorComponent } from '../editor/editor.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-editar-capitulo',
-  standalone: true,
-  imports: [RouterModule, EditorComponent, FormsModule],
+  imports: [RouterModule, FormsModule, EditorComponent, CommonModule],
   templateUrl: './editar-capitulo.component.html',
   styleUrl: './editar-capitulo.component.css',
 })
-export class EditarCapituloComponent {
-  capitulo = {
+export class EditarCapituloComponent implements OnInit {
+  obraId!: number;
+  capituloId?: number;
+  capitulo: Capitulo = {
+    ORDEN: 1,
     TITULO: '',
     TEXTO: '',
-    ORDEN: 1,
   };
-
-  libroId: number;
-  capituloOrden: number;
-  ordenesUsados: number[] = [];
+  error = '';
+  modoEdicion = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private capitulosService: CapitulosService,
-    private cd: ChangeDetectorRef
-  ) {
-    this.libroId = Number(this.route.snapshot.paramMap.get('id'));
-    this.capituloOrden = Number(this.route.snapshot.paramMap.get('orden'));
-  }
-
+    private capitulosService: CapitulosService
+  ) {}
 
   ngOnInit(): void {
-    this.capitulosService
-      .getCapitulo(this.libroId, this.capituloOrden)
-      .subscribe((data) => {
-        setTimeout(() => {
-         this.capitulo.TEXTO = data.capitulo.texto;
-         this.cd.detectChanges();
+    this.route.params.subscribe((params) => {
+      this.obraId = +params['id'];
+      this.capituloId = params['idCapitulo']
+        ? +params['idCapitulo']
+        : undefined;
+
+      if (this.capituloId) {
+        this.modoEdicion = true;
+        this.capitulosService.getCapituloPorId(this.capituloId).subscribe({
+          next: (cap) => {
+            this.capitulo = cap;
+          },
+          error: () => {
+            this.error = 'No se pudo cargar el capítulo.';
+          },
         });
-        this.capitulo.ORDEN = data.capitulo.orden;
-        this.capitulo.TITULO = data.capitulo.titulo;
-      });
-
-    this.capitulosService
-      .getCapitulosPorLibro(this.libroId)
-      .subscribe((caps) => {
-        this.ordenesUsados = caps.map((c: Capitulo) => c.ORDEN);
-
-        // Sugerir el siguiente número disponible
-        let siguiente = 1;
-        while (this.ordenesUsados.includes(siguiente)) {
-          siguiente++;
-        }
-        this.capitulo.ORDEN = siguiente;
-
-        // Aquí forzamos la actualización del binding para evitar ExpressionChangedAfterItHasBeenCheckedError
-        this.cd.detectChanges();
-      });
-  }
-
-  guardarCapitulo() {
-    this.capitulosService.crearCapitulo(this.libroId, this.capitulo).subscribe({
-      next: () => {
-        this.router.navigate(['/obra/editar', this.libroId]);
-      },
-      error: (err) => {
-        console.log('this.capitulo:', this.capitulo);
-        console.error('Error al guardar el capítulo:', err);
-        alert(
-          'Error al guardar el capítulo: ' +
-            (err.error?.mensaje || err.message || '')
-        );
-      },
+      }
     });
   }
+
+  guardarCapitulo(): void {
+    if (this.modoEdicion && this.capituloId) {
+      // UPDATE
+      this.capitulosService
+        .editarCapitulo(this.capituloId, this.capitulo)
+        .subscribe({
+          next: () => this.router.navigate(['/obra/editar', this.obraId]),
+          error: () => (this.error = 'Error al actualizar el capítulo.'),
+        });
+    } else {
+      // CREATE
+      this.capitulosService
+        .crearCapitulo(this.obraId, this.capitulo)
+        .subscribe({
+          next: () => this.router.navigate(['/obra/editar', this.obraId]),
+          error: () => (this.error = 'Error al crear el capítulo.'),
+        });
+    }
+  }
 }
+ */

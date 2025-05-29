@@ -5,77 +5,90 @@ import { CapitulosService } from '../../services/capitulosService/capitulos.serv
 
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../services/notificationService/notification.service';
+import { Capitulo } from '../../interfaces/capitulo';
+import { Obra } from '../../interfaces/obra';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-editar-obra',
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, FormsModule],
   templateUrl: './editar-obra.component.html',
   styleUrl: './editar-obra.component.css',
   providers: [ObrasService, CapitulosService],
 })
 export class EditarObraComponent {
-  obra: any;
-  capitulos: any[] = [];
-  obraId: number;
+  obra: Obra | undefined;
+  obraId: number = 0;
+  capitulos: Capitulo[] = [];
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private obrasService: ObrasService,
-    private notificationService: NotificationService,
-    private capitulosService: CapitulosService
-  ) {
-    this.obraId = Number(this.route.snapshot.paramMap.get('id'));
-  }
+    private capitulosService: CapitulosService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-  this.route.params.subscribe(params => {
-    this.obraId = +params['id'];
-
-    this.obrasService.getObraPorId(this.obraId).subscribe({
-      next: (obraData) => {
-        this.obra = obraData;
-
-        this.capitulosService.getListaCapitulos(this.obraId).subscribe({
-          next: (capitulosData) => {
-            this.capitulos = capitulosData;
-          },
-          error: (err) => {
-            console.error('Error al cargar capítulos:', err);
-          }
-        });
-      },
-      error: (err) => {
-        if (err.status === 403) {
-          this.notificationService.show({
-            type: 'error',
-            title: 'Acceso denegado',
-            message: 'No tienes permiso para editar esta obra.'
-          });
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.notificationService.show({
-            type: 'error',
-            title: 'Error',
-            message: 'Error al cargar la obra.'
-          });
-          console.error(err);
-        }
-      }
+    this.route.params.subscribe((params) => {
+      this.obraId = +params['idObra']; // el + convierte a número
+      this.obtenerObra(this.obraId);
+      this.obtenerCapitulos(this.obraId);
     });
-  });
-}
-
-  editarCapitulo(ordenCapitulo: number): void {
-    this.router.navigate([
-      '/obra/editar',
-      this.obraId,
-      'capitulo',
-      ordenCapitulo,
-    ]);
   }
 
-  nuevoCapitulo(): void {
-    this.router.navigate(['/obra/editar', this.obraId, 'capitulo', 'nuevo']);
+  obtenerObra(id: number): void {
+    this.obrasService.getObraPorId(id).subscribe({
+      next: (data: Obra) => {
+        this.obra = data;
+        console.log(this.obra);
+      },
+      error: (err) => {
+        console.log('no');
+        console.error('Error al cargar la obra:', err);
+      },
+    });
+  }
+
+  obtenerCapitulos(id: number): void {
+    this.capitulosService.getListaCapitulos(id).subscribe({
+      next: (data: Capitulo[]) => {
+        this.capitulos = data;
+      },
+      error: (err) => {
+        console.error('Error al cargar los capítulos:', err);
+      },
+    });
+  }
+
+  //guardar cambios al editar la obra
+  guardarCambios() {
+    if (this.obra) {
+      this.obrasService.editarObra(this.obraId, this.obra).subscribe({
+        next: () => {
+          console.log('Obra actualizada');
+          // mostrar notificación
+        },
+        error: (err) => {
+          console.error('Error al guardar la obra:', err);
+        },
+      });
+    }
+  }
+
+  //editar capitulo
+  editarCapitulo(id: number): void {
+    this.router.navigate(['/capitulo/editar', id]);
+  }
+
+  //borrar capitulo
+  borrarCapitulo(id: number): void {
+    this.capitulosService.eliminarCapitulo(id).subscribe({
+      next: () => {
+        this.capitulos = this.capitulos.filter((c) => c.ID !== id); // actualiza la vista
+      },
+      error: (err) => {
+        console.error('Error al borrar el capítulo:', err);
+      },
+    });
   }
 }

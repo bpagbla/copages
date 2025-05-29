@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
+import { StorageService } from '../../services/storageService/storage.service';
 
 @Component({
   selector: 'app-editor',
@@ -21,6 +22,7 @@ export class EditorComponent implements OnInit, OnDestroy {
   @Input() content: string = '';
   @Output() contentChange = new EventEmitter<string>();
   internalContent: string = '';
+  constructor(private storageService: StorageService) {}
 
   public quillModules: any = {
     toolbar: {
@@ -47,7 +49,7 @@ export class EditorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.internalContent = this.content;
-    const saved = localStorage.getItem('copages-draft');
+    const saved = this.storageService.getItem('copages-draft');
     if (saved && saved !== 'null') {
       this.editorContent = saved;
     } else {
@@ -80,8 +82,8 @@ export class EditorComponent implements OnInit, OnDestroy {
     return text ? text.split(' ').length : 0;
   }
 
-    onContentChanged(event: any) {
-    this.internalContent = event.html; 
+  onContentChanged(event: any) {
+    this.internalContent = event.html;
     this.contentChange.emit(this.internalContent);
   }
 

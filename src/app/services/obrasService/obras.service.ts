@@ -27,7 +27,7 @@ export class ObrasService {
   }
 
   // Editar una obra existente
-  editarObra(id: number, obra: any): Observable<any> {
+  editarObra(id: number, obra: Obra): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}/obra/${id}`, obra);
   }
 

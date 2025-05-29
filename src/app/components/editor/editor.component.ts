@@ -17,7 +17,7 @@ import { StorageService } from '../../services/storageService/storage.service';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css'],
 })
-export class EditorComponent implements OnInit, OnDestroy {
+export class EditorComponent implements OnInit {
   // Input y Output para binding externo
   @Input() content: string = '';
   @Output() contentChange = new EventEmitter<string>();
@@ -62,10 +62,6 @@ export class EditorComponent implements OnInit, OnDestroy {
     }, 5000); */
   }
 
-  ngOnDestroy(): void {
-    clearInterval(this.autoSaveInterval);
-  }
-
   decodeHtml(html: string): string {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = html;
@@ -82,9 +78,9 @@ export class EditorComponent implements OnInit, OnDestroy {
     return text ? text.split(' ').length : 0;
   }
 
-  onContentChanged(event: any) {
-    this.internalContent = event.html;
-    this.contentChange.emit(this.internalContent);
+  onContentChanged(newContent: string) {
+    this.internalContent = newContent;
+    this.contentChange.emit(newContent);
   }
 
   get charCount(): number {

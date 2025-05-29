@@ -4,10 +4,11 @@ import { CapitulosService } from '../../services/capitulosService/capitulos.serv
 import { Capitulo } from '../../interfaces/capitulo';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { EditorComponent } from '../editor/editor.component';
 
 @Component({
   selector: 'app-editar-capitulo',
-  imports: [RouterModule, FormsModule, CommonModule],
+  imports: [RouterModule, FormsModule, CommonModule, EditorComponent],
   templateUrl: './editar-capitulo.component.html',
   styleUrl: './editar-capitulo.component.css',
 })
@@ -23,7 +24,7 @@ throw new Error('Method not implemented.');
   ) {}
 
   ngOnInit(): void {
-    const capituloId = +this.route.snapshot.params['id'];
+    const capituloId = +this.route.snapshot.params['idCapitulo'];
     this.capitulosService.getCapituloPorId(capituloId).subscribe({
       next: (cap) => this.capitulo = cap,
       error: (err) => console.error('Error al cargar capítulo:', err)

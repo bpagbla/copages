@@ -12,15 +12,9 @@
   </div>
 
   <div class="mb-3">
-    <label for="texto" class="form-label">Contenido</label>
-    <textarea
-      id="texto"
-      class="form-control"
-      [(ngModel)]="capitulo.TEXTO"
-      name="texto"
-      rows="10"
-      required
-    ></textarea>
+<app-editor
+  [(content)]="capitulo.TEXTO"
+></app-editor>
   </div>
 
   <button class="btn btn-success" (click)="guardar()">Guardar cambios</button>

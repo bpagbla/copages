@@ -1,0 +1,4 @@
+.card-newBook:hover{
+background-color: var(--dark-orange);
+color: var(--white);
+}

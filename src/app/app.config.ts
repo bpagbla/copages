@@ -29,6 +29,9 @@ import {
   bootstrapList,
   bootstrapSave,
   bootstrapTrash,
+  bootstrapSearch,
+  bootstrapBookmarkX,
+  bootstrapBookmarkPlus,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
@@ -79,7 +82,10 @@ export const appConfig: ApplicationConfig = {
       bootstrapTools,
       bootstrapList,
       bootstrapSave,
-      bootstrapTrash
+      bootstrapTrash,
+      bootstrapSearch,
+      bootstrapBookmarkX,
+      bootstrapBookmarkPlus,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

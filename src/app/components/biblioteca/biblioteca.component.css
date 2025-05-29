@@ -1,0 +1,28 @@
+.book-card {
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.book-card:hover {
+  transform: scale(1.03);
+}
+
+input::placeholder {
+  color: #999;
+}
+
+.searchIcon {
+  color: var(--blue);
+}
+
+
+
+.icono{
+    background-color: var(--white);
+    color: var(--black);
+}
+
+.icono:hover{
+background-color: var(--dark-orange);
+    color: var(--white);
+}

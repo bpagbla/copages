@@ -5,15 +5,18 @@ import { CommonModule } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { Obra } from '../../interfaces/obra';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-biblioteca',
   templateUrl: './biblioteca.component.html',
   styleUrl: './biblioteca.component.css',
-  imports: [CommonModule, NgIcon, MatTooltipModule],
+  standalone: true,
+  imports: [CommonModule, NgIcon, MatTooltipModule, FormsModule],
 })
 export class BibliotecaComponent implements OnInit {
- libros: Obra[] = [];
+  libros: Obra[] = [];
+  filtro: string = '';
 
   constructor(private obrasService: ObrasService, private router: Router) {}
 
@@ -28,8 +31,15 @@ export class BibliotecaComponent implements OnInit {
     });
   }
 
-  irALectura(libroId: number) {
-    this.router.navigate(['/libro', libroId, 'capitulo', 1]); // por defecto al primer capítulo
+  get librosFiltrados(): Obra[] {
+    const f = this.filtro.toLowerCase();
+    return this.libros.filter((libro) =>
+      libro.TITULO.toLowerCase().includes(f)
+    );
+  }
+
+  irALectura(libroId: number): void {
+    this.router.navigate(['/libro', libroId, 'capitulo', 1]);
   }
 
   eliminar(libroId: number): void {

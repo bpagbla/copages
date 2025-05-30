@@ -32,7 +32,6 @@ export const routes: Routes = [
   {
     path: 'explore',
     component: ExploreComponent,
-    canActivate: [authGuard],
   },
   { path: 'libro/:idObra/capitulo/:orden', component: LecturaComponent },
 

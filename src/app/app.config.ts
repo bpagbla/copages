@@ -32,6 +32,7 @@ import {
   bootstrapSearch,
   bootstrapBookmarkX,
   bootstrapBookmarkPlus,
+  bootstrapCompass,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
@@ -86,6 +87,7 @@ export const appConfig: ApplicationConfig = {
       bootstrapSearch,
       bootstrapBookmarkX,
       bootstrapBookmarkPlus,
+      bootstrapCompass,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

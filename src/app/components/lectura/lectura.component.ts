@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CapitulosService } from '../../services/capitulosService/capitulos.service';
 import { CommonModule } from '@angular/common';
 import { Capitulo } from '../../interfaces/capitulo';
+import { AuthService } from '../../services/authService/auth.service';
+import { ObrasService } from '../../services/obrasService/obras.service';
 
 @Component({
   selector: 'app-lectura',
@@ -15,11 +17,14 @@ export class LecturaComponent implements OnInit {
   idObra: number = 0;
   orden: number = 1;
   totalCapitulos: number = 0;
+  guardado: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private chapterService: CapitulosService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private obrasService: ObrasService
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +35,32 @@ export class LecturaComponent implements OnInit {
       this.cargarCapitulo(this.idObra, this.orden);
       this.obtenerTotalCapitulos(this.idObra);
     });
+
+    if (this.estaLoggeado) {
+      this.comprobarGuardado();
+    }
+  }
+
+  comprobarGuardado() {
+    this.obrasService.estaGuardado(this.idObra).subscribe({
+      next: (res) => (this.guardado = res.guardado),
+      error: (err) => console.error('Error comprobando guardado', err),
+    });
+  }
+  guardarLibro() {
+    if (!this.guardado) {
+      this.obrasService.guardarEnBiblioteca(this.idObra).subscribe({
+        next: () => {
+          this.guardado = true;
+          console.log('Libro guardado correctamente');
+        },
+        error: (err) => console.error('Error al guardar libro', err),
+      });
+    }
+  }
+
+  get estaLoggeado(): boolean {
+    return this.authService.isLoggedIn;
   }
 
   cargarCapitulo(idObra: number, orden: number): void {
@@ -44,6 +75,27 @@ export class LecturaComponent implements OnInit {
         };
       },
     });
+  }
+  toggleBiblioteca() {
+    if (!this.estaLoggeado) return;
+
+    if (this.guardado) {
+      this.obrasService.eliminarDeBiblioteca(this.idObra).subscribe({
+        next: () => {
+          this.guardado = false;
+          console.log('Libro eliminado de la biblioteca');
+        },
+        error: (err) => console.error('Error al eliminar libro', err),
+      });
+    } else {
+      this.obrasService.guardarEnBiblioteca(this.idObra).subscribe({
+        next: () => {
+          this.guardado = true;
+          console.log('Libro guardado en la biblioteca');
+        },
+        error: (err) => console.error('Error al guardar libro', err),
+      });
+    }
   }
 
   obtenerTotalCapitulos(idObra: number): void {

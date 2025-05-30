@@ -55,4 +55,8 @@ export class ObrasService {
   getBiblioteca(): Observable<Obra[]> {
     return this.http.get<Obra[]>(`${this.baseUrl}/biblioteca`);
   }
+
+  getObrasRecientes(): Observable<Obra[]> {
+    return this.http.get<Obra[]>(`${this.baseUrl}/obras-recientes`);
+  }
 }

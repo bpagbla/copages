@@ -6,3 +6,7 @@
 .btn:hover {
   background-color: var(--dark-orange);
 }
+
+.content-noLog {
+  margin: 5rem 2rem;
+}

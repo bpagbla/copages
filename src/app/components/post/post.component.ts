@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { Post } from '../../interfaces/post';
 import { ObrasService } from '../../services/obrasService/obras.service';
 import { NotificationService } from '../../services/notificationService/notification.service';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  imports: [NgIf, CommonModule, RouterModule],
+  imports: [NgIf, CommonModule, RouterModule, NgIcon],
 })
 export class PostComponent implements OnInit {
   @Input() post!: Post;
@@ -18,6 +19,8 @@ export class PostComponent implements OnInit {
   @Input() showDate = true;
   @Input() showTituloCap = true;
   @Input() showOrdenCap = true;
+  @Input() index: number = 0;
+
 
   guardado = false;
 

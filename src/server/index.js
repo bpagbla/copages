@@ -303,7 +303,8 @@ app.get("/posts", verifyToken, (req, res) => {
   u.ID AS authorId,                                 
   u.NICK AS username,
   u.NOMBRE AS nombre,                              
-  u.APELLIDOS AS apellidos                          
+  u.APELLIDOS AS apellidos,
+  u.PFP AS pfp                          
 FROM libro l
 INNER JOIN componeCapLib ccl ON ccl.ID_LIBRO = l.ID
 INNER JOIN capitulo c ON c.ID = ccl.ID_CAPITULO
@@ -335,6 +336,7 @@ LIMIT 20;
         username: row.username,
         nombre: row.nombre,
         apellidos: row.apellidos,
+        pfp: row.pfp,
       },
     }));
 
@@ -751,10 +753,10 @@ app.post("/biblioteca", verifyToken, (req, res) => {
 });
 
 //sacar libros guardados
-app.get('/biblioteca', verifyToken, (req, res) => {
+app.get("/biblioteca", verifyToken, (req, res) => {
   const userId = req.user.id;
 
- const sql = `
+  const sql = `
   SELECT 
     l.ID AS ID,
     l.TITULO AS TITULO,
@@ -768,11 +770,10 @@ app.get('/biblioteca', verifyToken, (req, res) => {
   WHERE g.ID_USUARIO = ?
 `;
 
-
   conexion.query(sql, [userId], (err, results) => {
     if (err) {
-      console.error('Error al obtener la biblioteca:', err);
-      return res.status(500).json({ message: 'Error en el servidor' });
+      console.error("Error al obtener la biblioteca:", err);
+      return res.status(500).json({ message: "Error en el servidor" });
     }
 
     res.status(200).json(results); // coincide directamente con la interfaz Obra
@@ -797,7 +798,7 @@ app.delete("/biblioteca/:libroId", verifyToken, (req, res) => {
 });
 
 //comprobar si un libro está en la biblioteca del usuario
-app.get('/biblioteca/:libroId', verifyToken, (req, res) => {
+app.get("/biblioteca/:libroId", verifyToken, (req, res) => {
   const userId = req.user.id;
   const libroId = +req.params.libroId;
 
@@ -809,12 +810,41 @@ app.get('/biblioteca/:libroId', verifyToken, (req, res) => {
 
   conexion.query(sql, [userId, libroId], (err, results) => {
     if (err) {
-      console.error('Error al comprobar si el libro está guardado:', err);
-      return res.status(500).json({ message: 'Error en el servidor' });
+      console.error("Error al comprobar si el libro está guardado:", err);
+      return res.status(500).json({ message: "Error en el servidor" });
     }
 
     const yaGuardado = results.length > 0;
     res.status(200).json({ guardado: yaGuardado });
+  });
+});
+
+//sacar obras actualizadas recientemente
+app.get('/obras-recientes', (req, res) => {
+  const sql = `
+    SELECT 
+      l.ID, 
+      ANY_VALUE(l.TITULO) AS TITULO, 
+      ANY_VALUE(l.DESCRIPCION) AS DESCRIPCION, 
+      ANY_VALUE(l.PORTADA) AS PORTADA, 
+      ANY_VALUE(u.NICK) AS AUTOR
+    FROM libro l
+    JOIN publica p ON l.ID = p.ID_LIBRO
+    JOIN usuario u ON u.ID = p.ID_USUARIO
+    JOIN componeCapLib ccl ON l.ID = ccl.ID_LIBRO
+    JOIN capitulo c ON ccl.ID_CAPITULO = c.ID
+    GROUP BY l.ID
+    ORDER BY MAX(c.FECHA) DESC
+    LIMIT 10
+  `;
+
+  conexion.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error al obtener obras recientes:", err);
+      return res.status(500).json({ message: "Error en el servidor" });
+    }
+
+    res.status(200).json(results);
   });
 });
 

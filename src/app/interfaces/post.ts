@@ -13,6 +13,7 @@ export interface Post {
     username: string;
     nombre: string;
     apellidos: string;
+    pfp: string;
   };
   capituloTitulo: string;
   capituloOrden: number;

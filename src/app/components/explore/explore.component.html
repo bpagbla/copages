@@ -1,1 +1,25 @@
-<p>explore works!</p>
+<div class="content">
+  <div class="explore-container">
+    <h2 class="mb-4">Últimas actualizaciones</h2>
+
+    <div class="grid">
+      <div
+        *ngFor="let obra of obrasRecientes"
+        class="book-card"
+        [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
+      >
+        <div class="obra-img-wrapper">
+          <img
+            [src]="'/assets/covers/' + obra.PORTADA"
+            [alt]="obra.TITULO"
+            class="obra-img"
+          />
+        </div>
+        <h5 class="mt-2">{{ obra.TITULO }}</h5>
+        <small class="text-muted un" [routerLink]="['/profile', obra.AUTOR]">
+          {{ "@" + obra.AUTOR }}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,4 @@
-<div class="content">
-
+<div [ngClass]="{ content: estaLoggeado, 'content-noLog': !estaLoggeado }">
   <div *ngIf="capitulo; else noCapitulo">
     <h2>{{ capitulo.TITULO }}</h2>
 
@@ -11,7 +10,13 @@
       <button class="btn" (click)="irAnterior()" [disabled]="orden === 1">
         ← Capítulo anterior
       </button>
-
+      <button
+        class="btn d-flex justify-content-end"
+        [disabled]="!estaLoggeado"
+        (click)="toggleBiblioteca()"
+      >
+        {{ guardado ? "Eliminar de biblioteca" : "Guardar en biblioteca" }}
+      </button>
       <button
         class="btn"
         (click)="irSiguiente()"

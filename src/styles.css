@@ -50,6 +50,13 @@ body {
   margin-left: 2.5rem;
 }
 
+@media (max-width: 767px) {
+  .content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}
+
 .admin-color{
   background-color: var(--yellow);
 }

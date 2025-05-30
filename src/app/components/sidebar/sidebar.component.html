@@ -1,8 +1,14 @@
 <!-- Navbar para móviles -->
-<nav class="d-flex d-md-none justify-content-between align-items-center p-2 border-bottom bg-light">
+<nav
+  class="d-flex d-md-none justify-content-between align-items-center p-2 border-bottom bg-light"
+>
   <img src="assets/logo.webp" alt="logo" width="50" />
 
-  <button class="btn btn-outline-secondary" (click)="toggleMenu()" aria-label="Abrir menú">
+  <button
+    class="btn btn-outline-secondary"
+    (click)="toggleMenu()"
+    aria-label="Abrir menú"
+  >
     <ng-icon name="bootstrapList" size="1.5rem"></ng-icon>
   </button>
 </nav>
@@ -14,23 +20,51 @@
   tabindex="0"
 >
   <div class="navLinks d-flex flex-column gap-3 p-3 flex-grow-1">
-    <a routerLink="/home" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Home" matTooltipPosition="right">
+    <a
+      routerLink="/home"
+      routerLinkActive="active"
+      (click)="toggleMenu()"
+      matTooltip="Home"
+      matTooltipPosition="right"
+    >
       <ng-icon name="bootstrapHouseHeart" size="1.5rem"></ng-icon> Home
     </a>
-    <a routerLink="/biblioteca" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Biblioteca" matTooltipPosition="right">
+    <a
+      routerLink="/biblioteca"
+      routerLinkActive="active"
+      (click)="toggleMenu()"
+      matTooltip="Biblioteca"
+      matTooltipPosition="right"
+    >
       <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon> Biblioteca
     </a>
-    <a routerLink="/dashboard" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Escribir" matTooltipPosition="right">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      (click)="toggleMenu()"
+      matTooltip="Escribir"
+      matTooltipPosition="right"
+    >
       <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon> Escribir
     </a>
-    <a routerLink="/notifications" routerLinkActive="active" (click)="toggleMenu()" matTooltip="Notificaciones" matTooltipPosition="right">
-      <ng-icon name="bootstrapMailbox" size="1.5rem"></ng-icon> Notificaciones
+    <a
+      routerLink="/explore"
+      routerLinkActive="active"
+      matTooltip="Explorar"
+      matTooltipPosition="after"
+    >
+      <ng-icon name="bootstrapCompass" size="1.5rem"></ng-icon>
     </a>
   </div>
 
   <!-- PERFIL + LOGOUT dentro del menú móvil -->
   <div class="profile p-3 border-top">
-    <a routerLink="/profile" routerLinkActive="active" class="d-flex align-items-center gap-2 mb-3" (click)="toggleMenu()">
+    <a
+      routerLink="/profile"
+      routerLinkActive="active"
+      class="d-flex align-items-center gap-2 mb-3"
+      (click)="toggleMenu()"
+    >
       <ng-icon
         [name]="
           userRole === 'admin'
@@ -41,34 +75,62 @@
       ></ng-icon>
       {{ userNick || "cargando..." }}
     </a>
-    <a routerLink="/" (click)="logout(); toggleMenu()" class="d-flex align-items-center gap-2 text-danger">
+    <a
+      routerLink="/"
+      (click)="logout(); toggleMenu()"
+      class="d-flex align-items-center gap-2 text-danger"
+    >
       <ng-icon name="bootstrapPower" size="1.5rem"></ng-icon> Logout
     </a>
   </div>
 </div>
 
-
 <!-- Sidebar para escritorio -->
 <div class="sidebar d-none d-md-flex justify-content-between flex-column">
-  <img src="assets/logo.webp" alt="logo" width="50"/>
+  <img src="assets/logo.webp" alt="logo" width="50" />
 
   <div class="navLinks">
-    <a routerLink="/home" routerLinkActive="active" matTooltip="Home" matTooltipPosition="after">
+    <a
+      routerLink="/home"
+      routerLinkActive="active"
+      matTooltip="Home"
+      matTooltipPosition="after"
+    >
       <ng-icon name="bootstrapHouseHeart" size="1.5rem"></ng-icon>
     </a>
-    <a routerLink="/biblioteca" routerLinkActive="active" matTooltip="Biblioteca" matTooltipPosition="after">
+    <a
+      routerLink="/biblioteca"
+      routerLinkActive="active"
+      matTooltip="Biblioteca"
+      matTooltipPosition="after"
+    >
       <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon>
     </a>
-    <a routerLink="/dashboard" routerLinkActive="active" matTooltip="Escribir" matTooltipPosition="after">
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      matTooltip="Escribir"
+      matTooltipPosition="after"
+    >
       <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon>
     </a>
-    <a routerLink="/explore" routerLinkActive="active" matTooltip="Notificaciones" matTooltipPosition="after">
-      <ng-icon name="bootstrapMailbox" size="1.5rem"></ng-icon>
+    <a
+      routerLink="/explore"
+      routerLinkActive="active"
+      matTooltip="Explorar"
+      matTooltipPosition="after"
+    >
+      <ng-icon name="bootstrapCompass" size="1.5rem"></ng-icon>
     </a>
   </div>
 
   <div class="logoutLink">
-    <a routerLink="/" (click)="logout()" matTooltip="Logout" matTooltipPosition="after">
+    <a
+      routerLink="/"
+      (click)="logout()"
+      matTooltip="Logout"
+      matTooltipPosition="after"
+    >
       <ng-icon name="bootstrapPower" size="1.5rem"></ng-icon>
     </a>
   </div>

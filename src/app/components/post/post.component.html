@@ -1,45 +1,88 @@
-<article class="card mb-3">
-  <div class="card-body">
+<div class="d-flex align-items-start gap-3 mb-4">
+  <!-- Avatar a la izquierda -->
+  <a
+    [routerLink]="['/profile', post.author.username]"
+    class="flex-shrink-0 mt-2"
+  >
     <img
-      *ngIf="post.portada"
-      [src]="'/assets/covers/' + post.portada"
-      alt="Portada del libro"
-      class="img-fluid mb-2"
-      style="max-height: 200px; object-fit: cover"
+      [src]="'/assets/pfpics/' + post.author.pfp"
+      alt="Foto de perfil"
+      class="rounded-circle border border-white img-fluid"
+      style="max-width: 2rem; height: auto; object-fit: cover"
     />
-    <h5 class="card-title" *ngIf="showDescripcion">{{ post.title }}</h5>
+  </a>
 
-    <p *ngIf="showAuthor || showDate" class="card-subtitle mb-2 text-muted">
-      <span *ngIf="showAuthor"
-        >Por
-        <a [routerLink]="['/profile', post.author.username]">{{
-          post.author.username
-        }}</a></span
-      >
-      <span *ngIf="showAuthor && showDate"> - </span>
-      <span *ngIf="showDate">{{ post.date | date : "mediumDate" }}</span>
-    </p>
-
-    <p *ngIf="showDescripcion">{{ post.excerpt }}</p>
-
-    <div *ngIf="showTituloCap || showOrdenCap" class="capitulo-info">
-      <p *ngIf="showTituloCap">Capítulo: {{ post.capituloTitulo }}</p>
-      <p *ngIf="showOrdenCap">Número: {{ post.capituloOrden }}</p>
+  <!-- Contenedor del post -->
+  <article
+    class="flex-grow-1 rounded p-3"
+    [ngClass]="{
+      'bg-light': index % 2 === 0,
+      'bg-primary-subtle': index % 2 !== 0
+    }"
+  >
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div>
+        <a
+          [routerLink]="['/profile', post.author.username]"
+          class="fw-bold text-dark un"
+        >
+          {{ post.author.username }}
+        </a>
+        ha publicado algo
+      </div>
+      <small class="text-muted">{{ post.date | date : "mediumDate" }}</small>
     </div>
-    <a
-      *ngIf="post.id && post.capituloOrden"
-      [routerLink]="['/libro', post.id, 'capitulo', post.capituloOrden]"
-      class="btn btn-primary btn-sm mt-2"
-    >
-      Leer capítulo
-    </a>
 
-    <button
-      class="btn"
-      [ngClass]="guardado ? 'btn-danger' : 'btn-outline-success'"
-      (click)="toggleBiblioteca()"
-    >
-      {{ guardado ? "Eliminar de biblioteca" : "Guardar en biblioteca" }}
-    </button>
-  </div>
-</article>
+    <div class="d-flex">
+      <img
+        *ngIf="post.portada"
+        [src]="'/assets/covers/' + post.portada"
+        alt="Portada del libro"
+        class="img-thumbnail img-fluid me-3"
+        style="
+          max-width: 6rem;
+          height: auto;
+          object-fit: cover;
+        "
+      />
+
+      <div class="flex-grow-1">
+        <h5 class="fw-bold mb-1">{{ post.title }}</h5>
+
+        <p class="mb-1" *ngIf="showDescripcion">{{ post.excerpt }}</p>
+
+        <div
+          *ngIf="showTituloCap || showOrdenCap"
+          class="small text-muted mb-2"
+        >
+          <p class="mb-0" *ngIf="showTituloCap">
+            Capítulo: {{ post.capituloTitulo }}
+          </p>
+          <p class="mb-0" *ngIf="showOrdenCap">
+            Capítulo {{ post.capituloOrden }} ya disponible
+          </p>
+        </div>
+
+        <div class="d-flex gap-2 mt-2">
+          <a
+            *ngIf="post.id && post.capituloOrden"
+            [routerLink]="['/libro', post.id, 'capitulo', post.capituloOrden]"
+            class="btn btn-sm btn-danger d-flex align-items-center gap-1"
+          >
+            <ng-icon name="bootstrapBook"></ng-icon> Leer
+          </a>
+
+          <button
+            class="btn btn-sm d-flex align-items-center gap-1"
+            [ngClass]="guardado ? 'btn-outline-danger' : 'btn-warning'"
+            (click)="toggleBiblioteca()"
+          >
+            <ng-icon *ngIf="!guardado" name="bootstrapBookmarkPlus"></ng-icon>
+            <ng-icon *ngIf="guardado" name="bootstrapBookmarkX"></ng-icon>
+            {{ guardado ? "Eliminar" : "Guardar" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>

@@ -1,16 +1,16 @@
 <div class="content">
   <p>Sesión iniciada por {{ userRole || "Cargando..." }}</p>
 
-  <section *ngIf="posts.length > 0; else noPosts" >
+  <section *ngIf="posts.length > 0; else noPosts">
     <app-post
-      *ngFor="let post of posts"
+      *ngFor="let post of posts; let i = index"
       [post]="post"
+      [index]="i"
       [showDescripcion]="true"
       [showAuthor]="true"
       [showDate]="true"
       [showTituloCap]="true"
       [showOrdenCap]="true"
-      class="slide-up"
     >
     </app-post>
   </section>

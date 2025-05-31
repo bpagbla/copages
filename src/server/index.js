@@ -228,7 +228,7 @@ function verifyToken(req, res, next) {
   });
 }
 
-// Endpoint protegido para obtener la información del usuario
+// Endpoint protegido para obtener la información del usuario loggeado
 app.get("/user-info", verifyToken, (req, res) => {
   console.log(req.user);
   res.json({
@@ -245,7 +245,7 @@ app.get("/profile/:nick", (req, res) => {
 
   // 1. Consulta para obtener los datos del usuario
   const sqlUsuario =
-    "SELECT nick, nombre, apellidos, pfp FROM usuario WHERE nick = ?";
+    "SELECT id, nick, nombre, apellidos, pfp, role FROM usuario WHERE nick = ?";
 
   conexion.query(sqlUsuario, [nick], (err, usuarioResults) => {
     if (err) {
@@ -276,6 +276,8 @@ app.get("/profile/:nick", (req, res) => {
       console.log(obrasResults);
       // Enviamos la respuesta con usuario y obras
       res.json({
+        id: usuario.id,
+        role: usuario.role,
         nick: usuario.nick,
         nombre: usuario.nombre,
         apellidos: usuario.apellidos,
@@ -820,7 +822,7 @@ app.get("/biblioteca/:libroId", verifyToken, (req, res) => {
 });
 
 //sacar obras actualizadas recientemente
-app.get('/obras-recientes', (req, res) => {
+app.get("/obras-recientes", (req, res) => {
   const sql = `
     SELECT 
       l.ID, 
@@ -848,6 +850,58 @@ app.get('/obras-recientes', (req, res) => {
   });
 });
 
+//comprobar si un usuario sigue a otro
+app.get("/sigue/:seguidoId", verifyToken, (req, res) => {
+  console.log("llega");
+  const seguidorId = req.user.id;
+  const seguidoId = +req.params.seguidoId;
+  console.log(seguidoId);
+
+  const sql = `
+    SELECT 1 FROM sigue
+    WHERE ID_SEGUIDOR = ? AND ID_SEGUIDO = ?
+  `;
+
+  conexion.query(sql, [seguidorId, seguidoId], (err, results) => {
+    if (err) {
+      console.error("Error al verificar seguimiento:", err);
+      return res.status(500).json({ message: "Error del servidor" });
+    }
+
+    res.status(200).json({ sigue: results.length > 0 });
+  });
+});
+
+//seguir / dejar de seguir
+app.post("/sigue/:seguidoId", verifyToken, (req, res) => {
+  const seguidorId = req.user.id;
+  const seguidoId = +req.params.seguidoId;
+
+  const checkSql = `SELECT 1 FROM sigue WHERE ID_SEGUIDOR = ? AND ID_SEGUIDO = ?`;
+  conexion.query(checkSql, [seguidorId, seguidoId], (err, results) => {
+    if (err) {
+      console.error("Error al verificar seguimiento:", err);
+      return res.status(500).json({ message: "Error del servidor" });
+    }
+
+    if (results.length > 0) {
+      // Ya sigue: eliminar
+      const deleteSql = `DELETE FROM sigue WHERE ID_SEGUIDOR = ? AND ID_SEGUIDO = ?`;
+      conexion.query(deleteSql, [seguidorId, seguidoId], (err2) => {
+        if (err2)
+          return res.status(500).json({ message: "Error al dejar de seguir" });
+        return res.json({ message: "Dejaste de seguir", sigue: false });
+      });
+    } else {
+      // No sigue: insertar
+      const insertSql = `INSERT INTO sigue (ID_SEGUIDOR, ID_SEGUIDO) VALUES (?, ?)`;
+      conexion.query(insertSql, [seguidorId, seguidoId], (err2) => {
+        if (err2) return res.status(500).json({ message: "Error al seguir" });
+        return res.json({ message: "Ahora sigues al usuario", sigue: true });
+      });
+    }
+  });
+});
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

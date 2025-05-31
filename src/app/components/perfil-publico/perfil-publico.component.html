@@ -11,9 +11,15 @@
       class="rounded-circle"
     />
     <p>Nombre: {{ usuario.nombre }} {{ usuario.apellidos }}</p>
-    <button (click)="seguir()" class="btn btn-primary">
-      {{ estaSiguiendo ? "Dejar de seguir" : "Seguir" }}
-    </button>
+<button
+  (click)="seguir()"
+  class="btn"
+  [disabled]="usuario.id === currentUserId"
+  [ngClass]="estaSiguiendo ? 'btn-danger' : 'btn-primary'"
+>
+  {{ estaSiguiendo ? 'Dejar de seguir' : 'Seguir' }}
+</button>
+
 
     <h3>Obras publicadas</h3>
 

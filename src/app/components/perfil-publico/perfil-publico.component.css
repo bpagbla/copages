@@ -1,0 +1,11 @@
+img.rounded-circle {
+  object-fit: cover;
+}
+.book-card {
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.book-card:hover {
+  transform: scale(1.03);
+}

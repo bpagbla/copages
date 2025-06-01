@@ -1,45 +1,80 @@
-<div class="content">
+<div class="content ">
   <div *ngIf="error">
-    <p>{{ error }}</p>
+    <p class="text-danger">{{ error }}</p>
   </div>
 
-  <div *ngIf="!error && usuario">
+  <div *ngIf="!error && usuario" class="text-center">
+    <!-- Foto de perfil -->
     <img
       [src]="'/assets/pfpics/' + usuario.pfp"
       alt="Foto de perfil"
       width="120"
-      class="rounded-circle"
+      height="120"
+      class="rounded-circle mb-2"
     />
-    <p>Nombre: {{ usuario.nombre }} {{ usuario.apellidos }}</p>
-<button
-  (click)="seguir()"
-  class="btn"
-  [disabled]="usuario.id === currentUserId"
-  [ngClass]="estaSiguiendo ? 'btn-danger' : 'btn-primary'"
->
-  {{ estaSiguiendo ? 'Dejar de seguir' : 'Seguir' }}
-</button>
 
+    <!-- Nickname -->
+    <h4 class="fw-bold dokdo-regular fs-2">
+      {{ usuario.nick.toUpperCase() }}
+    </h4>
 
-    <h3>Obras publicadas</h3>
+    <!-- Botones -->
+    <div class="d-flex justify-content-center gap-2 mb-4">
+      <button
+        (click)="seguir()"
+        class="btn btn-light border"
+        [disabled]="usuario.id === currentUserId"
+      >
+        {{ estaSiguiendo ? "Dejar de seguir" : "Seguir" }}
+      </button>
+      <button class="btn btn-light border" (click)="colaborar()">
+        Colaborar
+      </button>
+    </div>
 
-    <div class="row g-3">
-      <div *ngFor="let obra of obras" class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card h-100">
-          <img
-            [src]="'/assets/covers/' + obra.PORTADA"
-            class="card-img-top"
-            alt="Portada"
-          />
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ obra.TITULO }}</h5>
-            <p class="card-text">{{ obra.DESCRIPCION | slice : 0 : 150 }}...</p>
-            <a
-              [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
-              class="btn btn-primary mt-auto"
-            >
-              Leer
-            </a>
+    <!-- Obras publicadas -->
+    <h3 class="text-start mt-5 mb-3">Obras Publicadas</h3>
+
+    <div class="container-fluid px-3">
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
+        <div class="col" *ngFor="let obra of obras">
+          <div
+            class="book-card text-center"
+            (click)="irALectura(obra.ID)"
+            style="cursor: pointer"
+          >
+            <div class="position-relative">
+              <img
+                [src]="'/assets/covers/' + obra.PORTADA"
+                [alt]="obra.TITULO"
+                class="img-fluid rounded"
+                style="max-width: 100%;  object-fit: cover"
+              />
+              <div
+                class="position-absolute top-0 end-0 m-2 d-flex align-items-center justify-content-center p-2 rounded-circle bg-white"
+                style="cursor: pointer"
+                [matTooltip]="
+                  obra.GUARDADO
+                    ? 'Eliminar de biblioteca'
+                    : 'Guardar en biblioteca'
+                "
+                (click)="toggleBiblioteca(obra); $event.stopPropagation()"
+              >
+                <ng-icon
+                  [name]="
+                    obra.GUARDADO
+                      ? 'bootstrapBookmarkX'
+                      : 'bootstrapBookmarkPlus'
+                  "
+                  size="1.5rem"
+                  class="deleteIcon"
+                ></ng-icon>
+              </div>
+            </div>
+
+            <div class="mt-2">
+              <h6 class="mb-0">{{ obra.TITULO }}</h6>
+            </div>
           </div>
         </div>
       </div>

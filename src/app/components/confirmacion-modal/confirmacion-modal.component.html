@@ -1,0 +1,32 @@
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  *ngIf="isVisible"
+  style="background: rgba(0, 0, 0, 0.5)"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">{{ title }}</h1>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="close()"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        {{ message }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          {{ cancelText }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmAndClose()">
+          {{ confirmText }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

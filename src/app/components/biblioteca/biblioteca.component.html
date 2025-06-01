@@ -1,7 +1,7 @@
 <div class="content">
   <!-- Buscador -->
   <div class="d-flex align-items-center mb-4 px-3">
-    <div class="position-relative ">
+    <div class="position-relative">
       <input
         type="text"
         [(ngModel)]="filtro"
@@ -35,7 +35,9 @@
               class="icono position-absolute top-0 end-0 m-2 d-flex align-items-center justify-content-center p-2 rounded-circle"
               style="cursor: pointer"
               matTooltip="Eliminar de biblioteca"
-              (click)="eliminar(libro.ID); $event.stopPropagation()"
+              (click)="
+                eliminarLibroConConfirmacion(libro.ID); $event.stopPropagation()
+              "
             >
               <ng-icon
                 name="bootstrapBookmarkX"

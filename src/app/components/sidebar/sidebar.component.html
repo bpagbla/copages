@@ -1,4 +1,4 @@
-<!-- Navbar para móviles -->
+<!-- Navbar para dispositivos pequeños -->
 <nav
   class="d-flex d-md-none justify-content-between align-items-center p-2 border-bottom bg-light"
 >
@@ -13,7 +13,7 @@
   </button>
 </nav>
 
-<!-- Menú desplegable para móviles -->
+<!-- Menú desplegable -->
 <div
   *ngIf="menuAbierto"
   class="mobile-menu d-md-none bg-light border position-fixed top-0 start-0 w-75 h-100 shadow d-flex flex-column"
@@ -24,8 +24,6 @@
       routerLink="/home"
       routerLinkActive="active"
       (click)="toggleMenu()"
-      matTooltip="Home"
-      matTooltipPosition="right"
     >
       <ng-icon name="bootstrapHouseHeart" size="1.5rem"></ng-icon> Home
     </a>
@@ -33,8 +31,6 @@
       routerLink="/biblioteca"
       routerLinkActive="active"
       (click)="toggleMenu()"
-      matTooltip="Biblioteca"
-      matTooltipPosition="right"
     >
       <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon> Biblioteca
     </a>
@@ -42,16 +38,12 @@
       routerLink="/dashboard"
       routerLinkActive="active"
       (click)="toggleMenu()"
-      matTooltip="Escribir"
-      matTooltipPosition="right"
     >
       <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon> Escribir
     </a>
     <a
       routerLink="/explore"
       routerLinkActive="active"
-      matTooltip="Explorar"
-      matTooltipPosition="after"
     >
       <ng-icon name="bootstrapCompass" size="1.5rem"></ng-icon> Explorar
     </a>

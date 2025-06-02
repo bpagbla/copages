@@ -99,7 +99,7 @@ export class PostComponent implements OnInit {
         });
         const libroId = res.libroId;
         this.postEliminado.emit(this.index);
-        this.router.navigate(['/editar-obra', libroId]);
+        this.router.navigate(['/editar/obra', libroId]);
       },
       error: (err) => {
         console.error('Error al aceptar colaboración:', err);

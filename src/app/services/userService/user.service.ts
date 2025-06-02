@@ -28,6 +28,7 @@ export class UserService {
   getUserInfo(): Observable<any> {
     return this.http.get(`${API_URL}/user-info`);
   }
+  
   existeSolicitudColaboracion(destinatarioId: number): Observable<any> {
     return this.http.get(`${API_URL}/colaboracion-existe/${destinatarioId}`);
   }

@@ -1,4 +1,4 @@
-<div class="content ">
+<div class="content">
   <div *ngIf="error">
     <p class="text-danger">{{ error }}</p>
   </div>
@@ -23,12 +23,16 @@
       <button
         (click)="seguir()"
         class="btn btn-light border"
-        [disabled]="usuario.id === currentUserId"
+        [disabled]="usuario.id === currentUserId || usuario.id === currentUserId"
       >
         {{ estaSiguiendo ? "Dejar de seguir" : "Seguir" }}
       </button>
-      <button class="btn btn-light border" (click)="colaborar()">
-        Colaborar
+      <button
+        class="btn btn-light border"
+        (click)="colaborar()"
+        [disabled]="usuario.id === currentUserId || usuario.id === currentUserId"
+      >
+        {{ solicitudEnviada ? "Cancelar solicitud" : "Colaborar" }}
       </button>
     </div>
 
@@ -48,7 +52,7 @@
                 [src]="'/assets/covers/' + obra.PORTADA"
                 [alt]="obra.TITULO"
                 class="img-fluid rounded"
-                style="max-width: 100%;  object-fit: cover"
+                style="max-width: 100%; object-fit: cover"
               />
               <div
                 class="position-absolute top-0 end-0 m-2 d-flex align-items-center justify-content-center p-2 rounded-circle bg-white"

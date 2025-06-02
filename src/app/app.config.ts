@@ -33,6 +33,8 @@ import {
   bootstrapBookmarkX,
   bootstrapBookmarkPlus,
   bootstrapCompass,
+  bootstrapPeopleFill,
+  bootstrapArrowClockwise,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
@@ -88,6 +90,7 @@ export const appConfig: ApplicationConfig = {
       bootstrapBookmarkX,
       bootstrapBookmarkPlus,
       bootstrapCompass,
+      bootstrapPeopleFill, bootstrapArrowClockwise
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

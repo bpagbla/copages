@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 const API_URL = 'http://localhost:3000';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
   constructor(private http: HttpClient) {}
@@ -19,10 +19,25 @@ export class UserService {
   }
 
   toggleSeguimiento(seguidoId: number): Observable<{ sigue: boolean }> {
-    return this.http.post<{ sigue: boolean }>(`${API_URL}/sigue/${seguidoId}`, {});
+    return this.http.post<{ sigue: boolean }>(
+      `${API_URL}/sigue/${seguidoId}`,
+      {}
+    );
   }
 
   getUserInfo(): Observable<any> {
     return this.http.get(`${API_URL}/user-info`);
   }
+  existeSolicitudColaboracion(destinatarioId: number): Observable<any> {
+    return this.http.get(`${API_URL}/colaboracion-existe/${destinatarioId}`);
+  }
+
+  enviarSolicitudColaboracion(destinatarioId: number): Observable<any> {
+    return this.http.post(`${API_URL}/colaboracion`, { destinatarioId });
+  }
+
+  cancelarSolicitudColaboracion(destinatarioId: number): Observable<any> {
+  return this.http.delete(`${API_URL}/colaboracion/${destinatarioId}`);
+}
+
 }

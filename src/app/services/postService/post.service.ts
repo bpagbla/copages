@@ -8,7 +8,7 @@ import { Post } from '../../interfaces/post';
 })
 export class PostService {
   constructor() {}
-
+  baseUrl = 'http://localhost:3000';
   private http = inject(HttpClient);
 
   getFeed(): Observable<Post[]> {
@@ -19,5 +19,31 @@ export class PostService {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+  }
+
+  // Enviar solicitud de colaboración
+  enviarSolicitudColaboracion(destinatarioId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/colaboracion`, { destinatarioId });
+  }
+
+  // Obtener solicitudes pendientes (como posts)
+  getSolicitudesColaboracion(): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.baseUrl}/colaboraciones-pendientes`);
+  }
+
+  // Aceptar solicitud
+  aceptarColaboracion(solicitudId: number): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/colaboracion/${solicitudId}/aceptar`,
+      {}
+    );
+  }
+
+  // Rechazar solicitud
+  rechazarColaboracion(solicitudId: number): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/colaboracion/${solicitudId}/rechazar`,
+      {}
+    );
   }
 }

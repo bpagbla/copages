@@ -5,12 +5,13 @@ import { RouterModule } from '@angular/router';
 import { Post } from '../../interfaces/post';
 import { PostComponent } from '../post/post.component';
 import { PostService } from '../../services/postService/post.service';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  imports: [CommonModule, RouterModule, PostComponent],
+  imports: [CommonModule, RouterModule, PostComponent, NgIcon],
 })
 export class HomeComponent implements OnInit {
   userRole: string | null = null;
@@ -22,7 +23,6 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.authService.getUserInfo().subscribe({
       next: (res) => {
-        console.log('Usuario:', res);
         this.userRole = res.role;
       },
       error: (err) => {
@@ -30,10 +30,30 @@ export class HomeComponent implements OnInit {
       },
     });
 
-    this.postService.getFeed().subscribe({
-      next: (res) => {
-        this.posts = res;
-        console.log('Posts cargados:', res);
+    this.cargarFeedCompleto();
+  }
+
+  actualizarFeed(): void {
+    this.cargarFeedCompleto();
+  }
+
+  private cargarFeedCompleto(): void {
+    // Llamamos ambos endpoints en paralelo
+    const feed$ = this.postService.getFeed();
+    const solicitudes$ = this.postService.getSolicitudesColaboracion();
+
+    // Combinamos resultados
+    feed$.subscribe({
+      next: (postsNormales) => {
+        solicitudes$.subscribe({
+          next: (solicitudes) => {
+            this.posts = [...solicitudes, ...postsNormales]; // Primero solicitudes
+          },
+          error: (err) => {
+            console.error('Error al cargar colaboraciones:', err);
+            this.posts = postsNormales; // Al menos muestra el feed normal
+          },
+        });
       },
       error: (err) => {
         console.error('Error al cargar posts del feed:', err);

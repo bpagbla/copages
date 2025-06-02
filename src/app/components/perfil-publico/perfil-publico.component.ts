@@ -24,6 +24,7 @@ export class PerfilPublicoComponent implements OnInit {
   error: string = '';
   estaSiguiendo: boolean = false;
   currentUserId: number | null = null;
+  solicitudEnviada: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,19 +35,22 @@ export class PerfilPublicoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.nick = this.route.snapshot.paramMap.get('nick') || '';
+    if (this.nick) {
+      this.cargarPerfil(this.nick);
+    }
+
+    // obtener usuario logueado si lo hay
     this.userService.getUserInfo().subscribe({
       next: (user) => {
         this.currentUserId = user.id;
-        this.nick = this.route.snapshot.paramMap.get('nick') || '';
-        if (this.nick) {
-          this.cargarPerfil(this.nick);
-        }
       },
       error: () => {
-        this.error = 'No se pudo obtener el usuario actual';
+        this.currentUserId = null;
       },
     });
   }
+
   irALectura(idObra: number) {
     // Reemplaza con el routing que estés usando
     this.router.navigate(['/libro', idObra, 'capitulo', 1]);
@@ -136,11 +140,81 @@ export class PerfilPublicoComponent implements OnInit {
         });
 
         this.comprobarSiSigue(this.usuario.id);
+        this.comprobarSolicitudColaboracion();
       },
       error: (err) => {
         this.error = err.error?.message || 'Error al cargar el perfil';
       },
     });
+  }
+
+  comprobarSolicitudColaboracion() {
+    if (!this.usuario) return;
+    this.userService.existeSolicitudColaboracion(this.usuario.id).subscribe({
+      next: (res) => {
+        this.solicitudEnviada = res.enviada;
+      },
+      error: (err) => {
+        console.error('Error al comprobar solicitud de colaboración:', err);
+      },
+    });
+  }
+
+  colaborar() {
+    if (!this.usuario) return;
+
+    if (!this.currentUserId) {
+      this.notificationService.show({
+        type: 'info',
+        title: 'No autenticado',
+        message: 'Debes iniciar sesión para colaborar.',
+      });
+      return;
+    }
+
+    if (!this.solicitudEnviada) {
+      // Enviar solicitud
+      this.userService.enviarSolicitudColaboracion(this.usuario.id).subscribe({
+        next: () => {
+          this.solicitudEnviada = true;
+          this.notificationService.show({
+            type: 'success',
+            title: 'Solicitud enviada',
+            message: 'Has enviado una solicitud de colaboración.',
+          });
+        },
+        error: (err) => {
+          console.error('Error al enviar solicitud:', err);
+          this.notificationService.show({
+            type: 'error',
+            title: 'Error',
+            message: 'No se pudo enviar la solicitud.',
+          });
+        },
+      });
+    } else {
+      // Cancelar solicitud
+      this.userService
+        .cancelarSolicitudColaboracion(this.usuario.id)
+        .subscribe({
+          next: () => {
+            this.solicitudEnviada = false;
+            this.notificationService.show({
+              type: 'info',
+              title: 'Solicitud cancelada',
+              message: 'Has cancelado la solicitud de colaboración.',
+            });
+          },
+          error: (err) => {
+            console.error('Error al cancelar solicitud:', err);
+            this.notificationService.show({
+              type: 'error',
+              title: 'Error',
+              message: 'No se pudo cancelar la solicitud.',
+            });
+          },
+        });
+    }
   }
 
   toggleBiblioteca(obra: any): void {
@@ -183,9 +257,5 @@ export class PerfilPublicoComponent implements OnInit {
         },
       });
     }
-  }
-
-  colaborar() {
-    throw new Error('Method not implemented.');
   }
 }

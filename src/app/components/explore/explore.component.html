@@ -16,9 +16,23 @@
           />
         </div>
         <h5 class="mt-2">{{ obra.TITULO }}</h5>
-        <small class="text-muted un" [routerLink]="['/profile', obra.AUTOR]">
-          {{ "@" + obra.AUTOR }}
-        </small>
+        <small class="text-muted">
+  <a
+    [routerLink]="['/profile', obra.AUTOR]"
+    class="text-decoration-none text-muted un"
+  >
+    {{ "@" + obra.AUTOR }}
+  </a>
+  <ng-container *ngIf="obra.coautor">
+    &nbsp;·&nbsp;
+    <a
+      [routerLink]="['/profile', obra.coautor]"
+      class="text-decoration-none text-muted un"
+    >
+      {{ "@" + obra.coautor }}
+    </a>
+  </ng-container>
+</small>
       </div>
     </div>
   </div>

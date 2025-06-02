@@ -1,6 +1,11 @@
 <div class="content">
   <p>Sesión iniciada por {{ userRole || "Cargando..." }}</p>
-
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-outline-primary btn-sm d-flex justify-items-center align-items-center" (click)="actualizarFeed()">
+      Actualizar
+      <ng-icon name="bootstrapArrowClockwise"></ng-icon>
+    </button>
+  </div>
   <section *ngIf="posts.length > 0; else noPosts">
     <app-post
       *ngFor="let post of posts; let i = index"
@@ -11,8 +16,8 @@
       [showDate]="true"
       [showTituloCap]="true"
       [showOrdenCap]="true"
-    >
-    </app-post>
+      (postEliminado)="posts.splice($event, 1)"
+    ></app-post>
   </section>
 
   <ng-template #noPosts>

@@ -59,4 +59,7 @@ export class ObrasService {
   getObrasRecientes(): Observable<Obra[]> {
     return this.http.get<Obra[]>(`${this.baseUrl}/obras-recientes`);
   }
+
+
+  
 }

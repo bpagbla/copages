@@ -2,3 +2,7 @@
 background-color: var(--dark-orange);
 color: var(--white);
 }
+
+.sharedIcon{
+    color: var(--dark-orange) !important;
+}

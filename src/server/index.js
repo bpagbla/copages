@@ -431,15 +431,29 @@ app.get("/loggedInUser-books", verifyToken, (req, res) => {
   const userId = req.user.id;
 
   const sql = `
-SELECT l.ID, l.TITULO, l.PORTADA, l.DESCRIPCION
+SELECT 
+  l.ID, 
+  l.TITULO, 
+  l.PORTADA, 
+  l.DESCRIPCION,
+  (SELECT COUNT(*) FROM publica p2 WHERE p2.ID_LIBRO = l.ID) > 1 AS esCompartida,
+  (
+    SELECT u.NICK
+    FROM publica p3
+    JOIN usuario u ON u.ID = p3.ID_USUARIO
+    WHERE p3.ID_LIBRO = l.ID AND p3.ID_USUARIO != ?
+    LIMIT 1
+  ) AS coautor
 FROM libro l
 INNER JOIN publica p ON l.ID = p.ID_LIBRO
 WHERE p.ID_USUARIO = ?
 GROUP BY l.ID, l.TITULO, l.PORTADA, l.DESCRIPCION
-ORDER BY l.ID DESC
+ORDER BY l.ID DESC;
+
+
   `;
 
-  conexion.query(sql, [userId], (err, results) => {
+  conexion.query(sql, [userId, userId], (err, results) => {
     if (err) {
       console.error("Error al obtener los libros del usuario logueado:", err);
       return res.status(500).json({ mensaje: "Error interno del servidor" });
@@ -826,13 +840,33 @@ app.get("/obras-recientes", (req, res) => {
   const sql = `
     SELECT 
       l.ID, 
-      ANY_VALUE(l.TITULO) AS TITULO, 
-      ANY_VALUE(l.DESCRIPCION) AS DESCRIPCION, 
-      ANY_VALUE(l.PORTADA) AS PORTADA, 
-      ANY_VALUE(u.NICK) AS AUTOR
+      l.TITULO, 
+      l.DESCRIPCION, 
+      l.PORTADA, 
+      (
+        SELECT u.NICK
+        FROM publica p2
+        JOIN usuario u ON u.ID = p2.ID_USUARIO
+        WHERE p2.ID_LIBRO = l.ID
+        LIMIT 1
+      ) AS AUTOR,
+      (
+        SELECT COUNT(*) FROM publica p3 WHERE p3.ID_LIBRO = l.ID
+      ) > 1 AS esCompartida,
+      (
+        SELECT u2.NICK
+        FROM publica p4
+        JOIN usuario u2 ON u2.ID = p4.ID_USUARIO
+        WHERE p4.ID_LIBRO = l.ID AND u2.NICK != (
+          SELECT u3.NICK
+          FROM publica p5
+          JOIN usuario u3 ON u3.ID = p5.ID_USUARIO
+          WHERE p5.ID_LIBRO = l.ID
+          LIMIT 1
+        )
+        LIMIT 1
+      ) AS coautor
     FROM libro l
-    JOIN publica p ON l.ID = p.ID_LIBRO
-    JOIN usuario u ON u.ID = p.ID_USUARIO
     JOIN componeCapLib ccl ON l.ID = ccl.ID_LIBRO
     JOIN capitulo c ON ccl.ID_CAPITULO = c.ID
     GROUP BY l.ID
@@ -900,6 +934,217 @@ app.post("/sigue/:seguidoId", verifyToken, (req, res) => {
         return res.json({ message: "Ahora sigues al usuario", sigue: true });
       });
     }
+  });
+});
+
+// POST /colaboracion
+app.post("/colaboracion", verifyToken, (req, res) => {
+  const remitenteId = req.user.id;
+  const { destinatarioId } = req.body;
+
+  const sql = `
+    INSERT INTO solicitud_colaboracion (ID_REMITENTE, ID_DESTINATARIO)
+    VALUES (?, ?)
+  `;
+
+  conexion.query(sql, [remitenteId, destinatarioId], (err) => {
+    if (err) {
+      console.error("Error al enviar solicitud de colaboración:", err);
+      return res.status(500).json({ message: "Error al enviar solicitud" });
+    }
+    res.status(201).json({ message: "Solicitud enviada correctamente" });
+  });
+});
+
+// GET /colaboraciones-pendientes
+app.get("/colaboraciones-pendientes", verifyToken, (req, res) => {
+  const userId = req.user.id;
+
+  const sql = `
+    SELECT 
+      sc.ID AS solicitudId,
+      u.ID AS autorId,
+      u.NICK AS username,
+      u.NOMBRE,
+      u.APELLIDOS,
+      u.PFP,
+      sc.FECHA
+    FROM solicitud_colaboracion sc
+    INNER JOIN usuario u ON sc.ID_REMITENTE = u.ID
+    WHERE sc.ID_DESTINATARIO = ? AND sc.ESTADO = 'pendiente'
+    ORDER BY sc.FECHA DESC
+  `;
+
+  conexion.query(sql, [userId], (err, results) => {
+    if (err) {
+      console.error("Error al obtener colaboraciones pendientes:", err);
+      return res.status(500).json({ message: "Error al obtener solicitudes" });
+    }
+
+    // Mapeamos como si fuera un "post"
+    const posts = results.map((row) => ({
+      solicitudId: row.solicitudId,
+      title: "Solicitud de colaboración",
+      date: row.FECHA,
+      portada: "", // no hay libro aún
+      excerpt: `${row.username} quiere crear una obra contigo`,
+      isCollabRequest: true,
+      author: {
+        id: row.autorId,
+        username: row.username,
+        nombre: row.NOMBRE,
+        apellidos: row.APELLIDOS,
+        pfp: row.PFP,
+      },
+    }));
+
+    res.json(posts);
+  });
+});
+
+//crear obra COLABORATIVA
+app.post("/colaboracion/:id/aceptar", verifyToken, (req, res) => {
+  const solicitudId = +req.params.id;
+  const userId = req.user.id;
+
+  // 1. Obtener datos de la solicitud
+  const getSolicitud = `
+    SELECT ID_REMITENTE, ID_DESTINATARIO
+    FROM solicitud_colaboracion
+    WHERE ID = ? AND ESTADO = 'pendiente'
+  `;
+
+  conexion.query(getSolicitud, [solicitudId], (err, results) => {
+    if (err) {
+      console.error("Error al consultar la solicitud:", err);
+      return res.status(500).json({ message: "Error interno" });
+    }
+
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Solicitud no válida o ya gestionada" });
+    }
+
+    const { ID_REMITENTE, ID_DESTINATARIO } = results[0];
+
+    if (ID_DESTINATARIO !== userId) {
+      return res
+        .status(403)
+        .json({ message: "No tienes permiso para aceptar esta solicitud" });
+    }
+
+    // 2. Crear libro vacío
+    const sqlLibro = `INSERT INTO libro (TITULO, DESCRIPCION) VALUES (?, ?)`;
+    conexion.query(
+      sqlLibro,
+      ["Título pendiente", "Descripción pendiente"],
+      (err2, libroResult) => {
+        if (err2) {
+          console.error("Error al crear libro colaborativo:", err2);
+          return res.status(500).json({ message: "Error al crear libro" });
+        }
+
+        const libroId = libroResult.insertId;
+
+        // 3. Insertar en `publica` a ambos usuarios
+        const insertPublica = `
+        INSERT INTO publica (ID_USUARIO, ID_LIBRO) VALUES (?, ?), (?, ?)
+      `;
+        conexion.query(
+          insertPublica,
+          [ID_REMITENTE, libroId, ID_DESTINATARIO, libroId],
+          (err3) => {
+            if (err3) {
+              console.error("Error al vincular autores:", err3);
+              return res
+                .status(500)
+                .json({ message: "Error al vincular autores" });
+            }
+
+            // 4. Marcar solicitud como aceptada
+            const updateEstado = `
+          UPDATE solicitud_colaboracion SET ESTADO = 'aceptada' WHERE ID = ?
+        `;
+            conexion.query(updateEstado, [solicitudId], (err4) => {
+              if (err4) {
+                console.error("Error al actualizar estado de solicitud:", err4);
+                return res
+                  .status(500)
+                  .json({ message: "Error al actualizar solicitud" });
+              }
+
+              // 5. Éxito: devolver ID del libro
+              return res.status(200).json({ libroId });
+            });
+          }
+        );
+      }
+    );
+  });
+});
+
+app.post("/colaboracion/:id/rechazar", verifyToken, (req, res) => {
+  const solicitudId = +req.params.id;
+
+  const sql = `
+    UPDATE solicitud_colaboracion
+    SET ESTADO = 'rechazada'
+    WHERE ID = ?
+  `;
+
+  conexion.query(sql, [solicitudId], (err) => {
+    if (err) {
+      console.error("Error al rechazar solicitud:", err);
+      return res.status(500).json({ message: "Error al rechazar solicitud" });
+    }
+
+    res.status(200).json({ message: "Colaboración rechazada" });
+  });
+});
+
+app.get("/colaboracion-existe/:destinatarioId", verifyToken, (req, res) => {
+  const remitenteId = req.user.id;
+  const destinatarioId = +req.params.destinatarioId;
+
+  const sql = `
+    SELECT 1 FROM solicitud_colaboracion
+    WHERE ID_REMITENTE = ? AND ID_DESTINATARIO = ? AND ESTADO = 'pendiente'
+    LIMIT 1
+  `;
+
+  conexion.query(sql, [remitenteId, destinatarioId], (err, results) => {
+    if (err) {
+      console.error("Error al verificar solicitud:", err);
+      return res.status(500).json({ message: "Error interno" });
+    }
+
+    res.json({ enviada: results.length > 0 });
+  });
+});
+
+app.delete("/colaboracion/:destinatarioId", verifyToken, (req, res) => {
+  const remitenteId = req.user.id;
+  const destinatarioId = +req.params.destinatarioId;
+
+  const sql = `
+    DELETE FROM solicitud_colaboracion
+    WHERE ID_REMITENTE = ? AND ID_DESTINATARIO = ? AND ESTADO = 'pendiente'
+  `;
+
+  conexion.query(sql, [remitenteId, destinatarioId], (err, result) => {
+    if (err) {
+      console.error("Error al cancelar solicitud:", err);
+      return res.status(500).json({ message: "Error al cancelar solicitud" });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: "No se encontró una solicitud pendiente para cancelar",
+      });
+    }
+
+    res.status(200).json({ message: "Solicitud cancelada con éxito" });
   });
 });
 

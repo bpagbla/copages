@@ -28,61 +28,74 @@
         >
           {{ post.author.username }}
         </a>
-        ha publicado algo
+        <span *ngIf="!post.isCollabRequest"> ha publicado algo</span>
+        <span *ngIf="post.isCollabRequest"> te ha enviado una solicitud de colaboración</span>
       </div>
-      <small class="text-muted">{{ post.date | date : "mediumDate" }}</small>
+      <small class="text-muted">{{ post.date | date: 'mediumDate' }}</small>
     </div>
 
-    <div class="d-flex">
-      <img
-        *ngIf="post.portada"
-        [src]="'/assets/covers/' + post.portada"
-        alt="Portada del libro"
-        class="img-thumbnail img-fluid me-3"
-        style="
-          max-width: 6rem;
-          height: auto;
-          object-fit: cover;
-        "
-      />
-
-      <div class="flex-grow-1">
-        <h5 class="fw-bold mb-1">{{ post.title }}</h5>
-
-        <p class="mb-1" *ngIf="showDescripcion">{{ post.excerpt }}</p>
-
-        <div
-          *ngIf="showTituloCap || showOrdenCap"
-          class="small text-muted mb-2"
+    <div *ngIf="post.isCollabRequest; else postNormal">
+      <div class="d-flex gap-2 mt-3">
+        <button
+          class="btn btn-sm btn-success"
+          (click)="aceptarColaboracion(post.solicitudId!)"
         >
-          <p class="mb-0" *ngIf="showTituloCap">
-            Capítulo: {{ post.capituloTitulo }}
-          </p>
-          <p class="mb-0" *ngIf="showOrdenCap">
-            Capítulo {{ post.capituloOrden }} ya disponible
-          </p>
-        </div>
-
-        <div class="d-flex gap-2 mt-2">
-          <a
-            *ngIf="post.id && post.capituloOrden"
-            [routerLink]="['/libro', post.id, 'capitulo', post.capituloOrden]"
-            class="btn btn-sm btn-danger d-flex align-items-center gap-1"
-          >
-            <ng-icon name="bootstrapBook"></ng-icon> Leer
-          </a>
-
-          <button
-            class="btn btn-sm d-flex align-items-center gap-1"
-            [ngClass]="guardado ? 'btn-outline-danger' : 'btn-warning'"
-            (click)="toggleBiblioteca()"
-          >
-            <ng-icon *ngIf="!guardado" name="bootstrapBookmarkPlus"></ng-icon>
-            <ng-icon *ngIf="guardado" name="bootstrapBookmarkX"></ng-icon>
-            {{ guardado ? "Eliminar" : "Guardar" }}
-          </button>
-        </div>
+          Aceptar
+        </button>
+        <button
+          class="btn btn-sm btn-outline-danger"
+          (click)="rechazarColaboracion(post.solicitudId!)"
+        >
+          Rechazar
+        </button>
       </div>
     </div>
+
+    <ng-template #postNormal>
+      <div class="d-flex">
+        <img
+          *ngIf="post.portada"
+          [src]="'/assets/covers/' + post.portada"
+          alt="Portada del libro"
+          class="img-thumbnail img-fluid me-3"
+          style="max-width: 6rem; height: auto; object-fit: cover"
+        />
+
+        <div class="flex-grow-1">
+          <h5 class="fw-bold mb-1">{{ post.title }}</h5>
+
+          <p class="mb-1" *ngIf="showDescripcion">{{ post.excerpt }}</p>
+
+          <div *ngIf="showTituloCap || showOrdenCap" class="small text-muted mb-2">
+            <p class="mb-0" *ngIf="showTituloCap">
+              Capítulo: {{ post.capituloTitulo }}
+            </p>
+            <p class="mb-0" *ngIf="showOrdenCap">
+              Capítulo {{ post.capituloOrden }} ya disponible
+            </p>
+          </div>
+
+          <div class="d-flex gap-2 mt-2">
+            <a
+              *ngIf="post.id && post.capituloOrden"
+              [routerLink]="['/libro', post.id, 'capitulo', post.capituloOrden]"
+              class="btn btn-sm btn-danger d-flex align-items-center gap-1"
+            >
+              <ng-icon name="bootstrapBook"></ng-icon> Leer
+            </a>
+
+            <button
+              class="btn btn-sm d-flex align-items-center gap-1"
+              [ngClass]="guardado ? 'btn-outline-danger' : 'btn-warning'"
+              (click)="toggleBiblioteca()"
+            >
+              <ng-icon *ngIf="!guardado" name="bootstrapBookmarkPlus"></ng-icon>
+              <ng-icon *ngIf="guardado" name="bootstrapBookmarkX"></ng-icon>
+              {{ guardado ? 'Eliminar' : 'Guardar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
   </article>
 </div>

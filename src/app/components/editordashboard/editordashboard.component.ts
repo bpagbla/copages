@@ -4,10 +4,12 @@ import { Router, RouterModule } from '@angular/router';
 import { ObrasService } from '../../services/obrasService/obras.service';
 import { FormsModule } from '@angular/forms';
 import { Obra } from '../../interfaces/obra';
+import { NgIcon } from '@ng-icons/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-editordashboard',
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule, NgIcon, MatTooltipModule],
   templateUrl: './editordashboard.component.html',
   styleUrl: './editordashboard.component.css',
 })
@@ -35,22 +37,23 @@ export class EditordashboardComponent implements OnInit {
     this.router.navigate(['/editar/obra', id]);
   }
 
-eliminarObra(id: number): void {
-  const confirmacion = confirm('¿Estás seguro de que quieres eliminar esta obra?');
-  if (!confirmacion) return;
+  eliminarObra(id: number): void {
+    const confirmacion = confirm(
+      '¿Estás seguro de que quieres eliminar esta obra?'
+    );
+    if (!confirmacion) return;
 
-  this.obrasService.eliminarObra(id).subscribe({
-    next: () => {
-      // Actualiza la lista local quitando la obra eliminada
-      this.obras = this.obras.filter((obra) => obra.ID !== id);
-    },
-    error: (err) => {
-      console.error('Error al eliminar la obra:', err);
-      this.error = 'No se pudo eliminar la obra.';
-    }
-  });
-}
-
+    this.obrasService.eliminarObra(id).subscribe({
+      next: () => {
+        // Actualiza la lista local quitando la obra eliminada
+        this.obras = this.obras.filter((obra) => obra.ID !== id);
+      },
+      error: (err) => {
+        console.error('Error al eliminar la obra:', err);
+        this.error = 'No se pudo eliminar la obra.';
+      },
+    });
+  }
 
   showModal = false;
   nuevaObra = { TITULO: '', DESCRIPCION: '' };

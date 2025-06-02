@@ -15,9 +15,14 @@ import { EditarObraComponent } from './components/editar-obra/editar-obra.compon
 import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component';
 import { EditordashboardComponent } from './components/editordashboard/editordashboard.component';
 import { ExploreComponent } from './components/explore/explore.component';
+import { redirectIfLoggedGuard } from './guards/redirect-if-logged.guard';
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
+  {
+    path: '',
+    component: LandingComponent,
+    canActivate: [redirectIfLoggedGuard],
+  },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },

@@ -1,0 +1,29 @@
+.obra-publica-wrapper {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.obra-contenedor {
+  background: var(--white);
+  border-radius: 60px;
+}
+
+
+.portada-img {
+  width: 15rem;
+  height: 23rem;
+  object-fit: cover;
+  border-radius: 10px;
+}
+@media (max-width: 768px) {
+  .portada-img {
+    width: 100%;
+    height: auto;
+  }
+  .content{
+    text-align: justify;
+  }
+}
+

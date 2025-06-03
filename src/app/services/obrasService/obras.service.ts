@@ -22,6 +22,10 @@ export class ObrasService {
     return this.http.get<any>(`${this.baseUrl}/obra/${id}`);
   }
 
+  getObraDetalle(id: number) {
+    return this.http.get<Obra>(`${this.baseUrl}/obra-publica/${id}`);
+  }
+
   // Crear una nueva obra
   crearObra(obra: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/obra`, obra);
@@ -59,7 +63,4 @@ export class ObrasService {
   getObrasRecientes(): Observable<Obra[]> {
     return this.http.get<Obra[]>(`${this.baseUrl}/obras-recientes`);
   }
-
-
-  
 }

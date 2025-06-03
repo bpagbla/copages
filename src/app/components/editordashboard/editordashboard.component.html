@@ -120,8 +120,13 @@
                 name="descripcion"
                 rows="5"
                 required
+                maxlength="600"
               ></textarea>
+              <small class="text-muted">
+                {{ nuevaObra.DESCRIPCION.length }}/500 caracteres
+              </small>
             </div>
+
             <div *ngIf="modalError" class="alert alert-danger">
               {{ modalError }}
             </div>

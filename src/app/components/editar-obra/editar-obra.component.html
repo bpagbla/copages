@@ -20,7 +20,16 @@
           [(ngModel)]="o.DESCRIPCION"
           name="descripcion"
           rows="5"
+          maxlength="600"
         ></textarea>
+        <small
+          [ngClass]="{
+            'text-danger': o.DESCRIPCION.length >= 600,
+            'text-muted': o.DESCRIPCION.length < 600
+          }"
+        >
+          {{ o.DESCRIPCION.length }}/600 caracteres
+        </small>
       </div>
 
       <hr />

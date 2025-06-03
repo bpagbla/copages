@@ -16,6 +16,7 @@ import { EditarCapituloComponent } from './components/editar-capitulo/editar-cap
 import { EditordashboardComponent } from './components/editordashboard/editordashboard.component';
 import { ExploreComponent } from './components/explore/explore.component';
 import { redirectIfLoggedGuard } from './guards/redirect-if-logged.guard';
+import { DetalleObraComponent } from './components/detalle-obra/detalle-obra.component';
 
 export const routes: Routes = [
   {
@@ -56,6 +57,10 @@ export const routes: Routes = [
     path: 'editar/:idObra/capitulo/:idCapitulo',
     component: EditarCapituloComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'obra/:id',
+    component: DetalleObraComponent,
   },
 
   { path: '**', redirectTo: '' }, // Redirigir cualquier ruta desconocida al landing

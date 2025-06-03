@@ -64,22 +64,54 @@ export class EditarObraComponent {
 
   //guardar cambios al editar la obra
   guardarCambios() {
-    if (this.obra) {
-      this.obrasService.editarObra(this.obraId, this.obra).subscribe({
-        next: () => {
-          console.log('Obra actualizada');
-          // mostrar notificación
-          this.notificationService.show({
-            type: 'success',
-            message: 'Obra guardada',
-            title: 'Se han guardado los cambios.',
-          });
-        },
-        error: (err) => {
-          console.error('Error al guardar la obra:', err);
-        },
+    if (!this.obra) return;
+
+    const tituloValido = this.obra.TITULO.trim().length > 0;
+    const descripcionValida =
+      this.obra.DESCRIPCION.trim().length > 0 &&
+      this.obra.DESCRIPCION.length <= 600;
+
+    // Validación del título
+    if (!tituloValido) {
+      this.notificationService.show({
+        type: 'error',
+        title: 'Título inválido',
+        message: 'El título no puede estar vacío.',
       });
+      return;
     }
+
+    // Validación de la descripción
+    if (!descripcionValida) {
+      let mensaje = '';
+      if (this.obra.DESCRIPCION.trim().length === 0) {
+        mensaje = 'La descripción no puede estar vacía.';
+      } else if (this.obra.DESCRIPCION.length > 600) {
+        mensaje = 'La descripción no puede superar los 600 caracteres.';
+      }
+
+      this.notificationService.show({
+        type: 'error',
+        title: 'Descripción inválida',
+        message: mensaje,
+      });
+      return;
+    }
+
+    // Guardado
+    this.obrasService.editarObra(this.obraId, this.obra).subscribe({
+      next: () => {
+        console.log('Obra actualizada');
+        this.notificationService.show({
+          type: 'success',
+          message: 'Obra guardada',
+          title: 'Se han guardado los cambios.',
+        });
+      },
+      error: (err) => {
+        console.error('Error al guardar la obra:', err);
+      },
+    });
   }
 
   //editar capitulo

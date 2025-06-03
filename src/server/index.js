@@ -1168,6 +1168,52 @@ app.delete("/colaboracion/:destinatarioId", verifyToken, (req, res) => {
   });
 });
 
+//detalles de una obra
+app.get("/obra-publica/:id", (req, res) => {
+  const obraId = req.params.id;
+
+  const sql = `
+    SELECT 
+      l.ID,
+      l.TITULO,
+      l.DESCRIPCION,
+      l.PORTADA,
+      u.NICK AS AUTOR
+    FROM libro l
+    JOIN publica p ON l.ID = p.ID_LIBRO
+    JOIN usuario u ON u.ID = p.ID_USUARIO
+    WHERE l.ID = ?;
+  `;
+
+  conexion.query(sql, [obraId], (err, results) => {
+    if (err) {
+      console.error("Error SQL:", err);
+      return res.status(500).json({ mensaje: "Error interno" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ mensaje: "Obra no encontrada" });
+    }
+
+    // Extraer autores únicos
+    const autores = [...new Set(results.map(r => r.AUTOR))];
+    const esCompartida = autores.length > 1;
+
+    const response = {
+      ID: results[0].ID,
+      TITULO: results[0].TITULO,
+      DESCRIPCION: results[0].DESCRIPCION,
+      PORTADA: results[0].PORTADA,
+      AUTOR: autores[0],
+      esCompartida,
+      coautor: esCompartida ? autores[1] : undefined
+    };
+
+    res.json(response);
+  });
+});
+
+
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");
 });

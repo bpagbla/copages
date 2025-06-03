@@ -29,9 +29,11 @@
           {{ post.author.username }}
         </a>
         <span *ngIf="!post.isCollabRequest"> ha publicado algo</span>
-        <span *ngIf="post.isCollabRequest"> te ha enviado una solicitud de colaboración</span>
+        <span *ngIf="post.isCollabRequest">
+          te ha enviado una solicitud de colaboración</span
+        >
       </div>
-      <small class="text-muted">{{ post.date | date: 'mediumDate' }}</small>
+      <small class="text-muted">{{ post.date | date : "mediumDate" }}</small>
     </div>
 
     <div *ngIf="post.isCollabRequest; else postNormal">
@@ -66,7 +68,10 @@
 
           <p class="mb-1" *ngIf="showDescripcion">{{ post.excerpt }}</p>
 
-          <div *ngIf="showTituloCap || showOrdenCap" class="small text-muted mb-2">
+          <div
+            *ngIf="showTituloCap || showOrdenCap"
+            class="small text-muted mb-2"
+          >
             <p class="mb-0" *ngIf="showTituloCap">
               Capítulo: {{ post.capituloTitulo }}
             </p>
@@ -83,6 +88,9 @@
             >
               <ng-icon name="bootstrapBook"></ng-icon> Leer
             </a>
+            <a [routerLink]="['/obra', post.id]" class="btn btn-outline-primary"
+              >Ver más</a
+            >
 
             <button
               class="btn btn-sm d-flex align-items-center gap-1"
@@ -91,7 +99,7 @@
             >
               <ng-icon *ngIf="!guardado" name="bootstrapBookmarkPlus"></ng-icon>
               <ng-icon *ngIf="guardado" name="bootstrapBookmarkX"></ng-icon>
-              {{ guardado ? 'Eliminar' : 'Guardar' }}
+              {{ guardado ? "Eliminar" : "Guardar" }}
             </button>
           </div>
         </div>

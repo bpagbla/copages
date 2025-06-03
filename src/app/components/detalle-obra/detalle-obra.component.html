@@ -1,0 +1,40 @@
+<div class="content">
+  <div class="obra-publica-wrapper container" *ngIf="obra">
+    <div class="card p-5 shadow-lg border-0 rounded-4 obra-contenedor">
+      <div class="d-flex flex-column flex-md-row align-items-center gap-5">
+
+        <!-- Portada: primero en móvil, segundo en escritorio -->
+        <div class="flex-shrink-0 order-0 order-md-1">
+          <img
+            [src]="'/assets/covers/' + obra.PORTADA"
+            class="img-fluid rounded portada-img"
+            alt="Portada"
+          />
+        </div>
+
+        <!-- Información de la obra: segundo en móvil, primero en escritorio -->
+        <div
+          class="d-flex flex-column justify-content-center align-items-start gap-2 w-100 order-1 order-md-0"
+          style="max-width: 560px"
+        >
+          <h2 class="fw-semibold fs-xl">{{ obra.TITULO }}</h2>
+
+          <p class="text-secondary">
+            {{ "@" + obra.AUTOR }}
+            <span *ngIf="obra.esCompartida && obra.coautor">
+              · {{ "@" + obra.coautor }}</span
+            >
+          </p>
+
+          <p class="fw-light text-dark">{{ obra.DESCRIPCION }}</p>
+
+          <div class="d-flex gap-4 mt-3">
+            <button class="btn btn-primary">Leer</button>
+            <button class="btn btn-secondary">Guardar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

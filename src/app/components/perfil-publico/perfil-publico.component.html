@@ -6,7 +6,8 @@
   <div *ngIf="!error && usuario" class="text-center">
     <!-- Foto de perfil -->
     <img
-      [src]="'/assets/pfpics/' + usuario.pfp"
+      [src]="getPfpUrl(usuario.pfp)"
+
       alt="Foto de perfil"
       width="120"
       height="120"

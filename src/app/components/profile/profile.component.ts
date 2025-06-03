@@ -18,7 +18,7 @@ import { Router } from '@angular/router';
 export class ProfileComponent implements OnInit {
   user: User | null = null;
   nickInicial: string = '';
-
+  selectedFile: File | null = null;
   constructor(
     private authService: AuthService,
     private http: HttpClient,
@@ -38,7 +38,19 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+  getPfpUrl(pfp: string): string {
+    if (!pfp || pfp === 'defPfp.webp') {
+      return 'assets/pfpics/defPfp.webp';
+    }
+    return `http://localhost:3000/pfpics/${pfp}`;
+  }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
+  }
   guardarCambiosConfirmacion() {
     if (!this.user) return;
 
@@ -74,32 +86,52 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-actualizar(cambioNick: boolean) {
-  if (!this.user) return;
+  actualizar(cambioNick: boolean) {
+    if (!this.user) return;
 
-  this.userService.actualizarUsuario(this.user.id, this.user).subscribe({
-    next: (res) => {
-      if (cambioNick && res.accessToken) {
-        this.authService.actualizarAccessToken(res.accessToken);
-      }
+    const formData = new FormData();
+    formData.append('nombre', this.user.nombre);
+    formData.append('apellidos', this.user.apellidos);
+    formData.append('nick', this.user.nick);
 
-      this.notificationService.show({
-        type: 'success',
-        title: 'Perfil actualizado',
-        message: res.message,
+    if (this.selectedFile) {
+      formData.append('pfp', this.selectedFile);
+    }
+
+    this.userService
+      .actualizarUsuarioFormData(this.user.id, formData)
+      .subscribe({
+        next: (res) => {
+          if (cambioNick && res.accessToken) {
+            this.authService.actualizarAccessToken(res.accessToken);
+          }
+
+          this.notificationService.show({
+            type: 'success',
+            title: 'Perfil actualizado',
+            message: res.message,
+          });
+
+          this.nickInicial = this.user!.nick;
+
+          // Actualizar visualización de imagen nueva si se subió
+          if (this.selectedFile) {
+            this.user!.pfp = `${this.user!.nick}${this.getFileExtension(
+              this.selectedFile.name
+            )}`;
+          }
+        },
+        error: (err) => {
+          console.error('Error al actualizar el usuario:', err);
+          this.notificationService.show({
+            type: 'error',
+            title: 'Error',
+            message: 'Hubo un problema al actualizar el perfil.',
+          });
+        },
       });
-
-      this.nickInicial = this.user!.nick;
-    },
-    error: (err) => {
-      console.error('Error al actualizar el usuario:', err);
-      this.notificationService.show({
-        type: 'error',
-        title: 'Error',
-        message: 'Hubo un problema al actualizar el perfil.',
-      });
-    },
-  });
-}
-
+  }
+  getFileExtension(filename: string): string {
+    return '.' + filename.split('.').pop();
+  }
 }

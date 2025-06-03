@@ -4,12 +4,13 @@
     [routerLink]="['/profile', post.author.username]"
     class="flex-shrink-0 mt-2"
   >
-    <img
-      [src]="'/assets/pfpics/' + post.author.pfp"
-      alt="Foto de perfil"
-      class="rounded-circle border border-white img-fluid"
-      style="max-width: 2rem; height: auto; object-fit: cover"
-    />
+<img
+  [src]="getProfilePicUrl(post.author.pfp)"
+  alt="Foto de perfil"
+  class="rounded-circle border border-white img-fluid"
+  style="max-width: 2rem; height: auto; object-fit: cover"
+/>
+
   </a>
 
   <!-- Contenedor del post -->

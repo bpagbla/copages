@@ -50,4 +50,9 @@ export class UserService {
       user
     );
   }
+
+  actualizarUsuarioFormData(id: number, formData: FormData): Observable<any> {
+  return this.http.put(`http://localhost:3000/user/${id}`, formData);
+}
+
 }

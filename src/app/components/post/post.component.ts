@@ -134,4 +134,12 @@ export class PostComponent implements OnInit {
       },
     });
   }
+
+  getProfilePicUrl(pfp: string): string {
+  if (!pfp || pfp === 'defPfp.webp') {
+    return '/assets/pfpics/defPfp.webp'; // imagen local por defecto
+  }
+  return `http://localhost:3000/pfpics/${pfp}`; // imagen subida por usuario
+}
+
 }

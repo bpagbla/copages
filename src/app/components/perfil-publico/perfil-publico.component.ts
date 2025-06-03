@@ -258,4 +258,10 @@ export class PerfilPublicoComponent implements OnInit {
       });
     }
   }
+  getPfpUrl(pfp: string): string {
+    if (!pfp || pfp === 'defPfp.webp') {
+      return '/assets/pfpics/defPfp.webp'; // imagen por defecto en frontend
+    }
+    return `http://localhost:3000/pfpics/${pfp}`; // imagen subida y servida por backend
+  }
 }

@@ -1,13 +1,20 @@
+# Usa una imagen oficial de Node
 FROM node:lts
 
+# Establece el directorio de trabajo
 WORKDIR /app
 
+# Copia package.json y package-lock.json (si existe) primero
 COPY package*.json ./
+
+# Instala dependencias (incluye nodemon y multer)
 RUN npm install
 
+# Copia el resto del código fuente
 COPY . .
 
+# Expone el puerto de la API
 EXPOSE 3000
 
-CMD ["node", "index.js"]
-
+# Comando por defecto: usar nodemon en desarrollo
+CMD ["npm", "run", "dev"]

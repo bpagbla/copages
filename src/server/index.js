@@ -1216,10 +1216,42 @@ app.get("/obra-publica/:id", (req, res) => {
   });
 });
 
-//ENDPOINT PARA EDITAR USUARIO
-app.put("/user/:id", verifyToken, (req, res) => {
+//PFP EDITAR USUARIO
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+
+const UPLOAD_DIR = path.join(__dirname, "public", "pfpics");
+
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, 'public/pfpics');
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    const nick = req.body.nick || 'unknown';
+    const ext = path.extname(file.originalname);
+    cb(null, `${nick}${ext}`);
+  },
+});
+
+
+
+const upload = multer({ storage });
+
+// Servir las imágenes estáticamente
+app.use('/pfpics', express.static(path.join(__dirname, 'public/pfpics')));
+
+
+
+app.put("/user/:id", verifyToken, upload.single("pfp"), (req, res) => {
   const { id } = req.params;
-  const { nick, nombre, apellidos, pfp } = req.body;
+  const { nick, nombre, apellidos } = req.body;
+  const pfp = req.file ? req.file.filename : req.body.pfp;
 
   const updateSql = `
     UPDATE usuario
@@ -1230,42 +1262,20 @@ app.put("/user/:id", verifyToken, (req, res) => {
   conexion.query(updateSql, [nick, nombre, apellidos, pfp, id], (err, result) => {
     if (err) {
       console.error("Error al actualizar el usuario:", err);
-      return res
-        .status(500)
-        .json({ message: "Error al actualizar el usuario" });
+      return res.status(500).json({ message: "Error al actualizar el usuario" });
     }
 
-    // Obtener los datos actualizados desde la base de datos
-    const selectSql = `SELECT * FROM usuario WHERE ID = ?`;
-    conexion.query(selectSql, [id], (err2, results) => {
-      if (err2 || results.length === 0) {
-        console.error("Error al recuperar usuario actualizado:", err2);
-        return res
-          .status(500)
-          .json({ message: "Error al recuperar los datos actualizados" });
-      }
+    // Aquí puedes regenerar el token si lo necesitas
 
-      const user = results[0];
-
-      const userData = {
-        id: user.ID,
-        username: user.NICK,
-        email: user.EMAIL,
-        role: user.ROLE,
-        nombre: user.NOMBRE,
-        apellidos: user.APELLIDOS,
-        pfp: user.PFP,
-      };
-
-      const newAccessToken = generarAccessToken(userData);
-
-      res.status(200).json({
-        message: "Usuario actualizado correctamente",
-        accessToken: newAccessToken,
-      });
+    return res.status(200).json({
+      message: "Usuario actualizado correctamente",
+      pfp: `/pfpics/${pfp}`, // puedes devolver la ruta completa
     });
   });
 });
+
+
+
 
 
 app.listen(3000, () => {

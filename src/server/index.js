@@ -773,17 +773,37 @@ app.get("/biblioteca", verifyToken, (req, res) => {
   const userId = req.user.id;
 
   const sql = `
-  SELECT 
-    l.ID AS ID,
-    l.TITULO AS TITULO,
-    l.DESCRIPCION AS DESCRIPCION,
-    l.PORTADA AS PORTADA,
-    u.NICK AS AUTOR
-  FROM guarda g
-  JOIN libro l ON g.ID_LIBRO = l.ID
-  JOIN publica p ON p.ID_LIBRO = l.ID
-  JOIN usuario u ON u.ID = p.ID_USUARIO
-  WHERE g.ID_USUARIO = ?
+SELECT 
+  l.ID AS ID,
+  l.TITULO AS TITULO,
+  l.DESCRIPCION AS DESCRIPCION,
+  l.PORTADA AS PORTADA,
+  (
+    SELECT u.NICK
+    FROM publica p2
+    JOIN usuario u ON u.ID = p2.ID_USUARIO
+    WHERE p2.ID_LIBRO = l.ID
+    LIMIT 1
+  ) AS AUTOR,
+  (
+    SELECT u2.NICK
+    FROM publica p3
+    JOIN usuario u2 ON u2.ID = p3.ID_USUARIO
+    WHERE p3.ID_LIBRO = l.ID
+      AND u2.NICK != (
+        SELECT u3.NICK
+        FROM publica p4
+        JOIN usuario u3 ON u3.ID = p4.ID_USUARIO
+        WHERE p4.ID_LIBRO = l.ID
+        LIMIT 1
+      )
+    LIMIT 1
+  ) AS coautor
+FROM guarda g
+JOIN libro l ON g.ID_LIBRO = l.ID
+WHERE g.ID_USUARIO = ?
+GROUP BY l.ID
+
 `;
 
   conexion.query(sql, [userId], (err, results) => {

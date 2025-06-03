@@ -49,11 +49,22 @@
 
           <div class="mt-2">
             <h6 class="mb-0">{{ libro.TITULO }}</h6>
-            <small
-              class="text-muted un"
-              [routerLink]="['/profile', libro.AUTOR]"
-            >
-              &#64;{{ libro.AUTOR }}
+            <small class="text-muted">
+              <a
+                [routerLink]="['/profile', libro.AUTOR]"
+                class="text-decoration-none text-muted un"
+              >
+                {{ "@" + libro.AUTOR }}
+              </a>
+              <ng-container *ngIf="libro.coautor">
+                &nbsp;·&nbsp;
+                <a
+                  [routerLink]="['/profile', libro.coautor]"
+                  class="text-decoration-none text-muted un"
+                >
+                  {{"@" + libro.coautor }}
+                </a>
+              </ng-container>
             </small>
           </div>
         </div>

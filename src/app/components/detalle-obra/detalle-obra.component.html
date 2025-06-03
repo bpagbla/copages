@@ -2,7 +2,6 @@
   <div class="obra-publica-wrapper container" *ngIf="obra">
     <div class="card p-5 shadow-lg border-0 rounded-4 obra-contenedor">
       <div class="d-flex flex-column flex-md-row align-items-center gap-5">
-
         <!-- Portada: primero en móvil, segundo en escritorio -->
         <div class="flex-shrink-0 order-0 order-md-1">
           <img
@@ -19,12 +18,23 @@
         >
           <h2 class="fw-semibold fs-xl">{{ obra.TITULO }}</h2>
 
-          <p class="text-secondary">
-            {{ "@" + obra.AUTOR }}
-            <span *ngIf="obra.esCompartida && obra.coautor">
-              · {{ "@" + obra.coautor }}</span
-            >
-          </p>
+        <small class="text-muted">
+  <a
+    [routerLink]="['/profile', obra.AUTOR]"
+    class="text-decoration-none text-muted un"
+  >
+    {{ "@" + obra.AUTOR }}
+  </a>
+  <ng-container *ngIf="obra.coautor">
+    &nbsp;·&nbsp;
+    <a
+      [routerLink]="['/profile', obra.coautor]"
+      class="text-decoration-none text-muted un"
+    >
+      {{ "@" + obra.coautor }}
+    </a>
+  </ng-container>
+</small>
 
           <p class="fw-light text-dark">{{ obra.DESCRIPCION }}</p>
 
@@ -33,7 +43,6 @@
             <button class="btn btn-secondary">Guardar</button>
           </div>
         </div>
-
       </div>
     </div>
   </div>

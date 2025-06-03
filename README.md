@@ -1,8 +1,8 @@
-# Copages 📚✍️
+# Copages 
 
 Aplicación web para escribir, guardar y colaborar en obras literarias.
 
-## 🚀 Instrucciones rápidas
+## Instrucciones rápidas
 
 1. **Clonar el repositorio**
 ```bash

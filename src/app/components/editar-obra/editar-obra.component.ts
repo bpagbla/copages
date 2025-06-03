@@ -45,8 +45,21 @@ export class EditarObraComponent {
         console.log(this.obra);
       },
       error: (err) => {
-        console.log('no');
-        console.error('Error al cargar la obra:', err);
+        if (err.status === 403) {
+          this.notificationService.show({
+            type: 'error',
+            title: 'Acceso denegado',
+            message: 'No tienes permiso para editar esta obra.',
+          });
+          this.router.navigate(['/home']);
+        } else {
+          console.error('Error al cargar la obra:', err);
+          this.notificationService.show({
+            type: 'error',
+            title: 'Error',
+            message: 'Ocurrió un error al cargar la obra.',
+          });
+        }
       },
     });
   }

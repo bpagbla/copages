@@ -11,6 +11,7 @@ import { PostService } from '../../services/postService/post.service';
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
+  styleUrls: ['./post.component.css'],
   imports: [NgIf, CommonModule, RouterModule, NgIcon],
 })
 export class PostComponent implements OnInit {
@@ -33,6 +34,7 @@ export class PostComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log('Post recibido:', this.post);
     if (this.post.id) {
       this.obrasService.estaGuardado(this.post.id).subscribe({
         next: (res) => {

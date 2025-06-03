@@ -38,11 +38,10 @@ export class HomeComponent implements OnInit {
   }
 
   private cargarFeedCompleto(): void {
-    // Llamamos ambos endpoints en paralelo
+    // Llamada a ambos endpoints 
     const feed$ = this.postService.getFeed();
     const solicitudes$ = this.postService.getSolicitudesColaboracion();
 
-    // Combinamos resultados
     feed$.subscribe({
       next: (postsNormales) => {
         solicitudes$.subscribe({

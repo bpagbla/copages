@@ -298,7 +298,7 @@ app.get("/posts", verifyToken, (req, res) => {
   l.ID AS id,
   l.TITULO AS title,
   l.PORTADA AS portada,
-  SUBSTRING(l.DESCRIPCION, 1, 200) AS excerpt,
+  l.DESCRIPCION AS excerpt,
   c.TITULO AS capituloTitulo,
   c.ORDEN AS capituloOrden,
   c.FECHA AS date,
@@ -1196,7 +1196,7 @@ app.get("/obra-publica/:id", (req, res) => {
     }
 
     // Extraer autores únicos
-    const autores = [...new Set(results.map(r => r.AUTOR))];
+    const autores = [...new Set(results.map((r) => r.AUTOR))];
     const esCompartida = autores.length > 1;
 
     const response = {
@@ -1206,13 +1206,12 @@ app.get("/obra-publica/:id", (req, res) => {
       PORTADA: results[0].PORTADA,
       AUTOR: autores[0],
       esCompartida,
-      coautor: esCompartida ? autores[1] : undefined
+      coautor: esCompartida ? autores[1] : undefined,
     };
 
     res.json(response);
   });
 });
-
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

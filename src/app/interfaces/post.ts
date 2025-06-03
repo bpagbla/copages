@@ -9,7 +9,7 @@ export interface Author {
 export interface Post {
   id?: number; // libro.id (solo si es post real)
   title: string; // para ambos: libro o solicitud
-  excerpt: string;
+  excerpt: string; ///
   date: string;
   portada?: string; // vacío en colaboraciones
   author: Author;

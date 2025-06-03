@@ -54,19 +54,25 @@
     </div>
 
     <ng-template #postNormal>
-      <div class="d-flex">
+      <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+
         <img
           *ngIf="post.portada"
           [src]="'/assets/covers/' + post.portada"
           alt="Portada del libro"
-          class="img-thumbnail img-fluid me-3"
-          style="max-width: 6rem; height: auto; object-fit: cover"
+          class="portada-img me-3"
         />
 
         <div class="flex-grow-1">
           <h5 class="fw-bold mb-1">{{ post.title }}</h5>
 
-          <p class="mb-1" *ngIf="showDescripcion">{{ post.excerpt }}</p>
+          <p class="mb-1" *ngIf="showDescripcion">
+            {{
+              post.excerpt.length > 200
+                ? (post.excerpt | slice : 0 : 200) + "..."
+                : post.excerpt
+            }}
+          </p>
 
           <div
             *ngIf="showTituloCap || showOrdenCap"

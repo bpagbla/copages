@@ -204,6 +204,7 @@ app.post("/refresh", (req, res) => {
       role: user.role,
       nombre: user.nombre,
       apellidos: user.apellidos,
+      pfp: user.pfp,
     };
 
     const newAccessToken = generarAccessToken(userData);
@@ -235,6 +236,8 @@ app.get("/user-info", verifyToken, (req, res) => {
     id: req.user.id,
     nick: req.user.username,
     role: req.user.role,
+    nombre: req.user.nombre,
+    apellidos: req.user.apellidos,
     pfp: req.user.pfp,
   });
 });
@@ -1212,6 +1215,58 @@ app.get("/obra-publica/:id", (req, res) => {
     res.json(response);
   });
 });
+
+//ENDPOINT PARA EDITAR USUARIO
+app.put("/user/:id", verifyToken, (req, res) => {
+  const { id } = req.params;
+  const { nick, nombre, apellidos, pfp } = req.body;
+
+  const updateSql = `
+    UPDATE usuario
+    SET NICK = ?, NOMBRE = ?, APELLIDOS = ?, PFP = ?
+    WHERE ID = ?
+  `;
+
+  conexion.query(updateSql, [nick, nombre, apellidos, pfp, id], (err, result) => {
+    if (err) {
+      console.error("Error al actualizar el usuario:", err);
+      return res
+        .status(500)
+        .json({ message: "Error al actualizar el usuario" });
+    }
+
+    // Obtener los datos actualizados desde la base de datos
+    const selectSql = `SELECT * FROM usuario WHERE ID = ?`;
+    conexion.query(selectSql, [id], (err2, results) => {
+      if (err2 || results.length === 0) {
+        console.error("Error al recuperar usuario actualizado:", err2);
+        return res
+          .status(500)
+          .json({ message: "Error al recuperar los datos actualizados" });
+      }
+
+      const user = results[0];
+
+      const userData = {
+        id: user.ID,
+        username: user.NICK,
+        email: user.EMAIL,
+        role: user.ROLE,
+        nombre: user.NOMBRE,
+        apellidos: user.APELLIDOS,
+        pfp: user.PFP,
+      };
+
+      const newAccessToken = generarAccessToken(userData);
+
+      res.status(200).json({
+        message: "Usuario actualizado correctamente",
+        accessToken: newAccessToken,
+      });
+    });
+  });
+});
+
 
 app.listen(3000, () => {
   console.log("listening on http://localhost:3000");

@@ -48,6 +48,7 @@ export class BibliotecaComponent implements OnInit {
   }
   eliminarLibroConConfirmacion(libroId: number): void {
     console.log('ELIMINAR');
+    
     this.notificationService.confirm({
       title: 'Eliminar libro',
       message: '¿Estás seguro de eliminar este libro de tu biblioteca?',

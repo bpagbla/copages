@@ -42,10 +42,10 @@ export class AuthService {
     }
   }
 
-    private isTokenValid(token: string): boolean {
+  private isTokenValid(token: string): boolean {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return (Date.now() / 1000) < payload.exp;
+      return Date.now() / 1000 < payload.exp;
     } catch {
       return false;
     }
@@ -73,7 +73,7 @@ export class AuthService {
             this.loggedIn.next(true);
           } else {
             this.loggedIn.next(false);
-           this.storageService.removeItem('accessToken');
+            this.storageService.removeItem('accessToken');
           }
         },
         error: () => {
@@ -82,8 +82,6 @@ export class AuthService {
         },
       });
   }
-
-
 
   // validar inicio de sesión
   validarLogin(username: string, password: string) {
@@ -123,9 +121,7 @@ export class AuthService {
         () => {
           this.storageService.removeItem('accessToken');
           this.storageService.removeItem('refreshToken');
-
           this.loggedIn.next(false);
-
           this.router.navigate(['/login']);
         },
         (error) => {
@@ -211,5 +207,10 @@ export class AuthService {
   // Método para actualizar el estado de login
   setLoggedIn(value: boolean): void {
     this.loggedIn.next(value);
+  }
+
+  actualizarAccessToken(token: string): void {
+    this.storageService.setItem('accessToken', token);
+    this.checkToken(); // vuelve a evaluar si el token es válido
   }
 }

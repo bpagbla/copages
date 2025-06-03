@@ -28,7 +28,7 @@ export class UserService {
   getUserInfo(): Observable<any> {
     return this.http.get(`${API_URL}/user-info`);
   }
-  
+
   existeSolicitudColaboracion(destinatarioId: number): Observable<any> {
     return this.http.get(`${API_URL}/colaboracion-existe/${destinatarioId}`);
   }
@@ -38,7 +38,16 @@ export class UserService {
   }
 
   cancelarSolicitudColaboracion(destinatarioId: number): Observable<any> {
-  return this.http.delete(`${API_URL}/colaboracion/${destinatarioId}`);
-}
+    return this.http.delete(`${API_URL}/colaboracion/${destinatarioId}`);
+  }
 
+  actualizarUsuario(
+    id: number,
+    user: any
+  ): Observable<{ message: string; accessToken: string }> {
+    return this.http.put<{ message: string; accessToken: string }>(
+      `${API_URL}/user/${id}`,
+      user
+    );
+  }
 }

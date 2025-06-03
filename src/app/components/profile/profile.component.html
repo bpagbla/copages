@@ -36,6 +36,31 @@
 
     <h1 class="text-center">{{ user.nick }}</h1>
   </div>
+
+  <form *ngIf="user" (ngSubmit)="guardarCambiosConfirmacion()" class="ps-4 pe-4">
+  <div class="mb-3">
+    <label class="form-label">Nombre</label>
+    <input [(ngModel)]="user.nombre" name="nombre" class="form-control" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Apellidos</label>
+    <input [(ngModel)]="user.apellidos" name="apellidos" class="form-control" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Nick</label>
+    <input [(ngModel)]="user.nick" name="nick" class="form-control" />
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Foto de perfil (nombre de archivo)</label>
+    <input [(ngModel)]="user.pfp" name="pfp" class="form-control" />
+  </div>
+
+  <button class="btn btn-primary" type="submit">Guardar cambios</button>
+</form>
+
 </div>
 <ng-template #noUser>
   <p>No hay usuario logueado.</p>

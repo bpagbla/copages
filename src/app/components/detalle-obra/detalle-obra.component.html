@@ -18,29 +18,47 @@
         >
           <h2 class="fw-semibold fs-xl">{{ obra.TITULO }}</h2>
 
-        <small class="text-muted">
-  <a
-    [routerLink]="['/profile', obra.AUTOR]"
-    class="text-decoration-none text-muted un"
-  >
-    {{ "@" + obra.AUTOR }}
-  </a>
-  <ng-container *ngIf="obra.coautor">
-    &nbsp;·&nbsp;
-    <a
-      [routerLink]="['/profile', obra.coautor]"
-      class="text-decoration-none text-muted un"
-    >
-      {{ "@" + obra.coautor }}
-    </a>
-  </ng-container>
-</small>
+          <small class="text-muted">
+            <a
+              [routerLink]="['/profile', obra.AUTOR]"
+              class="text-decoration-none text-muted un"
+            >
+              {{ "@" + obra.AUTOR }}
+            </a>
+            <ng-container *ngIf="obra.coautor">
+              &nbsp;·&nbsp;
+              <a
+                [routerLink]="['/profile', obra.coautor]"
+                class="text-decoration-none text-muted un"
+              >
+                {{ "@" + obra.coautor }}
+              </a>
+            </ng-container>
+          </small>
 
           <p class="fw-light text-dark">{{ obra.DESCRIPCION }}</p>
 
           <div class="d-flex gap-4 mt-3">
-            <button class="btn btn-primary">Leer</button>
-            <button class="btn btn-secondary">Guardar</button>
+            <button
+              class="btn btn-primary"
+              [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
+            >
+              Leer
+            </button>
+            <button
+              class="btn d-flex align-items-center gap-2"
+              [ngClass]="
+                guardado ? 'btn-outline-danger' : 'btn-warning'
+              "
+              (click)="toggleBiblioteca()"
+            >
+              <ng-icon
+                [name]="
+                  guardado ? 'bootstrapBookmarkX' : 'bootstrapBookmarkPlus'
+                "
+              ></ng-icon>
+              {{ guardado ? "Eliminar" : "Guardar" }}
+            </button>
           </div>
         </div>
       </div>

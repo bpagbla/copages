@@ -6,7 +6,7 @@
       <div
         *ngFor="let obra of obrasRecientes"
         class="book-card"
-        [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
+        [routerLink]="['/obra', obra.ID]"
       >
         <div class="obra-img-wrapper">
           <img

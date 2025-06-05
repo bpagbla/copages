@@ -39,17 +39,24 @@
           <p class="fw-light text-dark">{{ obra.DESCRIPCION }}</p>
 
           <div class="d-flex gap-4 mt-3">
-            <button
-              class="btn btn-primary"
-              [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
-            >
-              Leer
-            </button>
+<span
+  matTooltip="Esta obra no tiene capítulos aún"
+  [matTooltipDisabled]="tieneCapitulos"
+  matTooltipPosition="above"
+>
+  <button
+    class="btn btn-primary"
+    [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
+    [disabled]="!tieneCapitulos"
+  >
+    Leer
+  </button>
+</span>
+
+
             <button
               class="btn d-flex align-items-center gap-2"
-              [ngClass]="
-                guardado ? 'btn-outline-danger' : 'btn-warning'
-              "
+              [ngClass]="guardado ? 'btn-outline-danger' : 'btn-warning'"
               (click)="toggleBiblioteca()"
             >
               <ng-icon

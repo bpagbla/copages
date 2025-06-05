@@ -5,26 +5,34 @@ import { CommonModule, NgIf } from '@angular/common';
 import { NgIcon } from '@ng-icons/core';
 import { NotificationService } from '../../services/notificationService/notification.service';
 import { Obra } from '../../interfaces/obra';
+import { CapitulosService } from '../../services/capitulosService/capitulos.service';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-detalle-obra',
   templateUrl: './detalle-obra.component.html',
   styleUrls: ['./detalle-obra.component.css'],
-  imports: [NgIf, CommonModule, RouterModule, NgIcon],
+  imports: [NgIf, CommonModule, RouterModule, NgIcon, MatTooltipModule],
 })
 export class DetalleObraComponent implements OnInit {
-   obra!: Obra;
+  obra!: Obra;
   guardado = false;
+  tieneCapitulos = false;
 
   constructor(
     private route: ActivatedRoute,
-    private obrasService: ObrasService, private notificationService: NotificationService
+    private obrasService: ObrasService,
+    private capitulosService: CapitulosService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
     this.obrasService.getObraDetalle(id).subscribe((data) => {
       this.obra = data;
+      this.capitulosService.getTotalCapitulos(id).subscribe((res) => {
+        this.tieneCapitulos = res.count > 0;
+      });
     });
   }
   toggleBiblioteca(): void {

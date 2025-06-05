@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { Obra } from '../../interfaces/obra';
 import { NgIcon } from '@ng-icons/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NotificationService } from '../../services/notificationService/notification.service';
 
 @Component({
   selector: 'app-editordashboard',
@@ -18,7 +19,11 @@ export class EditordashboardComponent implements OnInit {
   error: string = '';
   modalError = '';
 
-  constructor(private obrasService: ObrasService, private router: Router) {}
+  constructor(
+    private obrasService: ObrasService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.obrasService.getMisObras().subscribe({
@@ -37,12 +42,18 @@ export class EditordashboardComponent implements OnInit {
     this.router.navigate(['/editar/obra', id]);
   }
 
-  eliminarObra(id: number): void {
-    const confirmacion = confirm(
-      '¿Estás seguro de que quieres eliminar esta obra?'
-    );
-    if (!confirmacion) return;
+  confirmarEliminarObra(id: number): void {
+    this.notificationService.confirm({
+      title: '¿Eliminar obra?',
+      message:
+        '¿Estás seguro de que deseas eliminar esta obra? Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      onConfirm: () => this.eliminarObra(id),
+    });
+  }
 
+  eliminarObra(id: number): void {
     this.obrasService.eliminarObra(id).subscribe({
       next: () => {
         // Actualiza la lista local quitando la obra eliminada

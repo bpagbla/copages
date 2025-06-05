@@ -60,10 +60,33 @@ export class UserService {
     );
   }
 
-  actualizarUsuarioFormData(id: number, formData: FormData): Observable<any> {
+/**
+ * Envía una solicitud PUT al backend para actualizar los datos del usuario, incluyendo archivos (como imagen de perfil).
+ *
+ * @param id ID del usuario que se va a actualizar.
+ * @param formData Objeto `FormData` que contiene los datos a actualizar.
+ * @returns Un observable con la respuesta del servidor (`any`).
+ */
+actualizarUsuarioFormData(id: number, formData: FormData): Observable<any> {
   return this.http.put(`http://localhost:3000/user/${id}`, formData);
 }
-  comprobarSeguimiento(seguidoId: number): Observable<{ sigue: boolean }> {
-    return this.http.get<{ sigue: boolean }>(`${API_URL}/sigue/${seguidoId}`);
-  }
+
+/**
+ * Consulta al backend si el usuario actual sigue a otro usuario específico.
+ *
+ * @param seguidoId ID del usuario que se quiere verificar si está siendo seguido.
+ * @returns Un observable que emite un objeto con la propiedad `sigue`, que indica si el seguimiento existe.
+ *
+ * @example
+ * ts
+ * comprobarSeguimiento(12).subscribe(res => {
+ *   if (res.sigue) {
+ *     // Ya lo sigue
+ *   }
+ * });
+ */
+comprobarSeguimiento(seguidoId: number): Observable<{ sigue: boolean }> {
+  return this.http.get<{ sigue: boolean }>(`${API_URL}/sigue/${seguidoId}`);
+}
+
 }

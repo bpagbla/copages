@@ -1,6 +1,24 @@
+/**
+ * Representa un capítulo dentro de una obra.
+ */
 export interface Capitulo {
-    ID: number,
-    ORDEN: number;
-    TITULO: string;
-    TEXTO: string;
+  /**
+   * Identificador único del capítulo.
+   */
+  ID: number;
+
+  /**
+   * Orden o posición del capítulo dentro de la obra.
+   */
+  ORDEN: number;
+
+  /**
+   * Título del capítulo.
+   */
+  TITULO: string;
+
+  /**
+   * Contenido textual completo del capítulo.
+   */
+  TEXTO: string;
 }

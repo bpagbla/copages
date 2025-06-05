@@ -1,7 +1,6 @@
 <div [ngClass]="{ content: estaLoggeado, 'content-noLog': !estaLoggeado }">
   <div *ngIf="capitulo; else noCapitulo">
     <h2>{{ capitulo.TITULO }}</h2>
-
     <!-- Mostrar el texto con formato HTML -->
     <div [innerHTML]="capitulo.TEXTO" class="texto-capitulo"></div>
 

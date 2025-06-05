@@ -68,10 +68,10 @@ export class LecturaComponent implements OnInit {
       next: (data) => {
         const c = data.capitulo;
         this.capitulo = {
-          ID: c.id,
-          ORDEN: c.orden,
-          TITULO: c.titulo,
-          TEXTO: c.texto,
+          ID: c.ID,
+          ORDEN: c.ORDEN,
+          TITULO: c.TITULO,
+          TEXTO: c.TEXTO,
         };
       },
     });

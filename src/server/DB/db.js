@@ -8,7 +8,8 @@ const connection = mysql.createConnection({
   port:3306,    
   user: 'root',         
   password: '',        
-  database: 'pfcdb'    
+  database: 'pfcdb',
+  charset: 'utf8mb4'    
 });
 
 // Verificar la conexión

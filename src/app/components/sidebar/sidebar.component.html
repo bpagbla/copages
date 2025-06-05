@@ -2,10 +2,10 @@
 <nav
   class="d-flex d-md-none justify-content-between align-items-center p-2 border-bottom bg-light"
 >
-  <img src="assets/logo.webp" alt="logo" width="50" />
+  <img src="assets/logo.webp" alt="logo" width="50" routerLink="/home" />
 
   <button
-    class="btn btn-outline-secondary"
+    class="btn btn-outline-secondary" 
     (click)="toggleMenu()"
     aria-label="Abrir menú"
   >
@@ -79,7 +79,7 @@
 
 <!-- Sidebar para escritorio -->
 <div class="sidebar d-none d-md-flex justify-content-between flex-column">
-  <img src="assets/logo.webp" alt="logo" width="50" />
+  <img src="assets/logo.webp" alt="logo" width="50" routerLink="/home"/>
 
   <div class="navLinks">
     <a

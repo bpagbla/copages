@@ -1,4 +1,23 @@
 services:
+  sqlFinal:
+    container_name: sqlFinal
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+      - ../mysql:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: pfcdb
+      LANG: C.UTF-8
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   backend:
     container_name: server
     build: ./src/server
@@ -20,20 +39,4 @@ services:
     depends_on:
       sqlFinal:
         condition: service_healthy
-
-  sqlFinal:
-    container_name: sqlFinal
-    image: mysql:8
-    ports:
-      - "3306:3306"
-    volumes:
-      - ../mysql:/var/lib/mysql
-
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: pfcdb
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+    restart: always

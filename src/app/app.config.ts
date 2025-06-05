@@ -10,8 +10,12 @@ import {
   provideClientHydration,
   withEventReplay,
 } from '@angular/platform-browser';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
+import { provideIcons } from '@ng-icons/core';
 import {
   bootstrapBlockquoteLeft,
   bootstrapBook,
@@ -38,7 +42,7 @@ import {
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
-import { authInterceptor } from './interceptors/auth.interceptor';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 const modules = {
   toolbar: [
@@ -90,11 +94,17 @@ export const appConfig: ApplicationConfig = {
       bootstrapBookmarkX,
       bootstrapBookmarkPlus,
       bootstrapCompass,
-      bootstrapPeopleFill, bootstrapArrowClockwise
+      bootstrapPeopleFill,
+      bootstrapArrowClockwise,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptorsFromDi()),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
   ],
 };

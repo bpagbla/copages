@@ -19,6 +19,8 @@ export class ProfileComponent implements OnInit {
   user: User | null = null;
   nickInicial: string = '';
   selectedFile: File | null = null;
+  previewUrl: string | null = null;
+
   constructor(
     private authService: AuthService,
     private http: HttpClient,
@@ -39,9 +41,8 @@ export class ProfileComponent implements OnInit {
     });
   }
   getPfpUrl(pfp: string): string {
-    if (!pfp || pfp === 'defPfp.webp') {
-      return 'assets/pfpics/defPfp.webp';
-    }
+    if (this.previewUrl) return this.previewUrl;
+    if (!pfp || pfp === 'defPfp.webp') return 'assets/pfpics/defPfp.webp';
     return `http://localhost:3000/pfpics/${pfp}`;
   }
 
@@ -49,6 +50,7 @@ export class ProfileComponent implements OnInit {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
+      this.previewUrl = URL.createObjectURL(file);
     }
   }
   guardarCambiosConfirmacion() {

@@ -63,5 +63,7 @@ export class UserService {
   actualizarUsuarioFormData(id: number, formData: FormData): Observable<any> {
   return this.http.put(`http://localhost:3000/user/${id}`, formData);
 }
-
+  comprobarSeguimiento(seguidoId: number): Observable<{ sigue: boolean }> {
+    return this.http.get<{ sigue: boolean }>(`${API_URL}/sigue/${seguidoId}`);
+  }
 }

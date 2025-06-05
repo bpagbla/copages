@@ -1,8 +1,3 @@
-/**
- * Copages - Red social para escritores
- * @version 1.0.0
- * @author Beatriz Pages Blázquez
- */
 /// <reference types="@angular/localize" />
 
 import { bootstrapApplication } from '@angular/platform-browser';

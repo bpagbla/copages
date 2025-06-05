@@ -6,14 +6,14 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { PerfilPublicoComponent } from './components/perfil-publico/perfil-publico.component';
 
-import { authGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { BibliotecaComponent } from './components/biblioteca/biblioteca.component';
 import { LecturaComponent } from './components/lectura/lectura.component';
 import { EditarObraComponent } from './components/editar-obra/editar-obra.component';
 import { EditarCapituloComponent } from './components/editar-capitulo/editar-capitulo.component';
 import { EditordashboardComponent } from './components/editordashboard/editordashboard.component';
 import { ExploreComponent } from './components/explore/explore.component';
-import { redirectIfLoggedGuard } from './guards/redirect-if-logged.guard';
+import { RedirectIfLoggedGuard } from './guards/redirect-if-logged.guard';
 import { DetalleObraComponent } from './components/detalle-obra/detalle-obra.component';
 import { Routes } from '@angular/router';
 
@@ -31,22 +31,22 @@ export const routes: Routes = [
   {
     path: '',
     component: LandingComponent,
-    canActivate: [redirectIfLoggedGuard],
+    canActivate: [RedirectIfLoggedGuard],
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'home', component: HomeComponent, canActivate: [authGuard] },
-  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] }, // perfil propio (editable)
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] }, // perfil propio (editable)
   /**
    * Perfil público de cualquier usuario por su nick
    * @param nick Nick del usuario cuyo perfil se quiere visualizar
    */
   { path: 'profile/:nick', component: PerfilPublicoComponent }, // perfil público (cualquier usuario)
-  { path: 'editor', component: EditorComponent, canActivate: [authGuard] },
+  { path: 'editor', component: EditorComponent, canActivate: [AuthGuard] },
   {
     path: 'biblioteca',
     component: BibliotecaComponent,
-    canActivate: [authGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'explore',
@@ -62,7 +62,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: EditordashboardComponent,
-    canActivate: [authGuard],
+    canActivate: [AuthGuard],
   },
   /**
    * Página de edición de una obra existente.
@@ -71,7 +71,7 @@ export const routes: Routes = [
   {
     path: 'editar/obra/:idObra',
     component: EditarObraComponent,
-    canActivate: [authGuard],
+    canActivate: [AuthGuard],
   },
   /**
    * Edición de un capítulo específico dentro de una obra.
@@ -81,7 +81,7 @@ export const routes: Routes = [
   {
     path: 'editar/:idObra/capitulo/:idCapitulo',
     component: EditarCapituloComponent,
-    canActivate: [authGuard],
+    canActivate: [AuthGuard],
   },
   /**
    * Detalle público de una obra.

@@ -43,3 +43,8 @@ Thumbs.db
 
 node_modules
 .env
+
+
+#documentation
+/docs
+/documentation

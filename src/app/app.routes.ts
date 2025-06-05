@@ -1,5 +1,3 @@
-import { Routes } from '@angular/router';
-
 import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -17,8 +15,19 @@ import { EditordashboardComponent } from './components/editordashboard/editordas
 import { ExploreComponent } from './components/explore/explore.component';
 import { redirectIfLoggedGuard } from './guards/redirect-if-logged.guard';
 import { DetalleObraComponent } from './components/detalle-obra/detalle-obra.component';
+import { Routes } from '@angular/router';
 
+/**
+ * Rutas principales de la aplicación .
+ * Define la navegación entre componentes públicos, privados y protegidos mediante guards.
+ *
+ * @description Algunas rutas están protegidas con `authGuard` (requieren autenticación),
+ * y otras como la ruta raíz están condicionadas por `redirectIfLoggedGuard`.
+ */
 export const routes: Routes = [
+  /**
+   * Ruta raíz - muestra la página de inicio solo si no estás logueado.
+   */
   {
     path: '',
     component: LandingComponent,
@@ -28,6 +37,10 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] }, // perfil propio (editable)
+  /**
+   * Perfil público de cualquier usuario por su nick
+   * @param nick Nick del usuario cuyo perfil se quiere visualizar
+   */
   { path: 'profile/:nick', component: PerfilPublicoComponent }, // perfil público (cualquier usuario)
   { path: 'editor', component: EditorComponent, canActivate: [authGuard] },
   {
@@ -39,6 +52,11 @@ export const routes: Routes = [
     path: 'explore',
     component: ExploreComponent,
   },
+  /**
+   * Vista de lectura de un capítulo de una obra.
+   * @param idObra ID de la obra.
+   * @param orden Orden del capítulo dentro de la obra.
+   */
   { path: 'libro/:idObra/capitulo/:orden', component: LecturaComponent },
 
   {
@@ -46,18 +64,29 @@ export const routes: Routes = [
     component: EditordashboardComponent,
     canActivate: [authGuard],
   },
-
+  /**
+   * Página de edición de una obra existente.
+   * @param idObra ID de la obra a editar.
+   */
   {
     path: 'editar/obra/:idObra',
     component: EditarObraComponent,
     canActivate: [authGuard],
   },
-
+  /**
+   * Edición de un capítulo específico dentro de una obra.
+   * @param idObra ID de la obra.
+   * @param idCapitulo ID del capítulo.
+   */
   {
     path: 'editar/:idObra/capitulo/:idCapitulo',
     component: EditarCapituloComponent,
     canActivate: [authGuard],
   },
+  /**
+   * Detalle público de una obra.
+   * @param id ID de la obra a visualizar.
+   */
   {
     path: 'obra/:id',
     component: DetalleObraComponent,

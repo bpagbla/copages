@@ -31,7 +31,12 @@ export class AuthService {
   ) {
     this.checkToken();
   }
-
+  /**
+   * Verifica si existe un token de acceso válido en el almacenamiento local.
+   *
+   * Si el token es válido, actualiza el estado de autenticación a `true`.
+   * En caso contrario, elimina el token y marca al usuario como no autenticado.
+   */
   private checkToken() {
     const token = this.storageService.getItem('accessToken');
     if (token && this.isTokenValid(token)) {
@@ -42,6 +47,12 @@ export class AuthService {
     }
   }
 
+  /**
+   * Comprueba si el token JWT proporcionado aún no ha expirado.
+   *
+   * @param token Token JWT a verificar.
+   * @returns `true` si el token es válido (no ha expirado), `false` si es inválido o mal formado.
+   */
   private isTokenValid(token: string): boolean {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));

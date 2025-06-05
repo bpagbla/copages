@@ -10,13 +10,21 @@ const API_URL = 'http://localhost:3000';
 export class UserService {
   constructor(private http: HttpClient) {}
 
+    /**
+   * Obtiene un usuario por su ID.
+   * @param nick Nick del usuario a consultar
+   * @returns Observable con los datos del usuario
+   */
   getPerfil(nick: string): Observable<any> {
     return this.http.get(`${API_URL}/profile/${nick}`);
   }
 
-  comprobarSeguimiento(seguidoId: number): Observable<{ sigue: boolean }> {
-    return this.http.get<{ sigue: boolean }>(`${API_URL}/sigue/${seguidoId}`);
-  }
+/**
+ * Verifica si el usuario autenticado sigue actualmente al usuario con el ID proporcionado.
+ *
+ * @param seguidoId ID del usuario que se desea comprobar si está siendo seguido.
+ * @returns Observable que emite un objeto con la propiedad `sigue`, de tipo booleano (`true` si lo sigue, `false` si no).
+ */
 
   toggleSeguimiento(seguidoId: number): Observable<{ sigue: boolean }> {
     return this.http.post<{ sigue: boolean }>(
@@ -24,6 +32,7 @@ export class UserService {
       {}
     );
   }
+
 
   getUserInfo(): Observable<any> {
     return this.http.get(`${API_URL}/user-info`);

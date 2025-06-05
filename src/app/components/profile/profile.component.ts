@@ -73,7 +73,7 @@ export class ProfileComponent implements OnInit {
           this.notificationService.confirm({
             title: 'Cambio de nombre de usuario',
             message:
-              'Vas a cambiar tu nombre de usuario. Será necesario volver a iniciar sesión.',
+              'Vas a cambiar tu nombre de usuario: este nombre es único y si otra persona lo usa no podrás volver al username anterior. ¿Quieres continuar?',
             confirmText: 'Confirmar',
             cancelText: 'Cancelar',
             onConfirm: () => this.actualizar(true),

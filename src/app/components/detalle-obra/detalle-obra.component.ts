@@ -7,6 +7,7 @@ import { NotificationService } from '../../services/notificationService/notifica
 import { Obra } from '../../interfaces/obra';
 import { CapitulosService } from '../../services/capitulosService/capitulos.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { AuthService } from '../../services/authService/auth.service';
 
 @Component({
   selector: 'app-detalle-obra',
@@ -23,15 +24,21 @@ export class DetalleObraComponent implements OnInit {
     private route: ActivatedRoute,
     private obrasService: ObrasService,
     private capitulosService: CapitulosService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {}
+
+get estaLoggeado(): boolean {
+  return this.authService.isLoggedIn;
+}
+
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
     this.obrasService.getObraDetalle(id).subscribe((data) => {
       this.obra = data;
       this.capitulosService.getTotalCapitulos(id).subscribe((res) => {
-        this.tieneCapitulos = res.count > 0;
+        this.tieneCapitulos = res.total > 0;
       });
     });
   }

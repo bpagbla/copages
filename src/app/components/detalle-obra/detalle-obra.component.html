@@ -39,33 +39,36 @@
           <p class="fw-light text-dark">{{ obra.DESCRIPCION }}</p>
 
           <div class="d-flex gap-4 mt-3">
-<span
-  matTooltip="Esta obra no tiene capítulos aún"
-  [matTooltipDisabled]="tieneCapitulos"
-  matTooltipPosition="above"
->
-  <button
-    class="btn btn-primary"
-    [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
-    [disabled]="!tieneCapitulos"
-  >
-    Leer
-  </button>
-</span>
-
-
-            <button
-              class="btn d-flex align-items-center gap-2"
-              [ngClass]="guardado ? 'btn-outline-danger' : 'btn-warning'"
-              (click)="toggleBiblioteca()"
+            <span
+              matTooltip="Esta obra no tiene capítulos aún"
+              [matTooltipDisabled]="tieneCapitulos"
             >
-              <ng-icon
-                [name]="
-                  guardado ? 'bootstrapBookmarkX' : 'bootstrapBookmarkPlus'
-                "
-              ></ng-icon>
-              {{ guardado ? "Eliminar" : "Guardar" }}
-            </button>
+              <button
+                class="btn btn-primary"
+                [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
+                [disabled]="!tieneCapitulos"
+              >
+                Leer
+              </button>
+            </span>
+            <span
+              matTooltip="Inicia sesión para guardar"
+              [matTooltipDisabled]="estaLoggeado"
+            >
+              <button
+                class="btn d-flex align-items-center gap-2"
+                [ngClass]="guardado ? 'btn-outline-danger' : 'btn-warning'"
+                (click)="toggleBiblioteca()"
+                [disabled]="!estaLoggeado"
+              >
+                <ng-icon
+                  [name]="
+                    guardado ? 'bootstrapBookmarkX' : 'bootstrapBookmarkPlus'
+                  "
+                ></ng-icon>
+                {{ guardado ? "Eliminar" : "Guardar" }}
+              </button></span
+            >
           </div>
         </div>
       </div>

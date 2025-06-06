@@ -66,7 +66,7 @@ exports.refresh = (req, res) => {
   }
 
   jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Token inválido" });
+    if (err) return res.status(401).json({ message: "Token inválido" });
 
     const userData = {
       id: user.id,

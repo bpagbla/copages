@@ -1,47 +1,88 @@
-import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { StorageService } from '../services/storageService/storage.service';
-import { Observable } from 'rxjs';
-
 /**
- * Interceptor HTTP que agrega el token de autenticación a cada solicitud saliente.
+ * Interceptor HTTP que agrega el token de autenticación a cada solicitud saliente
+ * y maneja automáticamente la renovación del token cuando expira (código 401).
  *
- * Si existe un `accessToken` en el almacenamiento, lo añade al encabezado `Authorization` con formato `Bearer`.
+ * Si el token ha expirado, intenta obtener uno nuevo mediante el endpoint /refresh.
+ * Si falla la renovación, se cierra la sesión.
  *
  * @example
  * ts
  * {
  *   provide: HTTP_INTERCEPTORS,
- *   useClass: AuthInterceptor,
+ *   useClass: AuthRefreshInterceptor,
  *   multi: true
  * }
  */
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpErrorResponse,
+} from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { AuthService } from '../services/authService/auth.service';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   /**
    * Constructor del interceptor.
-   * @param storage Servicio que maneja el almacenamiento local del token.
+   * @param authService Servicio de autenticación que gestiona tokens y sesión.
    */
-  constructor(private storage: StorageService) {}
+  constructor(private authService: AuthService) {}
 
   /**
-   * Intercepta cada solicitud HTTP saliente y añade el token si está disponible.
+   * Intercepta solicitudes HTTP para añadir el token y gestionar la renovación automática.
    *
    * @param req Solicitud HTTP original.
    * @param next Manejador del siguiente interceptor en la cadena.
-   * @returns Un Observable de tipo `HttpEvent` con la solicitud potencialmente modificada.
+   * @returns Un Observable de tipo `HttpEvent` con la solicitud modificada o reintentada.
    */
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.storage.getItem('accessToken');
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    const token = this.authService['storageService'].getItem('accessToken');
 
+    let clonedReq = req;
     if (token) {
-      req = req.clone({
+      clonedReq = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
       });
     }
 
-    return next.handle(req);
+    return next.handle(clonedReq).pipe(
+      catchError((error) => {
+        // Si es error 401 y no es /login ni /refresh
+        if (
+          error instanceof HttpErrorResponse &&
+          error.status === 401 &&
+          !req.url.includes('/login') &&
+          !req.url.includes('/refresh')
+        ) {
+          return this.authService.refreshToken$().pipe(
+            switchMap((newToken) => {
+              this.authService.actualizarAccessToken(newToken);
+              const retryReq = req.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${newToken}`,
+                },
+              });
+              return next.handle(retryReq);
+            }),
+            catchError((err) => {
+              this.authService.logout();
+              return throwError(() => err);
+            })
+          );
+        }
+
+        return throwError(() => error);
+      })
+    );
   }
 }

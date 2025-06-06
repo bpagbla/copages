@@ -10,8 +10,6 @@ const cookieParser = require("cookie-parser");
 app.use(
   cors({
     origin: "http://localhost:4200",
-    methods: "GET,POST, PUT, DELETE", // Métodos permitidos
-    allowedHeaders: "Content-Type,Authorization", // Encabezados permitidos
     credentials: true, // Permite enviar cookies o credenciales
   })
 );

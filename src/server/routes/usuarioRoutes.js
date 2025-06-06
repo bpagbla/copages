@@ -13,7 +13,8 @@ router.get("/user-info", verifyToken, usuarioController.obtenerInfoLoggeado);
 router.get("/profile/:nick", usuarioController.obtenerPerfilYObras);
 router.get("/sigue/:seguidoId", verifyToken, usuarioController.comprobarSeguimiento);
 router.post("/sigue/:seguidoId", verifyToken, usuarioController.toggleSeguimiento);
-router.put("/user/:id", verifyToken, upload.single("pfp"), usuarioController.actualizarUsuario);
+router.put("/user/:id", upload.single("pfp"), verifyToken, usuarioController.actualizarUsuario);
+
 
 
 module.exports = router;

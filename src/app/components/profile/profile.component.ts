@@ -90,6 +90,7 @@ export class ProfileComponent implements OnInit {
 
   actualizar(cambioNick: boolean) {
     if (!this.user) return;
+    console.log('actualizando');
 
     const formData = new FormData();
     formData.append('nombre', this.user.nombre);
@@ -100,10 +101,12 @@ export class ProfileComponent implements OnInit {
       formData.append('pfp', this.selectedFile);
     }
 
+
     this.userService
       .actualizarUsuarioFormData(this.user.id, formData)
       .subscribe({
         next: (res) => {
+          console.log('Respuesta del servidor:', res);
           if (cambioNick && res.accessToken) {
             this.authService.actualizarAccessToken(res.accessToken);
           }
@@ -117,10 +120,8 @@ export class ProfileComponent implements OnInit {
           this.nickInicial = this.user!.nick;
 
           // Actualizar visualización de imagen nueva si se subió
-          if (this.selectedFile) {
-            this.user!.pfp = `${this.user!.nick}${this.getFileExtension(
-              this.selectedFile.name
-            )}`;
+          if (this.selectedFile && res.pfp) {
+            this.user!.pfp = res.pfp.replace('/pfpics/', '');
           }
         },
         error: (err) => {

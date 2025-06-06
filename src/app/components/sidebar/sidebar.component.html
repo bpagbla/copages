@@ -5,7 +5,7 @@
   <img src="assets/logo.webp" alt="logo" width="50" routerLink="/home" />
 
   <button
-    class="btn btn-outline-secondary" 
+    class="btn btn-outline-secondary"
     (click)="toggleMenu()"
     aria-label="Abrir menú"
   >
@@ -13,38 +13,33 @@
   </button>
 </nav>
 
+<!-- Backdrop para cerrar al hacer clic fuera -->
+<div
+  *ngIf="menuAbierto"
+  class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-25 mobile-backdrop"
+  style="z-index: 998"
+  (click)="toggleMenu()"
+></div>
+
 <!-- Menú desplegable -->
 <div
   *ngIf="menuAbierto"
   class="mobile-menu d-md-none bg-light border position-fixed top-0 start-0 w-75 h-100 shadow d-flex flex-column"
   tabindex="0"
+  style="z-index: 999"
+  (click)="$event.stopPropagation()"
 >
   <div class="navLinks d-flex flex-column gap-3 p-3 flex-grow-1">
-    <a
-      routerLink="/home"
-      routerLinkActive="active"
-      (click)="toggleMenu()"
-    >
+    <a routerLink="/home" routerLinkActive="active" (click)="toggleMenu()">
       <ng-icon name="bootstrapHouseHeart" size="1.5rem"></ng-icon> Home
     </a>
-    <a
-      routerLink="/biblioteca"
-      routerLinkActive="active"
-      (click)="toggleMenu()"
-    >
+    <a routerLink="/biblioteca" routerLinkActive="active" (click)="toggleMenu()">
       <ng-icon name="bootstrapBook" size="1.5rem"></ng-icon> Biblioteca
     </a>
-    <a
-      routerLink="/dashboard"
-      routerLinkActive="active"
-      (click)="toggleMenu()"
-    >
+    <a routerLink="/dashboard" routerLinkActive="active" (click)="toggleMenu()">
       <ng-icon name="bootstrapBlockquoteLeft" size="1.5rem"></ng-icon> Escribir
     </a>
-    <a
-      routerLink="/explore"
-      routerLinkActive="active"
-    >
+    <a routerLink="/explore" routerLinkActive="active" (click)="toggleMenu()">
       <ng-icon name="bootstrapCompass" size="1.5rem"></ng-icon> Explorar
     </a>
   </div>
@@ -79,7 +74,7 @@
 
 <!-- Sidebar para escritorio -->
 <div class="sidebar d-none d-md-flex justify-content-between flex-column">
-  <img src="assets/logo.webp" alt="logo" width="50" routerLink="/home"/>
+  <img src="assets/logo.webp" alt="logo" width="50" routerLink="/home" />
 
   <div class="navLinks">
     <a

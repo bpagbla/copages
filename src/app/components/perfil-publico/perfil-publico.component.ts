@@ -220,12 +220,20 @@ export class PerfilPublicoComponent implements OnInit {
   }
 
   toggleBiblioteca(obra: any): void {
+      if (!this.authService.isLoggedIn) {
+    this.notificationService.show({
+      type: 'info',
+      title: 'No autenticado',
+      message: 'Debes iniciar sesión para guardar libros en tu biblioteca.',
+    });
+    return;
+  }
     if (obra.GUARDADO) {
       this.obrasService.eliminarDeBiblioteca(obra.ID).subscribe({
         next: () => {
           obra.GUARDADO = false;
           this.notificationService.show({
-            type: 'info',
+            type: 'warning',
             title: 'Eliminado de la biblioteca',
             message: 'Se ha eliminado este libro de tu biblioteca',
           });
@@ -233,7 +241,7 @@ export class PerfilPublicoComponent implements OnInit {
         error: (err) => {
           console.error(err);
           this.notificationService.show({
-            type: 'info',
+            type: 'error',
             title: 'Error al eliminar libro',
             message: 'No se ha podido eliminar este libro de tu biblioteca',
           });

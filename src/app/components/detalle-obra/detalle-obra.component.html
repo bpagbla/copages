@@ -40,13 +40,13 @@
 
           <div class="d-flex gap-4 mt-3">
             <span
-              matTooltip="Esta obra no tiene capítulos aún"
-              [matTooltipDisabled]="tieneCapitulos"
+              matTooltip="No hay capítulos disponibles"
+              [matTooltipDisabled]="tieneCapitulos && !primerCapituloVacio"
             >
               <button
                 class="btn btn-primary"
                 [routerLink]="['/libro', obra.ID, 'capitulo', 1]"
-                [disabled]="!tieneCapitulos"
+                [disabled]="!tieneCapitulos || primerCapituloVacio"
               >
                 Leer
               </button>

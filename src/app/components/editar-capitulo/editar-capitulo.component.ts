@@ -31,6 +31,7 @@ export class EditarCapituloComponent implements OnInit {
       next: (cap) => (this.capitulo = cap),
       error: (err) => console.error('Error al cargar capítulo:', err),
     });
+    
   }
 
   guardar(): void {

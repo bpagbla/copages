@@ -19,6 +19,8 @@ export class DetalleObraComponent implements OnInit {
   obra!: Obra;
   guardado = false;
   tieneCapitulos = false;
+  primerCapituloVacio = false;
+  totalCapitulos = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,20 +30,34 @@ export class DetalleObraComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-get estaLoggeado(): boolean {
-  return this.authService.isLoggedIn;
-}
-
+  get estaLoggeado(): boolean {
+    return this.authService.isLoggedIn;
+  }
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
     this.obrasService.getObraDetalle(id).subscribe((data) => {
       this.obra = data;
       this.capitulosService.getTotalCapitulos(id).subscribe((res) => {
+        this.totalCapitulos = res.total;
         this.tieneCapitulos = res.total > 0;
+      });
+      this.capitulosService.getCapitulo(id, 1).subscribe({
+        next: (data) => {
+          const cap = data.capitulo; // <- aquí el cambio
+          const sinTitulo = !cap.TITULO || cap.TITULO.trim() === '';
+          const sinTexto = !cap.TEXTO || cap.TEXTO.trim() === '';
+          this.primerCapituloVacio =
+            this.tieneCapitulos &&
+            this.totalCapitulos === 1 &&
+            sinTitulo &&
+            sinTexto;
+        },
+        error: (err) => console.error('Error al cargar primer capítulo:', err),
       });
     });
   }
+  
   toggleBiblioteca(): void {
     if (!this.obra.ID) return;
 

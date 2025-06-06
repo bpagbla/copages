@@ -3,6 +3,7 @@ import { ObrasService } from '../../services/obrasService/obras.service';
 import { Obra } from '../../interfaces/obra';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/authService/auth.service';
 
 @Component({
   selector: 'app-explore',
@@ -13,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export class ExploreComponent {
   obrasRecientes: Obra[] = [];
 
-  constructor(private obrasService: ObrasService) {}
+  constructor(private obrasService: ObrasService,  public authService: AuthService) {}
 
   ngOnInit(): void {
     this.obrasService.getObrasRecientes().subscribe({

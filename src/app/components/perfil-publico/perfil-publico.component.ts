@@ -8,6 +8,7 @@ import { NotificationService } from '../../services/notificationService/notifica
 import { NgIcon } from '@ng-icons/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ObrasService } from '../../services/obrasService/obras.service';
+import { AuthService } from '../../services/authService/auth.service';
 
 @Component({
   selector: 'app-perfil-publico',
@@ -31,7 +32,8 @@ export class PerfilPublicoComponent implements OnInit {
     private userService: UserService,
     private notificationService: NotificationService,
     private router: Router,
-    private obrasService: ObrasService
+    private obrasService: ObrasService,
+    public authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -264,4 +266,17 @@ export class PerfilPublicoComponent implements OnInit {
     }
     return `http://localhost:3000/pfpics/${pfp}`; // imagen subida y servida por backend
   }
+
+  get tooltipSeguir(): string {
+  if (!this.authService.isLoggedIn) return 'Es necesario Iniciar Sesión';
+  if (this.usuario?.id === this.currentUserId) return 'No puedes seguirte a ti mismo';
+  return '';
+}
+
+get tooltipColaborar(): string {
+  if (!this.authService.isLoggedIn) return 'Es necesario Iniciar Sesión';
+  if (this.usuario?.id === this.currentUserId) return 'No puedes colaborar contigo mismo';
+  return '';
+}
+
 }

@@ -1,39 +1,40 @@
 <div class="content">
-  <div class="explore-container">
-    <h2 class="mb-4">Últimas actualizaciones</h2>
+  <div class="explore-container" [ngClass]="(authService.isLoggedIn$ | async) ? 'pt-1' : 'pt-4'">
+    <h2 class="mb-3" [ngClass]="(authService.isLoggedIn$ | async) ? 'mt-2' : 'mt-5'">Últimas actualizaciones</h2>
 
-    <div class="grid">
-      <div
-        *ngFor="let obra of obrasRecientes"
-        class="book-card"
-        [routerLink]="['/obra', obra.ID]"
-      >
-        <div class="obra-img-wrapper">
-          <img
-            [src]="'/assets/covers/' + obra.PORTADA"
-            [alt]="obra.TITULO"
-            class="obra-img"
-          />
-        </div>
-        <h5 class="mt-2">{{ obra.TITULO }}</h5>
-        <small class="text-muted">
-  <a
-    [routerLink]="['/profile', obra.AUTOR]"
-    class="text-decoration-none text-muted un"
+   <div class="grid d-flex flex-nowrap overflow-auto pb-2">
+  <div
+    *ngFor="let obra of obrasRecientes"
+    class="book-card flex-shrink-0"
+    [routerLink]="['/obra', obra.ID]"
   >
-    {{ "@" + obra.AUTOR }}
-  </a>
-  <ng-container *ngIf="obra.coautor">
-    &nbsp;·&nbsp;
-    <a
-      [routerLink]="['/profile', obra.coautor]"
-      class="text-decoration-none text-muted un"
-    >
-      {{ "@" + obra.coautor }}
-    </a>
-  </ng-container>
-</small>
-      </div>
+    <div class="obra-img-wrapper">
+      <img
+        [src]="'/assets/covers/' + obra.PORTADA"
+        [alt]="obra.TITULO"
+        class="obra-img"
+      />
     </div>
+    <h5 class="mt-2" >{{ obra.TITULO }}</h5>
+    <small class="text-muted">
+      <a
+        [routerLink]="['/profile', obra.AUTOR]"
+        class="text-decoration-none text-muted un"
+      >
+        {{ "@" + obra.AUTOR }}
+      </a>
+      <ng-container *ngIf="obra.coautor">
+        &nbsp;·&nbsp;
+        <a
+          [routerLink]="['/profile', obra.coautor]"
+          class="text-decoration-none text-muted un"
+        >
+          {{ "@" + obra.coautor }}
+        </a>
+      </ng-container>
+    </small>
+  </div>
+</div>
+
   </div>
 </div>

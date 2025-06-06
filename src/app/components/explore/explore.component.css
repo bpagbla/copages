@@ -3,9 +3,19 @@
 }
 
 .grid {
-  display: flex;
-  flex-wrap: wrap;
   gap: 1.5rem;
+  padding: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+.book-card h5 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 3rem; /* reserva espacio fijo para 2 líneas */
+  line-height: 1.5rem;
 }
 
 .book-card {

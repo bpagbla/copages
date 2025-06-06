@@ -1,4 +1,7 @@
-<div class="content">
+<div
+  class="content"
+  [ngClass]="(authService.isLoggedIn$ | async) ? 'mt-2' : 'mt-5'"
+>
   <div *ngIf="error">
     <p class="text-danger">{{ error }}</p>
   </div>
@@ -7,7 +10,6 @@
     <!-- Foto de perfil -->
     <img
       [src]="getPfpUrl(usuario.pfp)"
-
       alt="Foto de perfil"
       width="120"
       height="120"
@@ -21,20 +23,31 @@
 
     <!-- Botones -->
     <div class="d-flex justify-content-center gap-2 mb-4">
-      <button
-        (click)="seguir()"
-        class="btn btn-light border"
-        [disabled]="usuario.id === currentUserId || usuario.id === currentUserId"
-      >
-        {{ estaSiguiendo ? "Dejar de seguir" : "Seguir" }}
-      </button>
-      <button
-        class="btn btn-light border"
-        (click)="colaborar()"
-        [disabled]="usuario.id === currentUserId || usuario.id === currentUserId"
-      >
-        {{ solicitudEnviada ? "Cancelar solicitud" : "Colaborar" }}
-      </button>
+<span matTooltip="{{ tooltipSeguir }}" [matTooltipDisabled]="!tooltipSeguir">
+  <button
+    (click)="seguir()"
+    class="btn btn-light border"
+    [disabled]="
+      !(authService.isLoggedIn$ | async) || usuario.id === currentUserId
+    "
+  >
+    {{ estaSiguiendo ? 'Dejar de seguir' : 'Seguir' }}
+  </button>
+</span>
+
+<span matTooltip="{{ tooltipColaborar }}" [matTooltipDisabled]="!tooltipColaborar">
+  <button
+    class="btn btn-light border"
+    (click)="colaborar()"
+    [disabled]="
+      !(authService.isLoggedIn$ | async) || usuario.id === currentUserId
+    "
+  >
+    {{ solicitudEnviada ? 'Cancelar solicitud' : 'Colaborar' }}
+  </button>
+</span>
+
+
     </div>
 
     <!-- Obras publicadas -->

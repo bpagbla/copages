@@ -90,8 +90,31 @@
         class="btn btn-primary btn-guardar-fixed d-flex align-items-center gap-2"
         (click)="guardarCambios()"
       >
-        <ng-icon name="bootstrapSave"></ng-icon>
-        <span class="guardar-label">Guardar</span>
+        <ng-icon
+          *ngIf="estadoGuardado === 'idle'"
+          name="bootstrapSave"
+        ></ng-icon>
+        <div
+          *ngIf="estadoGuardado === 'guardando'"
+          class="spinner-border spinner-border-sm"
+          role="status"
+        >
+          <span class="visually-hidden">Guardando...</span>
+        </div>
+        <ng-icon
+          *ngIf="estadoGuardado === 'guardado'"
+          name="bootstrapCheck"
+        ></ng-icon>
+
+        <span class="guardar-label">
+          {{
+            estadoGuardado === "guardando"
+              ? "Guardando..."
+              : estadoGuardado === "guardado"
+              ? "Guardado"
+              : "Guardar"
+          }}
+        </span>
       </button>
     </div>
   </div>

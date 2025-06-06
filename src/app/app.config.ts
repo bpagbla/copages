@@ -39,6 +39,7 @@ import {
   bootstrapCompass,
   bootstrapPeopleFill,
   bootstrapArrowClockwise,
+  bootstrapCheck,
 } from '@ng-icons/bootstrap-icons';
 
 import { provideQuillConfig } from 'ngx-quill/config';
@@ -96,6 +97,7 @@ export const appConfig: ApplicationConfig = {
       bootstrapCompass,
       bootstrapPeopleFill,
       bootstrapArrowClockwise,
+      bootstrapCheck
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

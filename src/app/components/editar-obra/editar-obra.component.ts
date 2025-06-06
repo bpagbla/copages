@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ObrasService } from '../../services/obrasService/obras.service';
 import { CapitulosService } from '../../services/capitulosService/capitulos.service';
@@ -17,10 +17,12 @@ import { NgIcon } from '@ng-icons/core';
   styleUrl: './editar-obra.component.css',
   providers: [ObrasService, CapitulosService],
 })
-export class EditarObraComponent {
+export class EditarObraComponent implements OnInit, OnDestroy {
   obra: Obra | undefined;
   obraId: number = 0;
   capitulos: Capitulo[] = [];
+  estadoGuardado: 'idle' | 'guardando' | 'guardado' = 'idle';
+  private autoSaveInterval: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,10 +34,17 @@ export class EditarObraComponent {
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
-      this.obraId = +params['idObra']; // el + convierte a número
+      this.obraId = +params['idObra']; //el + convierte a número
       this.obtenerObra(this.obraId);
       this.obtenerCapitulos(this.obraId);
     });
+
+    this.autoSaveInterval = setInterval(() => {
+      this.guardarCambios();
+    }, 10000); // cada 10 segundos
+  }
+  ngOnDestroy(): void {
+    clearInterval(this.autoSaveInterval);
   }
 
   obtenerObra(id: number): void {
@@ -84,45 +93,21 @@ export class EditarObraComponent {
       this.obra.DESCRIPCION.trim().length > 0 &&
       this.obra.DESCRIPCION.length <= 600;
 
-    // Validación del título
-    if (!tituloValido) {
-      this.notificationService.show({
-        type: 'error',
-        title: 'Título inválido',
-        message: 'El título no puede estar vacío.',
-      });
-      return;
-    }
+    if (!tituloValido || !descripcionValida) return;
 
-    // Validación de la descripción
-    if (!descripcionValida) {
-      let mensaje = '';
-      if (this.obra.DESCRIPCION.trim().length === 0) {
-        mensaje = 'La descripción no puede estar vacía.';
-      } else if (this.obra.DESCRIPCION.length > 600) {
-        mensaje = 'La descripción no puede superar los 600 caracteres.';
-      }
+    this.estadoGuardado = 'guardando';
 
-      this.notificationService.show({
-        type: 'error',
-        title: 'Descripción inválida',
-        message: mensaje,
-      });
-      return;
-    }
-
-    // Guardado
     this.obrasService.editarObra(this.obraId, this.obra).subscribe({
       next: () => {
-        console.log('Obra actualizada');
-        this.notificationService.show({
-          type: 'success',
-          message: 'Obra guardada',
-          title: 'Se han guardado los cambios.',
-        });
+        setTimeout(() => {
+          this.estadoGuardado = 'guardado';
+
+          // El estado 'guardado'  permanece visible unos segundos antes de volver a 'idle'
+          setTimeout(() => (this.estadoGuardado = 'idle'), 3000);
+        }, 1500); // <- spinner visible al menos 1.5s
       },
-      error: (err) => {
-        console.error('Error al guardar la obra:', err);
+      error: () => {
+        this.estadoGuardado = 'idle';
       },
     });
   }

@@ -62,7 +62,8 @@ export class AuthInterceptor implements HttpInterceptor {
           error instanceof HttpErrorResponse &&
           error.status === 401 &&
           !req.url.includes('/login') &&
-          !req.url.includes('/refresh')
+          !req.url.includes('/refresh') &&
+          !req.url.includes('/user-info')
         ) {
           return this.authService.refreshToken$().pipe(
             switchMap((newToken) => {

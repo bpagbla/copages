@@ -109,24 +109,25 @@ export class PerfilPublicoComponent implements OnInit {
     });
   }
 
-  cargarPerfil(nick: string) {
-    this.userService.getPerfil(nick).subscribe({
-      next: (data: any) => {
-        this.usuario = {
-          id: data.id,
-          nick: data.nick,
-          nombre: data.nombre,
-          apellidos: data.apellidos,
-          pfp: data.pfp,
-          role: data.role,
-        };
+ cargarPerfil(nick: string) {
+  this.userService.getPerfil(nick).subscribe({
+    next: (data: any) => {
+      this.usuario = {
+        id: data.id,
+        nick: data.nick,
+        nombre: data.nombre,
+        apellidos: data.apellidos,
+        pfp: data.pfp,
+        role: data.role,
+      };
 
-        this.obras = data.obras.map((obra: any) => ({
-          ...obra,
-          GUARDADO: false, // valor inicial (se actualizará abajo)
-        }));
+      this.obras = data.obras.map((obra: any) => ({
+        ...obra,
+        GUARDADO: false, // valor inicial
+      }));
 
-        // Ahora comprueba si cada obra está guardada en la biblioteca
+      // ⚠️ Solo si hay sesión iniciada (currentUserId ya se obtuvo en ngOnInit)
+      if (this.authService.isLoggedIn) {
         this.obras.forEach((obra) => {
           this.obrasService.estaGuardado(obra.ID).subscribe({
             next: (res) => {
@@ -143,12 +144,14 @@ export class PerfilPublicoComponent implements OnInit {
 
         this.comprobarSiSigue(this.usuario.id);
         this.comprobarSolicitudColaboracion();
-      },
-      error: (err) => {
-        this.error = err.error?.message || 'Error al cargar el perfil';
-      },
-    });
-  }
+      }
+    },
+    error: (err) => {
+      this.error = err.error?.message || 'Error al cargar el perfil';
+    },
+  });
+}
+
 
   comprobarSolicitudColaboracion() {
     if (!this.usuario) return;

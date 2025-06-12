@@ -12,7 +12,7 @@ import { AuthService } from '../../services/authService/auth.service';
 export class NavComponent {
   isLoggedIn: boolean = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(public authService: AuthService) {}
 
   ngOnInit() {
     // Suscribirse al estado de autenticación

@@ -9,3 +9,10 @@ img.rounded-circle {
 .book-card:hover {
   transform: scale(1.03);
 }
+
+@media (max-width: 750px) {
+  .custom-mobile-margin {
+    margin-top: 5rem !important; 
+  }
+}
+

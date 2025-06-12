@@ -4,11 +4,21 @@
       <a routerLink="explore" class="un">Explore</a>
     </div>
     <div>
-      <a routerLink="/" class="dokdo-regular logo-txt">Co-Pages</a>
+<a routerLink="/" class="dokdo-regular logo-txt d-flex align-items-center">
+  <span class="d-none d-sm-inline">Co-Pages</span>
+  <img
+    src="/assets/logo.webp"
+    alt="Logo"
+    class="d-inline d-sm-none img-fluid"
+    style="max-height: 2em"
+  />
+</a>
+
     </div>
+
     <div class="d-flex justify-content-around">
       <div *ngIf="!isLoggedIn">
-        <a routerLink="register" class="pe-2 un" >Sign Up</a>
+        <a routerLink="register" class="pe-2 un">Sign Up</a>
         <a routerLink="login" class="ps-2 un">Login</a>
       </div>
       <div *ngIf="isLoggedIn">

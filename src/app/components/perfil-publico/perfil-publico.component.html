@@ -1,6 +1,9 @@
 <div
   class="content"
-  [ngClass]="(authService.isLoggedIn$ | async) ? 'mt-2' : 'mt-5'"
+  [ngClass]="[
+    (authService.isLoggedIn$ | async) ? 'mt-2' : 'mt-5',
+    'custom-mobile-margin'
+  ]"
 >
   <div *ngIf="error">
     <p class="text-danger">{{ error }}</p>
@@ -23,31 +26,35 @@
 
     <!-- Botones -->
     <div class="d-flex justify-content-center gap-2 mb-4">
-<span matTooltip="{{ tooltipSeguir }}" [matTooltipDisabled]="!tooltipSeguir">
-  <button
-    (click)="seguir()"
-    class="btn btn-light border"
-    [disabled]="
-      !(authService.isLoggedIn$ | async) || usuario.id === currentUserId
-    "
-  >
-    {{ estaSiguiendo ? 'Dejar de seguir' : 'Seguir' }}
-  </button>
-</span>
+      <span
+        matTooltip="{{ tooltipSeguir }}"
+        [matTooltipDisabled]="!tooltipSeguir"
+      >
+        <button
+          (click)="seguir()"
+          class="btn btn-light border"
+          [disabled]="
+            !(authService.isLoggedIn$ | async) || usuario.id === currentUserId
+          "
+        >
+          {{ estaSiguiendo ? "Dejar de seguir" : "Seguir" }}
+        </button>
+      </span>
 
-<span matTooltip="{{ tooltipColaborar }}" [matTooltipDisabled]="!tooltipColaborar">
-  <button
-    class="btn btn-light border"
-    (click)="colaborar()"
-    [disabled]="
-      !(authService.isLoggedIn$ | async) || usuario.id === currentUserId
-    "
-  >
-    {{ solicitudEnviada ? 'Cancelar solicitud' : 'Colaborar' }}
-  </button>
-</span>
-
-
+      <span
+        matTooltip="{{ tooltipColaborar }}"
+        [matTooltipDisabled]="!tooltipColaborar"
+      >
+        <button
+          class="btn btn-light border"
+          (click)="colaborar()"
+          [disabled]="
+            !(authService.isLoggedIn$ | async) || usuario.id === currentUserId
+          "
+        >
+          {{ solicitudEnviada ? "Cancelar solicitud" : "Colaborar" }}
+        </button>
+      </span>
     </div>
 
     <!-- Obras publicadas -->

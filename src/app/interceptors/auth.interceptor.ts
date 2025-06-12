@@ -1,18 +1,3 @@
-/**
- * Interceptor HTTP que agrega el token de autenticación a cada solicitud saliente
- * y maneja automáticamente la renovación del token cuando expira (código 401).
- *
- * Si el token ha expirado, intenta obtener uno nuevo mediante el endpoint /refresh.
- * Si falla la renovación, se cierra la sesión.
- *
- * @example
- * ts
- * {
- *   provide: HTTP_INTERCEPTORS,
- *   useClass: AuthRefreshInterceptor,
- *   multi: true
- * }
- */
 import {
   HttpInterceptor,
   HttpRequest,
@@ -27,19 +12,8 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  /**
-   * Constructor del interceptor.
-   * @param authService Servicio de autenticación que gestiona tokens y sesión.
-   */
   constructor(private authService: AuthService) {}
 
-  /**
-   * Intercepta solicitudes HTTP para añadir el token y gestionar la renovación automática.
-   *
-   * @param req Solicitud HTTP original.
-   * @param next Manejador del siguiente interceptor en la cadena.
-   * @returns Un Observable de tipo `HttpEvent` con la solicitud modificada o reintentada.
-   */
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
@@ -57,14 +31,21 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(clonedReq).pipe(
       catchError((error) => {
-        // Si es error 401 y no es /login ni /refresh
-        if (
+        const isAuthError =
           error instanceof HttpErrorResponse &&
           error.status === 401 &&
           !req.url.includes('/login') &&
           !req.url.includes('/refresh') &&
-          !req.url.includes('/user-info')
-        ) {
+          !req.url.includes('/user-info');
+
+        if (isAuthError) {
+          const refreshToken = this.authService['storageService'].getItem('refreshToken');
+
+          // Si no hay refresh token, no se intenta renovar
+          if (!refreshToken) {
+            return throwError(() => error);
+          }
+
           return this.authService.refreshToken$().pipe(
             switchMap((newToken) => {
               this.authService.actualizarAccessToken(newToken);

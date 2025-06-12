@@ -33,30 +33,41 @@ export class DetalleObraComponent implements OnInit {
   get estaLoggeado(): boolean {
     return this.authService.isLoggedIn;
   }
+ngOnInit(): void {
+  const id = +this.route.snapshot.paramMap.get('id')!;
+  this.obrasService.getObraDetalle(id).subscribe((data) => {
+    this.obra = data;
 
-  ngOnInit(): void {
-    const id = +this.route.snapshot.paramMap.get('id')!;
-    this.obrasService.getObraDetalle(id).subscribe((data) => {
-      this.obra = data;
-      this.capitulosService.getTotalCapitulos(id).subscribe((res) => {
-        this.totalCapitulos = res.total;
-        this.tieneCapitulos = res.total > 0;
-      });
-      this.capitulosService.getCapitulo(id, 1).subscribe({
-        next: (data) => {
-          const cap = data.capitulo; // <- aquí el cambio
-          const sinTitulo = !cap.TITULO || cap.TITULO.trim() === '';
-          const sinTexto = !cap.TEXTO || cap.TEXTO.trim() === '';
-          this.primerCapituloVacio =
-            this.tieneCapitulos &&
-            this.totalCapitulos === 1 &&
-            sinTitulo &&
-            sinTexto;
-        },
-        error: (err) => console.error('Error al cargar primer capítulo:', err),
-      });
+    this.capitulosService.getTotalCapitulos(id).subscribe((res) => {
+      this.totalCapitulos = res.total;
+      this.tieneCapitulos = res.total > 0;
     });
-  }
+
+    this.capitulosService.getCapitulo(id, 1).subscribe({
+      next: (data) => {
+        const cap = data.capitulo;
+        const sinTitulo = !cap.TITULO || cap.TITULO.trim() === '';
+        const sinTexto = !cap.TEXTO || cap.TEXTO.trim() === '';
+        this.primerCapituloVacio =
+          this.tieneCapitulos &&
+          this.totalCapitulos === 1 &&
+          sinTitulo &&
+          sinTexto;
+      },
+      error: (err) =>
+        console.error('Error al cargar primer capítulo:', err),
+    });
+
+    if (this.estaLoggeado) {
+      this.obrasService.estaGuardado(id).subscribe({
+        next: (res) => (this.guardado = res.guardado),
+        error: (err) =>
+          console.error('Error al comprobar si está guardado:', err),
+      });
+    }
+  });
+}
+
   
   toggleBiblioteca(): void {
     if (!this.obra.ID) return;

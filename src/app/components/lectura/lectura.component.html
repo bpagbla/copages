@@ -1,8 +1,11 @@
 <div [ngClass]="{ content: estaLoggeado, 'content-noLog': !estaLoggeado }">
-  <div *ngIf="capitulo; else noCapitulo">
+  <div *ngIf="capitulo; else noCapitulo" class="container-fluid">
     <h2>{{ capitulo.TITULO }}</h2>
     <!-- Mostrar el texto con formato HTML -->
-    <div [innerHTML]="capitulo.TEXTO" class="texto-capitulo"></div>
+    <div
+      [innerHTML]="textoCapituloLimpio"
+      class="texto-capitulo text-break"
+    ></div>
 
     <!-- Navegación entre capítulos -->
     <div class="mt-4 d-flex justify-content-between">

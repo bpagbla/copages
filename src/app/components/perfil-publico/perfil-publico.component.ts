@@ -17,6 +17,9 @@ import { AuthService } from '../../services/authService/auth.service';
   imports: [CommonModule, RouterModule, NgIcon, MatTooltip],
 })
 export class PerfilPublicoComponent implements OnInit {
+irADetalle(arg0: any) {
+throw new Error('Method not implemented.');
+}
   guardado = false;
 
   nick!: string;
@@ -54,12 +57,10 @@ export class PerfilPublicoComponent implements OnInit {
   }
 
   irALectura(idObra: number) {
-    // Reemplaza con el routing que estés usando
     this.router.navigate(['/libro', idObra, 'capitulo', 1]);
   }
 
   eliminarLibroConConfirmacion(idObra: number) {
-    // Aquí puedes usar tu servicio de confirmación/modales
     this.notificationService.confirm({
       title: '¿Eliminar obra?',
       message:
@@ -126,7 +127,7 @@ export class PerfilPublicoComponent implements OnInit {
         GUARDADO: false, // valor inicial
       }));
 
-      // ⚠️ Solo si hay sesión iniciada (currentUserId ya se obtuvo en ngOnInit)
+      // Solo si hay sesión iniciada 
       if (this.authService.isLoggedIn) {
         this.obras.forEach((obra) => {
           this.obrasService.estaGuardado(obra.ID).subscribe({

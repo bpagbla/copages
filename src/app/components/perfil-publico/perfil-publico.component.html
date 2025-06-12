@@ -62,12 +62,12 @@
 
     <div class="container-fluid px-3">
       <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
-        <div class="col" *ngFor="let obra of obras">
-          <div
-            class="book-card text-center"
-            (click)="irALectura(obra.ID)"
-            style="cursor: pointer"
-          >
+        <div
+          class="col"
+          *ngFor="let obra of obras"
+          [routerLink]="['/obra', obra.ID]"
+        >
+          <div class="book-card text-center" style="cursor: pointer">
             <div class="position-relative">
               <img
                 [src]="'/assets/covers/' + obra.PORTADA"

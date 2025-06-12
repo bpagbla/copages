@@ -76,6 +76,12 @@ export class LecturaComponent implements OnInit {
       },
     });
   }
+
+  get textoCapituloLimpio(): string {
+  return this.capitulo?.TEXTO?.replace(/&nbsp;/g, ' ') || '';
+}
+
+
   toggleBiblioteca() {
     if (!this.estaLoggeado) return;
 

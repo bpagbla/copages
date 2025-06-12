@@ -10,3 +10,10 @@
 .content-noLog {
   margin: 5rem 2rem;
 }
+
+
+.texto-capitulo img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

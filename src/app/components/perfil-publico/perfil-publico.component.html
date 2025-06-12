@@ -1,8 +1,7 @@
 <div
   class="content"
   [ngClass]="[
-    (authService.isLoggedIn$ | async) ? 'mt-2' : 'mt-5',
-    'custom-mobile-margin'
+    (authService.isLoggedIn$ | async) ? 'mt-0' : 'mt-5'
   ]"
 >
   <div *ngIf="error">

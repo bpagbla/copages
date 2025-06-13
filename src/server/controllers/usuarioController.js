@@ -179,23 +179,48 @@ exports.toggleSeguimiento = (req, res) => {
 exports.actualizarUsuario = (req, res) => {
   const { id } = req.params;
   const { nick, nombre, apellidos } = req.body;
-  const pfp = req.file ? req.file.filename : req.body.pfp;
+  let pfp = req.file ? req.file.filename : req.body.pfp;
 
-  const updateSql = `
-    UPDATE usuario
-    SET NICK = ?, NOMBRE = ?, APELLIDOS = ?, PFP = ?
-    WHERE ID = ?
-  `;
+  if (!pfp) {
+    // Si no se proporciona, obtener la pfp actual de la base de datos
+    const sqlGetPfp = 'SELECT PFP FROM usuario WHERE ID = ?';
+    conexion.query(sqlGetPfp, [id], (err, results) => {
+      if (err) {
+        console.error('Error al obtener la imagen de perfil actual:', err);
+        return res.status(500).json({ message: 'Error al actualizar el usuario' });
+      }
 
-  conexion.query(updateSql, [nick, nombre, apellidos, pfp, id], (err, result) => {
-    if (err) {
-      console.error("Error al actualizar el usuario:", err);
-      return res.status(500).json({ message: "Error al actualizar el usuario" });
-    }
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
 
-    return res.status(200).json({
-      message: "Usuario actualizado correctamente",
-      pfp: `/pfpics/${pfp}`,
+      pfp = results[0].PFP;
+
+      // Ahora sí podemos actualizar
+      hacerUpdate(pfp);
     });
-  });
+  } else {
+    hacerUpdate(pfp);
+  }
+
+  function hacerUpdate(pfpFinal) {
+    const updateSql = `
+      UPDATE usuario
+      SET NICK = ?, NOMBRE = ?, APELLIDOS = ?, PFP = ?
+      WHERE ID = ?
+    `;
+
+    conexion.query(updateSql, [nick, nombre, apellidos, pfpFinal, id], (err, result) => {
+      if (err) {
+        console.error("Error al actualizar el usuario:", err);
+        return res.status(500).json({ message: "Error al actualizar el usuario" });
+      }
+
+      return res.status(200).json({
+        message: "Usuario actualizado correctamente",
+        pfp: `/pfpics/${pfpFinal}`,
+      });
+    });
+  }
 };
+

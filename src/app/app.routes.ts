@@ -33,8 +33,8 @@ export const routes: Routes = [
     component: LandingComponent,
     canActivate: [RedirectIfLoggedGuard],
   },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent, canActivate: [RedirectIfLoggedGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [RedirectIfLoggedGuard] },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] }, // perfil propio (editable)
   /**
